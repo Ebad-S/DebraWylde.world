@@ -1,0 +1,35 @@
+# Original client notes (private, not for version control)
+_Initial_notes_/
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Environment
+.env
+.env.*
+
+# Node (future use)
+node_modules/
+npm-debug.log*
+
+# Python (future use)
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Logs
+*.log
+
+# Cursor
+.cursor/
+.vscode/
