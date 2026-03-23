@@ -1048,12 +1048,38 @@ p + p { margin-top: 1rem; }
 .footer-bottom {
   border-top: 1px solid rgba(255, 255, 255, 0.12);
   padding-top: 1.5rem;
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1rem 1.5rem;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 1rem;
   font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.footer-bottom__col {
+  margin: 0;
+}
+
+.footer-bottom__col--left {
+  text-align: left;
+}
+
+.footer-bottom__col--center {
+  text-align: center;
+}
+
+.footer-bottom__col--right {
+  text-align: right;
+}
+
+.footer-bottom a {
+  color: rgba(255, 255, 255, 0.75);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+.footer-bottom a:hover {
+  color: #fff;
 }
 
 /* --- Newsletter Form --- */
@@ -1202,7 +1228,14 @@ p + p { margin-top: 1rem; }
   }
 
   .footer-bottom {
-    flex-direction: column;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .footer-bottom__col--left,
+  .footer-bottom__col--center,
+  .footer-bottom__col--right {
     text-align: center;
   }
 
