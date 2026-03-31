@@ -2,8 +2,8 @@
 
 Professional website for Debra Wylde's Advisory & Transformation Coaching business.
 
-**Will go live here** <a href="https://debrawylde.world" target="_blank" rel="noopener">DebraWylde.world</a>  
-**Development Review Domain** <a href="https://debra.preview.serenity-webcrafts.com.au" target="_blank" rel="noopener">DebraWylde.world</a>
+✔ **Development Review on Serenity Webcrafts infrastructure** <a href="https://debra.preview.serenity-webcrafts.com.au" target="_blank" rel="noopener">debra.preview.serenity-webcrafts.com.au</a>
+✔ **Will go live here** <a href="https://debrawylde.world" target="_blank" rel="noopener">DebraWylde.world</a>  
 
 ## Project Structure
 
