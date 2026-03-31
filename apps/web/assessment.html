@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alignment Assessment | Debra Wylde</title>
+  <meta name="description" content="Discover where you are on your Alignment Evolution Path and unlock your personalised next-step guidance.">
+  <meta property="og:title" content="Alignment Assessment | Debra Wylde">
+  <meta property="og:description" content="A premium assessment to identify your stage on the Alignment Evolution Path.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://debrawylde.world/assessment.html">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;500;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="src/css/styles.css">
+</head>
+<body class="assessment-page">
+  <header class="site-header">
+    <div class="container">
+      <a href="index.html" class="site-logo">Debra Wylde</a>
+      <button class="mobile-nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <nav class="nav" aria-label="Main navigation">
+        <ul class="nav-list">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="program.html">Program</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+          <li><a href="assessment.html" class="active">Assessment</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="discovery-call.html" class="btn btn--primary nav-cta">Confidential Call</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="section">
+      <div class="container assessment-wrap">
+        <div id="panel-intro" class="assessment-panel assessment-intro">
+          <p class="section__eyebrow">Alignment Evolution Path™</p>
+          <h1 class="section__title">Where Are You on Your Alignment Evolution Path™?</h1>
+          <p class="section__subtitle section__subtitle--centered">You’ve built success. But something is shifting. This short assessment will identify where you are in the process - and what your next move requires.</p>
+          <p class="assessment-note">Select the answer that feels most true for you right now.</p>
+          <p class="assessment-note">Note: full results are unlocked after the payment step.</p>
+          <div class="hero__actions mt-4">
+            <button id="start-assessment" class="btn btn--primary btn--large" type="button">Start Assessment</button>
+          </div>
+        </div>
+
+        <div id="panel-questions" class="assessment-panel" hidden>
+          <div class="assessment-progress">
+            <p id="progress-text" class="assessment-progress__text">Question 1 of 15</p>
+            <div class="assessment-progress__track" aria-hidden="true">
+              <div id="progress-bar" class="assessment-progress__bar"></div>
+            </div>
+          </div>
+          <p id="question-group" class="assessment-question-group"></p>
+          <h2 id="question-text" class="assessment-question-text"></h2>
+          <div id="question-options" class="assessment-options"></div>
+          <p class="assessment-note">Select one option to continue.</p>
+          <div class="assessment-actions">
+            <button id="question-back" class="btn btn--outline" type="button">Back</button>
+            <button id="question-next" class="btn btn--primary" type="button" disabled>Continue</button>
+          </div>
+        </div>
+
+        <div id="panel-lead" class="assessment-panel" hidden>
+          <p class="section__eyebrow">Before Your Result</p>
+          <h2 class="section__title">Where should we send your result?</h2>
+          <p class="assessment-note">Enter your details to continue and prepare your personalised Alignment Report.</p>
+          <form id="lead-form" novalidate>
+            <div class="form-group">
+              <label for="lead-first-name">First Name <span aria-hidden="true">*</span></label>
+              <input id="lead-first-name" type="text" name="first_name" required autocomplete="given-name" placeholder="Your first name">
+              <p class="error-text">First name is required.</p>
+            </div>
+            <div class="form-group">
+              <label for="lead-email">Email Address <span aria-hidden="true">*</span></label>
+              <input id="lead-email" type="email" name="email" required autocomplete="email" placeholder="you@example.com">
+              <p class="error-text">Please provide a valid email address.</p>
+            </div>
+            <div class="assessment-actions">
+              <button id="lead-back" class="btn btn--outline" type="button">Back</button>
+              <button class="btn btn--primary" type="submit">Continue</button>
+            </div>
+          </form>
+        </div>
+
+        <div id="panel-paywall" class="assessment-panel assessment-intro" hidden>
+          <p class="section__eyebrow">Premium Unlock</p>
+          <h2 class="section__title">Unlock Your Alignment Report</h2>
+          <p class="section__subtitle section__subtitle--centered">Your result is ready. Unlock your personalised insight, stage placement, and next-step guidance.</p>
+          <p class="assessment-note">This premium report is designed to help you understand where you are on the Alignment Evolution Path™ and what your next move requires.</p>
+          <div class="assessment-actions">
+            <button id="paywall-back" class="btn btn--outline" type="button">Back</button>
+            <button id="unlock-report" class="btn btn--primary" type="button">Unlock My Report</button>
+          </div>
+        </div>
+
+        <div id="panel-results" class="assessment-panel" hidden>
+          <p class="section__eyebrow">Your Stage</p>
+          <h2 id="result-title" class="assessment-result-title"></h2>
+          <p id="result-subtitle" class="assessment-result-subtitle"></p>
+          <p id="result-body" class="assessment-result-body"></p>
+          <p id="result-requires" class="assessment-result-requires"></p>
+          <div class="hero__actions">
+            <a href="discovery-call.html" class="btn btn--primary btn--large">Book a Confidential Strategy Call</a>
+          </div>
+          <div class="assessment-debug">
+            <p class="assessment-note">Developer preview payload:</p>
+            <pre id="result-json"></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <p class="footer-brand__name">Debra Wylde</p>
+          <p class="footer-brand__text">Private strategic advisory for leaders navigating identity shift, next-level direction, and aligned leadership.</p>
+        </div>
+        <div>
+          <h4>Quick Links</h4>
+          <ul class="footer-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="assessment.html">Assessment</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="faq.html">FAQ</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Get in Touch</h4>
+          <ul class="footer-links">
+            <li><a href="mailto:hello@debrawylde.world">hello@debrawylde.world</a></li>
+            <li><a href="discovery-call.html">Book a Confidential Strategy Call</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="footer-bottom__col footer-bottom__col--left">&copy; 2026 Debra Wylde. All rights reserved.</p>
+        <p class="footer-bottom__col footer-bottom__col--center">Alignment creates decisive leadership.</p>
+        <p class="footer-bottom__col footer-bottom__col--right">Build with care by <a href="https://serenity-webcrafts.com.au/" target="_blank" rel="noopener">Serenity WebCrafts</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="src/js/main.js"></script>
+  <script src="src/js/assessment.js"></script>
+</body>
+</html>

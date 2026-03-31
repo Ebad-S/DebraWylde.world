@@ -1,8 +1,8 @@
 # DebraWylde.world
 
 Professional website for Debra Wylde's Advisory & Transformation Coaching business.
-
-**Domain:** [DebraWylde.world](https://debrawylde.world)
+[Development Review Domain](https://debra.preview.serenity-webcrafts.com.au/)
+**Original Domain:** [DebraWylde.world](https://debrawylde.world)
 
 ## Project Structure
 
@@ -25,7 +25,7 @@ DebraWylde.world/
 
 ## Quick Start
 
-The frontend prototype lives in `apps/web/`. Open `apps/web/index.html` in any browser to preview.
+The frontend prototype lives in `apps/web/`. Use `Live Server` or open `apps/web/index.html` in any browser to preview.
 
 For local development with live reload:
 
@@ -83,4 +83,4 @@ python -m http.server 8000
 
 ---
 
-Built by [Serenity Webcrafts](https://serenityweb.crafts)
+Built by [Serenity Webcrafts](https://serenity-webcrafts.com.au/)
