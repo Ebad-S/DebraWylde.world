@@ -1,0 +1,107 @@
+{
+  "meta": {
+    "appVersion": "0.1.0",
+    "schemaVersion": "2.0.0",
+    "createdAt": "2026-04-18T00:00:00.000Z",
+    "updatedAt": "2026-04-18T00:00:00.000Z",
+    "forecastHorizonYears": 3,
+    "currency": "AUD"
+  },
+  "setup": {
+    "businessName": "Product Business",
+    "startMonth": "jan",
+    "tradingStructure": "company",
+    "gstRegistration": "registered",
+    "chargeGstOnSales": true,
+    "basFrequency": "monthly",
+    "openingCash": 50000,
+    "reportBasis": "dual_view"
+  },
+  "years": {
+    "year1": {
+      "assumptions": { "growthPct": 4, "cpiPct": 2, "taxRatePct": 25, "gstRatePct": 10 },
+      "salesForecast": { "lineOverrides": [] },
+      "marketing": { "lineItems": [{ "id": "m1", "name": "Launch", "monthlyAmount": 1800, "startMonth": 1, "endMonth": 6, "isOneOff": false }] },
+      "costProfile": {
+        "fixedMonthlyCost": 7000,
+        "variableCostPctOfRevenue": 5,
+        "directLaborPctOfRevenue": 6,
+        "otherOperatingExpenseMonthly": 2200
+      },
+      "ownerAdjustments": {
+        "modelType": "company_salary_and_distributions",
+        "ownerDrawingsMonthly": 0,
+        "directorSalaryMonthly": 4200,
+        "distributionsMonthly": 1200,
+        "notes": ""
+      }
+    },
+    "year2": {
+      "assumptions": { "growthPct": 6, "cpiPct": 2, "taxRatePct": 25, "gstRatePct": 10 },
+      "salesForecast": { "lineOverrides": [] },
+      "marketing": { "lineItems": [] },
+      "costProfile": {
+        "fixedMonthlyCost": 7200,
+        "variableCostPctOfRevenue": 5,
+        "directLaborPctOfRevenue": 6,
+        "otherOperatingExpenseMonthly": 2300
+      },
+      "ownerAdjustments": {
+        "modelType": "company_salary_and_distributions",
+        "ownerDrawingsMonthly": 0,
+        "directorSalaryMonthly": 4300,
+        "distributionsMonthly": 1300,
+        "notes": ""
+      }
+    },
+    "year3": {
+      "assumptions": { "growthPct": 6, "cpiPct": 2, "taxRatePct": 25, "gstRatePct": 10 },
+      "salesForecast": { "lineOverrides": [] },
+      "marketing": { "lineItems": [] },
+      "costProfile": {
+        "fixedMonthlyCost": 7400,
+        "variableCostPctOfRevenue": 5,
+        "directLaborPctOfRevenue": 6,
+        "otherOperatingExpenseMonthly": 2400
+      },
+      "ownerAdjustments": {
+        "modelType": "company_salary_and_distributions",
+        "ownerDrawingsMonthly": 0,
+        "directorSalaryMonthly": 4400,
+        "distributionsMonthly": 1400,
+        "notes": ""
+      }
+    }
+  },
+  "salesDetails": {
+    "lines": [
+      {
+        "id": "prod_1",
+        "name": "Course Bundle",
+        "type": "product",
+        "unitPrice": 180,
+        "defaultUnitsPerPeriod": 280,
+        "seasonalityByMonth": [1.1, 1, 0.9, 0.9, 1, 1.1, 1.1, 1.15, 1.05, 0.95, 0.9, 0.95],
+        "costOfGoodsSold": 72,
+        "grossMarginPercent": null,
+        "paymentMethod": "card",
+        "merchantFeePercent": 2.2,
+        "collectionProfile": "default",
+        "gstApplies": true,
+        "isActive": true
+      }
+    ]
+  },
+  "collectionsPolicy": {
+    "defaultDebtorDays": 15,
+    "badDebtPct": 0.2,
+    "collectionSplitByMonthBucket": [0.9, 0.1],
+    "receivablesBasis": "gross",
+    "openingReceivables": 3000
+  },
+  "assets": { "items": [] },
+  "loans": { "items": [] },
+  "personalCashFlow": { "year1Only": true, "items": [] },
+  "derived": { "monthly": {}, "annual": {}, "quarterly": {}, "summaryCards": {}, "charts": {} },
+  "warnings": []
+}

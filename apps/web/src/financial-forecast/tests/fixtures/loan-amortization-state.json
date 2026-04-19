@@ -1,0 +1,120 @@
+{
+  "meta": {
+    "appVersion": "0.1.0",
+    "schemaVersion": "2.0.0",
+    "createdAt": "2026-04-18T00:00:00.000Z",
+    "updatedAt": "2026-04-18T00:00:00.000Z",
+    "forecastHorizonYears": 3,
+    "currency": "AUD"
+  },
+  "setup": {
+    "businessName": "Loan Amortization Scenario",
+    "startMonth": "jan",
+    "tradingStructure": "company",
+    "gstRegistration": "not_registered",
+    "chargeGstOnSales": false,
+    "basFrequency": "quarterly",
+    "openingCash": 0,
+    "reportBasis": "accrual_basis_view"
+  },
+  "years": {
+    "year1": {
+      "assumptions": { "growthPct": 0, "cpiPct": 0, "taxRatePct": 25, "gstRatePct": 10 },
+      "salesForecast": { "lineOverrides": [] },
+      "marketing": { "lineItems": [] },
+      "costProfile": {
+        "fixedMonthlyCost": 0,
+        "variableCostPctOfRevenue": 0,
+        "directLaborPctOfRevenue": 0,
+        "otherOperatingExpenseMonthly": 0
+      },
+      "ownerAdjustments": {
+        "modelType": "company_salary_and_distributions",
+        "ownerDrawingsMonthly": 0,
+        "directorSalaryMonthly": 0,
+        "distributionsMonthly": 0,
+        "notes": ""
+      }
+    },
+    "year2": {
+      "assumptions": { "growthPct": 0, "cpiPct": 0, "taxRatePct": 25, "gstRatePct": 10 },
+      "salesForecast": { "lineOverrides": [] },
+      "marketing": { "lineItems": [] },
+      "costProfile": {
+        "fixedMonthlyCost": 0,
+        "variableCostPctOfRevenue": 0,
+        "directLaborPctOfRevenue": 0,
+        "otherOperatingExpenseMonthly": 0
+      },
+      "ownerAdjustments": {
+        "modelType": "company_salary_and_distributions",
+        "ownerDrawingsMonthly": 0,
+        "directorSalaryMonthly": 0,
+        "distributionsMonthly": 0,
+        "notes": ""
+      }
+    },
+    "year3": {
+      "assumptions": { "growthPct": 0, "cpiPct": 0, "taxRatePct": 25, "gstRatePct": 10 },
+      "salesForecast": { "lineOverrides": [] },
+      "marketing": { "lineItems": [] },
+      "costProfile": {
+        "fixedMonthlyCost": 0,
+        "variableCostPctOfRevenue": 0,
+        "directLaborPctOfRevenue": 0,
+        "otherOperatingExpenseMonthly": 0
+      },
+      "ownerAdjustments": {
+        "modelType": "company_salary_and_distributions",
+        "ownerDrawingsMonthly": 0,
+        "directorSalaryMonthly": 0,
+        "distributionsMonthly": 0,
+        "notes": ""
+      }
+    }
+  },
+  "salesDetails": {
+    "lines": [
+      {
+        "id": "loan_dummy_revenue",
+        "name": "Low Revenue Support",
+        "type": "service",
+        "unitPrice": 1,
+        "defaultUnitsPerPeriod": 1,
+        "seasonalityByMonth": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        "costOfGoodsSold": null,
+        "grossMarginPercent": 100,
+        "paymentMethod": "bank_transfer",
+        "merchantFeePercent": 0,
+        "collectionProfile": "default",
+        "gstApplies": false,
+        "isActive": true
+      }
+    ]
+  },
+  "collectionsPolicy": {
+    "defaultDebtorDays": 0,
+    "badDebtPct": 0,
+    "collectionSplitByMonthBucket": [1],
+    "receivablesBasis": "gross",
+    "openingReceivables": 0
+  },
+  "assets": { "items": [] },
+  "loans": {
+    "items": [
+      {
+        "id": "loan_1",
+        "name": "Simple Loan",
+        "principal": 1200,
+        "annualInterestRate": 12,
+        "termYears": 1,
+        "repaymentFrequency": "monthly",
+        "drawdownMonthIndex": 1,
+        "repaymentStartMonthIndex": 1
+      }
+    ]
+  },
+  "personalCashFlow": { "year1Only": true, "items": [] },
+  "derived": { "monthly": {}, "annual": {}, "quarterly": {}, "summaryCards": {}, "charts": {} },
+  "warnings": []
+}

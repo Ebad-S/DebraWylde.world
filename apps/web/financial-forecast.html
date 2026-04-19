@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Financial Forecast Engine | Debra Wylde</title>
+  <meta name="description" content="Build a clear, strategic financial forecast with guided inputs, live analysis, and a full results dashboard.">
+  <meta property="og:title" content="Financial Forecast Engine | Debra Wylde">
+  <meta property="og:description" content="Define assumptions, model outcomes, and review your financial strategy with confidence.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://debrawylde.world/financial-forecast.html">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="public/images/Logo.png" type="image/png">
+  <link rel="stylesheet" href="src/css/styles.css">
+  <link rel="stylesheet" href="src/financial-forecast/styles/financial-forecast.css">
+</head>
+<body class="financial-forecast-product">
+  <header class="site-header">
+    <div class="container">
+      <a href="index.html" class="site-logo"><img src="public/images/Logo.png" alt="" class="site-logo__mark" aria-hidden="true">Debra Wylde</a>
+      <button class="mobile-nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <nav class="nav" aria-label="Main navigation">
+        <ul class="nav-list">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="program.html">Program</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+          <li><a href="assessment.html">Assessment</a></li>
+          <li><a href="financial-forecast.html" class="active">Financial Forecast</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="discovery-call.html" class="btn btn--primary nav-cta">Confidential Call</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="ff-shell">
+      <div class="container">
+        <div id="forecast-app" aria-live="polite"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <p class="footer-brand__name">Debra Wylde</p>
+          <p class="footer-brand__text">Private strategic advisory for leaders navigating identity shift, next-level direction, and aligned leadership.</p>
+        </div>
+        <div>
+          <h4>Quick Links</h4>
+          <ul class="footer-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="assessment.html">Assessment</a></li>
+            <li><a href="financial-forecast.html">Financial Forecast</a></li>
+            <li><a href="about.html">About</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Get in Touch</h4>
+          <ul class="footer-links">
+            <li><a href="mailto:hello@debrawylde.world">hello@debrawylde.world</a></li>
+            <li><a href="discovery-call.html">Book a Confidential Strategy Call</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="footer-bottom__col footer-bottom__col--left">&copy; 2026 Debra Wylde. All rights reserved.</p>
+        <p class="footer-bottom__col footer-bottom__col--center">Alignment creates decisive leadership.</p>
+        <p class="footer-bottom__col footer-bottom__col--right">Build with care by <a href="https://serenity-webcrafts.com.au/" target="_blank" rel="noopener">Serenity WebCrafts</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="src/js/main.js"></script>
+  <script>
+    (function bootstrapForecastApp() {
+      if (window.location.protocol === "file:") {
+        var mount = document.getElementById("forecast-app");
+        if (mount) {
+          mount.innerHTML = [
+            '<section class="ff-panel">',
+            '<h3>Local Server Required</h3>',
+            '<p>The Financial Forecast app uses ES modules and cannot run correctly when opened directly from local files.</p>',
+            '<p>Start a local server from <code>apps/web</code>, for example:<br><code>npx serve .</code></p>',
+            '<p>Then open the localhost URL and navigate to Financial Forecast from the site menu.</p>',
+            '</section>'
+          ].join("");
+        }
+        console.error("[forecast-bootstrap] file:// detected. Start a local server (npx serve .) to load module imports.");
+        return;
+      }
+
+      var script = document.createElement("script");
+      script.type = "module";
+      script.src = "src/financial-forecast/ui/app-shell.js";
+      script.onerror = function () {
+        var mount = document.getElementById("forecast-app");
+        if (mount) {
+          mount.innerHTML = [
+            '<section class="ff-panel ff-panel--critical">',
+            '<h3>Forecast App Failed To Load</h3>',
+            '<p>Bootstrap script could not be loaded. Check browser console and network logs for path/MIME issues.</p>',
+            '</section>'
+          ].join("");
+        }
+      };
+      document.body.appendChild(script);
+    })();
+  </script>
+</body>
+</html>

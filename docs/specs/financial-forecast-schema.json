@@ -1,0 +1,344 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FinancialForecastState",
+  "type": "object",
+  "required": [
+    "meta",
+    "setup",
+    "years",
+    "salesDetails",
+    "collectionsPolicy",
+    "assets",
+    "loans",
+    "personalCashFlow",
+    "derived",
+    "warnings"
+  ],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": [
+        "appVersion",
+        "schemaVersion",
+        "createdAt",
+        "updatedAt",
+        "forecastHorizonYears",
+        "currency"
+      ],
+      "properties": {
+        "appVersion": { "type": "string" },
+        "schemaVersion": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "forecastHorizonYears": { "type": "integer", "minimum": 1 },
+        "currency": { "type": "string", "default": "AUD" }
+      }
+    },
+    "setup": {
+      "type": "object",
+      "required": [
+        "businessName",
+        "startMonth",
+        "tradingStructure",
+        "gstRegistration",
+        "chargeGstOnSales",
+        "basFrequency",
+        "openingCash",
+        "reportBasis"
+      ],
+      "properties": {
+        "businessName": { "type": "string", "minLength": 1 },
+        "startMonth": { "type": "string" },
+        "tradingStructure": { "type": "string" },
+        "gstRegistration": { "type": "string" },
+        "chargeGstOnSales": { "type": "boolean" },
+        "basFrequency": { "type": "string" },
+        "openingCash": { "type": "number" },
+        "reportBasis": { "type": "string" }
+      }
+    },
+    "years": {
+      "type": "object",
+      "required": ["year1", "year2", "year3"],
+      "properties": {
+        "year1": { "$ref": "#/$defs/YearConfig" },
+        "year2": { "$ref": "#/$defs/YearConfig" },
+        "year3": { "$ref": "#/$defs/YearConfig" }
+      }
+    },
+    "salesDetails": {
+      "type": "object",
+      "required": ["lines"],
+      "properties": {
+        "lines": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/SalesLine" }
+        }
+      }
+    },
+    "collectionsPolicy": {
+      "$ref": "#/$defs/CollectionsPolicy"
+    },
+    "assets": {
+      "type": "object",
+      "required": ["items"],
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/AssetItem" }
+        }
+      }
+    },
+    "loans": {
+      "type": "object",
+      "required": ["items"],
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/LoanItem" }
+        }
+      }
+    },
+    "personalCashFlow": {
+      "type": "object",
+      "required": ["year1Only", "items"],
+      "properties": {
+        "year1Only": { "type": "boolean", "const": true },
+        "items": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/PersonalCashFlowItem" }
+        }
+      }
+    },
+    "derived": {
+      "type": "object",
+      "required": ["monthly", "annual", "quarterly", "summaryCards", "charts"],
+      "properties": {
+        "monthly": { "type": "object" },
+        "annual": { "type": "object" },
+        "quarterly": { "type": "object" },
+        "summaryCards": { "type": "object" },
+        "charts": { "type": "object" }
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/Warning" }
+    }
+  },
+  "$defs": {
+    "YearConfig": {
+      "type": "object",
+      "required": ["assumptions", "salesForecast", "marketing", "costProfile", "ownerAdjustments"],
+      "properties": {
+        "assumptions": { "$ref": "#/$defs/Assumptions" },
+        "salesForecast": { "$ref": "#/$defs/SalesForecastConfig" },
+        "marketing": { "$ref": "#/$defs/MarketingConfig" },
+        "costProfile": { "$ref": "#/$defs/CostProfile" },
+        "ownerAdjustments": { "$ref": "#/$defs/OwnerAdjustments" }
+      }
+    },
+    "Assumptions": {
+      "type": "object",
+      "required": ["growthPct", "cpiPct", "taxRatePct", "gstRatePct"],
+      "properties": {
+        "growthPct": { "type": "number", "minimum": -100, "maximum": 1000 },
+        "cpiPct": { "type": "number", "minimum": -100, "maximum": 1000 },
+        "taxRatePct": { "type": "number", "minimum": 0, "maximum": 100 },
+        "gstRatePct": { "type": "number", "minimum": 0, "maximum": 100 }
+      }
+    },
+    "SalesForecastConfig": {
+      "type": "object",
+      "required": ["lineOverrides"],
+      "properties": {
+        "lineOverrides": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["salesLineId", "monthIndex", "unitsOverride"],
+            "properties": {
+              "salesLineId": { "type": "string" },
+              "monthIndex": { "type": "integer", "minimum": 1, "maximum": 12 },
+              "unitsOverride": { "type": "number", "minimum": 0 }
+            }
+          }
+        }
+      }
+    },
+    "MarketingConfig": {
+      "type": "object",
+      "required": ["lineItems"],
+      "properties": {
+        "lineItems": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "name", "monthlyAmount", "startMonth", "endMonth"],
+            "properties": {
+              "id": { "type": "string" },
+              "name": { "type": "string" },
+              "monthlyAmount": { "type": "number", "minimum": 0 },
+              "startMonth": { "type": "integer", "minimum": 1, "maximum": 12 },
+              "endMonth": { "type": "integer", "minimum": 1, "maximum": 12 },
+              "isOneOff": { "type": "boolean", "default": false }
+            }
+          }
+        }
+      }
+    },
+    "CostProfile": {
+      "type": "object",
+      "required": [
+        "fixedMonthlyCost",
+        "variableCostPctOfRevenue",
+        "directLaborPctOfRevenue",
+        "otherOperatingExpenseMonthly"
+      ],
+      "properties": {
+        "fixedMonthlyCost": { "type": "number", "minimum": 0 },
+        "variableCostPctOfRevenue": { "type": "number", "minimum": 0, "maximum": 100 },
+        "directLaborPctOfRevenue": { "type": "number", "minimum": 0, "maximum": 100 },
+        "otherOperatingExpenseMonthly": { "type": "number", "minimum": 0 }
+      }
+    },
+    "OwnerAdjustments": {
+      "type": "object",
+      "required": ["modelType", "ownerDrawingsMonthly", "directorSalaryMonthly", "distributionsMonthly"],
+      "properties": {
+        "modelType": { "type": "string" },
+        "ownerDrawingsMonthly": { "type": "number", "minimum": 0 },
+        "directorSalaryMonthly": { "type": "number", "minimum": 0 },
+        "distributionsMonthly": { "type": "number", "minimum": 0 },
+        "notes": { "type": "string" }
+      }
+    },
+    "CollectionsPolicy": {
+      "type": "object",
+      "required": [
+        "defaultDebtorDays",
+        "badDebtPct",
+        "collectionSplitByMonthBucket",
+        "receivablesBasis",
+        "openingReceivables"
+      ],
+      "properties": {
+        "defaultDebtorDays": { "type": "number", "minimum": 0 },
+        "badDebtPct": { "type": "number", "minimum": 0, "maximum": 100 },
+        "collectionSplitByMonthBucket": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "number", "minimum": 0, "maximum": 1 }
+        },
+        "receivablesBasis": { "type": "string" },
+        "openingReceivables": { "type": "number" }
+      }
+    },
+    "SalesLine": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "type",
+        "unitPrice",
+        "defaultUnitsPerPeriod",
+        "seasonalityByMonth",
+        "paymentMethod",
+        "merchantFeePercent",
+        "collectionProfile",
+        "gstApplies",
+        "isActive"
+      ],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "type": { "type": "string" },
+        "unitPrice": { "type": "number", "minimum": 0 },
+        "defaultUnitsPerPeriod": { "type": "number", "minimum": 0 },
+        "seasonalityByMonth": {
+          "type": "array",
+          "minItems": 12,
+          "maxItems": 12,
+          "items": { "type": "number", "minimum": 0 }
+        },
+        "costOfGoodsSold": { "type": ["number", "null"], "minimum": 0 },
+        "grossMarginPercent": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+        "paymentMethod": { "type": "string" },
+        "merchantFeePercent": { "type": "number", "minimum": 0, "maximum": 100 },
+        "collectionProfile": { "type": ["string", "object"] },
+        "gstApplies": { "type": "boolean" },
+        "isActive": { "type": "boolean" }
+      }
+    },
+    "AssetItem": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "category",
+        "purchaseAmount",
+        "purchaseMonthIndex",
+        "usefulLifeYears",
+        "depreciationMethod",
+        "residualValue"
+      ],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "category": { "type": "string" },
+        "purchaseAmount": { "type": "number", "minimum": 0 },
+        "purchaseMonthIndex": { "type": "integer", "minimum": 1, "maximum": 36 },
+        "usefulLifeYears": { "type": "number", "exclusiveMinimum": 0 },
+        "depreciationMethod": { "type": "string" },
+        "residualValue": { "type": "number", "minimum": 0 }
+      }
+    },
+    "LoanItem": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "principal",
+        "annualInterestRate",
+        "termYears",
+        "repaymentFrequency",
+        "drawdownMonthIndex",
+        "repaymentStartMonthIndex"
+      ],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "principal": { "type": "number", "minimum": 0 },
+        "annualInterestRate": { "type": "number", "minimum": 0, "maximum": 100 },
+        "termYears": { "type": "number", "exclusiveMinimum": 0 },
+        "repaymentFrequency": { "type": "string" },
+        "drawdownMonthIndex": { "type": "integer", "minimum": 1, "maximum": 36 },
+        "repaymentStartMonthIndex": { "type": "integer", "minimum": 1, "maximum": 36 }
+      }
+    },
+    "PersonalCashFlowItem": {
+      "type": "object",
+      "required": ["id", "name", "amount", "frequency", "personalUsePercent"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "amount": { "type": "number" },
+        "frequency": { "type": "string" },
+        "personalUsePercent": { "type": "number", "minimum": 0, "maximum": 100 },
+        "businessUsePercentDerived": { "type": "number", "minimum": 0, "maximum": 100 }
+      }
+    },
+    "Warning": {
+      "type": "object",
+      "required": ["code", "severity", "domain", "message", "blocking", "year"],
+      "properties": {
+        "code": { "type": "string" },
+        "severity": { "type": "string" },
+        "domain": { "type": "string" },
+        "message": { "type": "string" },
+        "blocking": { "type": "boolean" },
+        "year": { "type": "string" }
+      }
+    }
+  }
+}

@@ -1,0 +1,107 @@
+{
+  "meta": {
+    "appVersion": "0.1.0",
+    "schemaVersion": "2.0.0",
+    "createdAt": "2026-04-18T00:00:00.000Z",
+    "updatedAt": "2026-04-18T00:00:00.000Z",
+    "forecastHorizonYears": 3,
+    "currency": "AUD"
+  },
+  "setup": {
+    "businessName": "Company Salary/Distribution Scenario",
+    "startMonth": "jan",
+    "tradingStructure": "company",
+    "gstRegistration": "registered",
+    "chargeGstOnSales": true,
+    "basFrequency": "monthly",
+    "openingCash": 30000,
+    "reportBasis": "dual_view"
+  },
+  "years": {
+    "year1": {
+      "assumptions": { "growthPct": 1, "cpiPct": 1, "taxRatePct": 25, "gstRatePct": 10 },
+      "salesForecast": { "lineOverrides": [] },
+      "marketing": { "lineItems": [] },
+      "costProfile": {
+        "fixedMonthlyCost": 3500,
+        "variableCostPctOfRevenue": 4,
+        "directLaborPctOfRevenue": 5,
+        "otherOperatingExpenseMonthly": 700
+      },
+      "ownerAdjustments": {
+        "modelType": "company_salary_and_distributions",
+        "ownerDrawingsMonthly": 0,
+        "directorSalaryMonthly": 3200,
+        "distributionsMonthly": 900,
+        "notes": ""
+      }
+    },
+    "year2": {
+      "assumptions": { "growthPct": 1, "cpiPct": 1, "taxRatePct": 25, "gstRatePct": 10 },
+      "salesForecast": { "lineOverrides": [] },
+      "marketing": { "lineItems": [] },
+      "costProfile": {
+        "fixedMonthlyCost": 3500,
+        "variableCostPctOfRevenue": 4,
+        "directLaborPctOfRevenue": 5,
+        "otherOperatingExpenseMonthly": 700
+      },
+      "ownerAdjustments": {
+        "modelType": "company_salary_and_distributions",
+        "ownerDrawingsMonthly": 0,
+        "directorSalaryMonthly": 3200,
+        "distributionsMonthly": 900,
+        "notes": ""
+      }
+    },
+    "year3": {
+      "assumptions": { "growthPct": 1, "cpiPct": 1, "taxRatePct": 25, "gstRatePct": 10 },
+      "salesForecast": { "lineOverrides": [] },
+      "marketing": { "lineItems": [] },
+      "costProfile": {
+        "fixedMonthlyCost": 3500,
+        "variableCostPctOfRevenue": 4,
+        "directLaborPctOfRevenue": 5,
+        "otherOperatingExpenseMonthly": 700
+      },
+      "ownerAdjustments": {
+        "modelType": "company_salary_and_distributions",
+        "ownerDrawingsMonthly": 0,
+        "directorSalaryMonthly": 3200,
+        "distributionsMonthly": 900,
+        "notes": ""
+      }
+    }
+  },
+  "salesDetails": {
+    "lines": [
+      {
+        "id": "svc_comp_1",
+        "name": "Retainer",
+        "type": "service",
+        "unitPrice": 900,
+        "defaultUnitsPerPeriod": 10,
+        "seasonalityByMonth": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        "costOfGoodsSold": null,
+        "grossMarginPercent": 70,
+        "paymentMethod": "bank_transfer",
+        "merchantFeePercent": 0,
+        "collectionProfile": "default",
+        "gstApplies": true,
+        "isActive": true
+      }
+    ]
+  },
+  "collectionsPolicy": {
+    "defaultDebtorDays": 20,
+    "badDebtPct": 0,
+    "collectionSplitByMonthBucket": [0.85, 0.15],
+    "receivablesBasis": "gross",
+    "openingReceivables": 1000
+  },
+  "assets": { "items": [] },
+  "loans": { "items": [] },
+  "personalCashFlow": { "year1Only": true, "items": [] },
+  "derived": { "monthly": {}, "annual": {}, "quarterly": {}, "summaryCards": {}, "charts": {} },
+  "warnings": []
+}

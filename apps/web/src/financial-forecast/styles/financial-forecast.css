@@ -1,0 +1,591 @@
+.financial-forecast-product {
+  background: linear-gradient(180deg, #1c1323 0%, #24152a 100%);
+  color: #f2ede6;
+}
+
+.financial-forecast-product main {
+  padding: 2.5rem 0 4rem;
+}
+
+.ff-shell {
+  padding: 2rem 0 1.5rem;
+}
+
+#forecast-app {
+  background: #2a1a2f;
+  border: 1px solid rgba(216, 185, 138, 0.22);
+  border-radius: 20px;
+  padding: 1.25rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+}
+
+.ff-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 1rem;
+}
+
+.ff-sidebar {
+  position: sticky;
+  top: 0.6rem;
+  height: calc(100vh - 2rem);
+  overflow-y: auto;
+  padding-right: 0.3rem;
+}
+
+.ff-main {
+  overflow: visible;
+}
+
+.ff-top {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+  text-align: center;
+}
+
+.ff-top h1 {
+  color: #f7f2eb;
+  font-family: "Playfair Display", Georgia, serif;
+  margin-bottom: 0.4rem;
+}
+
+.ff-top p {
+  color: #cfc6bb;
+  max-width: 68ch;
+}
+
+.ff-top__meta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  width: 100%;
+}
+
+.ff-company-card {
+  background: #3b2438;
+  border: 1px solid #5e4561;
+  border-radius: 12px;
+  padding: 0.75rem;
+  margin-bottom: 0.9rem;
+}
+
+.ff-company-card__label {
+  color: #a89f95;
+  font-size: 0.74rem;
+  letter-spacing: 0.02em;
+}
+
+.ff-company-card__name {
+  color: #f7f2eb;
+  font-weight: 600;
+}
+
+.ff-progress-wrap {
+  margin-bottom: 1rem;
+}
+
+.ff-progress-meta {
+  color: #cfc6bb;
+  font-size: 0.82rem;
+}
+
+.ff-progress-line {
+  width: 100%;
+  height: 8px;
+  background: #3b2438;
+  border-radius: 999px;
+  margin: 0.5rem 0 0.85rem;
+}
+
+.ff-progress-line span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #a88458, #d8b98a);
+}
+
+.ff-sidebar-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.ff-sidebar-step {
+  border: 1px solid #4a314a;
+  background: #2f1f35;
+  color: #ede3d6;
+  border-radius: 12px;
+  padding: 0.55rem 0.65rem;
+  font-size: 0.84rem;
+  display: grid;
+  grid-template-columns: 24px 1fr auto;
+  gap: 0.45rem;
+  align-items: center;
+  text-align: left;
+}
+
+.ff-sidebar-step__number {
+  color: #a89f95;
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
+.ff-sidebar-step__badge {
+  background: rgba(120, 201, 157, 0.2);
+  border: 1px solid rgba(120, 201, 157, 0.5);
+  color: #d8f8e5;
+  font-size: 0.68rem;
+  border-radius: 999px;
+  padding: 0.16rem 0.45rem;
+}
+
+.ff-sidebar-step.is-active {
+  border-color: #d8b98a;
+  box-shadow: 0 0 0 2px rgba(216, 185, 138, 0.2);
+}
+
+.ff-sidebar-step.is-inactive {
+  opacity: 0.7;
+}
+
+.ff-nav-controls {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.7rem;
+  margin-bottom: 1rem;
+}
+
+.ff-step-header,
+.ff-subsection-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.ff-step-header {
+  margin-bottom: 0.75rem;
+}
+
+.ff-top-actions {
+  justify-content: center;
+  margin-bottom: 0.7rem;
+}
+
+.ff-bottom-actions {
+  display: flex;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+  margin-top: 0.85rem;
+}
+
+.ff-panel {
+  background: #321f37;
+  border: 1px solid #4f3450;
+  border-radius: 14px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.ff-panel h2,
+.ff-panel h3 {
+  color: #f7f2eb;
+  margin-bottom: 0.6rem;
+}
+
+.ff-panel--critical {
+  border-color: #d76f78;
+}
+
+.ff-helper {
+  color: #cfc6bb;
+  font-size: 0.92rem;
+}
+
+.ff-grid {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.ff-grid--2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.ff-grid--3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.ff-field,
+.ff-checkbox {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.9rem;
+}
+
+.ff-checkbox {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.ff-field input,
+.ff-field select {
+  border: 1px solid #5a3b58;
+  border-radius: 8px;
+  background: #28172e;
+  color: #f2ede6;
+  padding: 0.55rem 0.65rem;
+}
+
+.ff-tip {
+  color: #a89f95;
+  font-size: 0.72rem;
+  margin-left: 0.2rem;
+  cursor: help;
+}
+
+.ff-subpanel {
+  border: 1px solid #523854;
+  background: #291a2f;
+  border-radius: 10px;
+  padding: 0.75rem;
+  margin-top: 0.8rem;
+}
+
+.ff-seasonality-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin-top: 0.65rem;
+}
+
+.ff-actions-inline {
+  display: inline-flex;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.ff-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.7rem;
+  margin-bottom: 1rem;
+}
+
+.ff-stat-card {
+  border: 1px solid rgba(216, 185, 138, 0.25);
+  border-radius: 10px;
+  padding: 0.75rem;
+  background: #24152b;
+}
+
+.ff-stat-card__label {
+  color: #cfc6bb;
+  font-size: 0.84rem;
+}
+
+.ff-stat-card__value {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #f7f2eb;
+}
+
+.ff-chart-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.ff-chart,
+.ff-chart-svg {
+  width: 100%;
+}
+
+.ff-chart-empty {
+  padding: 1rem 0;
+  color: #a89f95;
+}
+
+.ff-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.45rem;
+  min-height: 180px;
+}
+
+.ff-bar {
+  flex: 1;
+  background: linear-gradient(180deg, #d8b98a, #a88458);
+  border-radius: 8px 8px 4px 4px;
+  position: relative;
+  min-height: 8px;
+}
+
+.ff-bar span {
+  position: absolute;
+  bottom: -1.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.72rem;
+  color: #cfc6bb;
+  white-space: nowrap;
+}
+
+.ff-table-wrap {
+  overflow-x: auto;
+}
+
+.ff-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ff-table th,
+.ff-table td {
+  border: 1px solid #533957;
+  padding: 0.5rem;
+  text-align: left;
+  font-size: 0.85rem;
+}
+
+.ff-badge {
+  display: inline-flex;
+  border-radius: 999px;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.78rem;
+  border: 1px solid transparent;
+}
+
+.ff-badge--ok {
+  border-color: #78c99d;
+  color: #b9f1cc;
+}
+
+.ff-badge--warning {
+  border-color: #d8b98a;
+  color: #f0d8af;
+}
+
+.ff-badge--critical {
+  border-color: #df6f78;
+  color: #ffc5ca;
+}
+
+.ff-badge--info {
+  border-color: #7aa6ff;
+  color: #bcd3ff;
+}
+
+.ff-review-summary {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.ff-review-list {
+  margin: 0.75rem 0 1rem;
+  padding-left: 1rem;
+  list-style: disc;
+}
+
+#ff-print-layout {
+  display: none;
+}
+
+@media print {
+  @page {
+    margin: 14mm;
+    size: A4 portrait;
+  }
+
+  body > *:not(#ff-print-layout) {
+    display: none !important;
+  }
+
+  #ff-print-layout {
+    display: block !important;
+    position: static !important;
+    inset: auto;
+    background: #fff;
+    color: #111827;
+    padding: 0;
+    margin: 0;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    min-height: 0 !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  #ff-print-layout,
+  #ff-print-layout * {
+    background: #fff !important;
+    color: #111827 !important;
+    position: static !important;
+    float: none !important;
+    min-height: 0 !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    flex-grow: 0 !important;
+    flex-shrink: 1 !important;
+    transform: none !important;
+    box-shadow: none !important;
+    filter: none !important;
+    opacity: 1 !important;
+  }
+
+  #ff-print-layout .ff-print-root,
+  #ff-print-layout .ff-print-root * {
+    visibility: visible !important;
+  }
+
+  #ff-print-layout .ff-print-root {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 0;
+    background: #fff;
+    color: #111827;
+    font-family: Inter, Arial, sans-serif;
+    font-size: 12px;
+    line-height: 1.45;
+  }
+
+  #ff-print-layout .ff-print-section {
+    margin: 0 0 16px;
+    padding: 0;
+    page-break-inside: avoid;
+    break-inside: avoid;
+    min-height: 0 !important;
+  }
+
+  #ff-print-layout .ff-print-section:last-child {
+    margin-bottom: 0;
+    page-break-after: auto;
+    break-after: auto;
+  }
+
+  #ff-print-layout h1,
+  #ff-print-layout h2 {
+    font-family: "Playfair Display", Georgia, serif;
+  }
+
+  #ff-print-layout .subtitle,
+  #ff-print-layout .timestamp {
+    color: #374151 !important;
+    margin: 2px 0;
+  }
+
+  #ff-print-layout .print-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin: 10px 0 0;
+  }
+
+  #ff-print-layout .print-card {
+    border: 1px solid #9ca3af;
+    border-radius: 6px;
+    padding: 8px;
+    background: #fff !important;
+  }
+
+  #ff-print-layout .print-card p {
+    margin: 3px 0 0;
+    font-weight: 700;
+  }
+
+  #ff-print-layout .print-chart {
+    margin: 0 0 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #fff !important;
+    min-height: 0 !important;
+  }
+
+  #ff-print-layout .print-chart figcaption {
+    margin: 8px 8px 0;
+    font-weight: 700;
+    color: #111827 !important;
+  }
+
+  #ff-print-layout .print-chart svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  #ff-print-layout .print-subsection {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  #ff-print-layout .print-chart-fallback {
+    border: 1px dashed #9ca3af;
+    border-radius: 6px;
+    padding: 10px;
+    margin: 0 0 12px;
+    font-style: italic;
+  }
+
+  #ff-print-layout .print-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #9ca3af;
+    background: #fff !important;
+    margin: 0 0 10px;
+  }
+
+  #ff-print-layout .print-table th,
+  #ff-print-layout .print-table td {
+    border: 1px solid #9ca3af;
+    padding: 6px;
+    text-align: left;
+    color: #111827 !important;
+    background: #fff !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .ff-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .ff-sidebar {
+    position: static;
+    height: auto;
+    overflow: visible;
+  }
+
+  .ff-grid--3,
+  .ff-grid--2,
+  .ff-chart-grid,
+  .ff-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ff-seasonality-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+#forecast-app ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+#forecast-app ::-webkit-scrollbar-thumb {
+  background: #6f526e;
+  border-radius: 999px;
+}
+
+#forecast-app ::-webkit-scrollbar-track {
+  background: #2a1a2f;
+}

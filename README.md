@@ -31,6 +31,10 @@ The frontend prototype lives in `apps/web/`. Use `Live Server` or open `apps/web
 For local development with live reload:
 
 ```bash
+npx serve .
+```
+
+```bash
 cd apps/web
 python -m http.server 8000
 ```

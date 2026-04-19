@@ -1,0 +1,119 @@
+{
+  "meta": {
+    "appVersion": "0.1.0",
+    "schemaVersion": "2.0.0",
+    "createdAt": "2026-04-18T00:00:00.000Z",
+    "updatedAt": "2026-04-18T00:00:00.000Z",
+    "forecastHorizonYears": 3,
+    "currency": "AUD"
+  },
+  "setup": {
+    "businessName": "Owner Drawings Scenario",
+    "startMonth": "jan",
+    "tradingStructure": "sole_trader",
+    "gstRegistration": "registered",
+    "chargeGstOnSales": true,
+    "basFrequency": "quarterly",
+    "openingCash": 12000,
+    "reportBasis": "dual_view"
+  },
+  "years": {
+    "year1": {
+      "assumptions": { "growthPct": 0, "cpiPct": 0, "taxRatePct": 25, "gstRatePct": 10 },
+      "salesForecast": { "lineOverrides": [] },
+      "marketing": { "lineItems": [] },
+      "costProfile": {
+        "fixedMonthlyCost": 2000,
+        "variableCostPctOfRevenue": 0,
+        "directLaborPctOfRevenue": 0,
+        "otherOperatingExpenseMonthly": 200
+      },
+      "ownerAdjustments": {
+        "modelType": "sole_trader_drawings",
+        "ownerDrawingsMonthly": 1300,
+        "directorSalaryMonthly": 0,
+        "distributionsMonthly": 0,
+        "notes": ""
+      }
+    },
+    "year2": {
+      "assumptions": { "growthPct": 0, "cpiPct": 0, "taxRatePct": 25, "gstRatePct": 10 },
+      "salesForecast": { "lineOverrides": [] },
+      "marketing": { "lineItems": [] },
+      "costProfile": {
+        "fixedMonthlyCost": 2000,
+        "variableCostPctOfRevenue": 0,
+        "directLaborPctOfRevenue": 0,
+        "otherOperatingExpenseMonthly": 200
+      },
+      "ownerAdjustments": {
+        "modelType": "sole_trader_drawings",
+        "ownerDrawingsMonthly": 1300,
+        "directorSalaryMonthly": 0,
+        "distributionsMonthly": 0,
+        "notes": ""
+      }
+    },
+    "year3": {
+      "assumptions": { "growthPct": 0, "cpiPct": 0, "taxRatePct": 25, "gstRatePct": 10 },
+      "salesForecast": { "lineOverrides": [] },
+      "marketing": { "lineItems": [] },
+      "costProfile": {
+        "fixedMonthlyCost": 2000,
+        "variableCostPctOfRevenue": 0,
+        "directLaborPctOfRevenue": 0,
+        "otherOperatingExpenseMonthly": 200
+      },
+      "ownerAdjustments": {
+        "modelType": "sole_trader_drawings",
+        "ownerDrawingsMonthly": 1300,
+        "directorSalaryMonthly": 0,
+        "distributionsMonthly": 0,
+        "notes": ""
+      }
+    }
+  },
+  "salesDetails": {
+    "lines": [
+      {
+        "id": "svc_draw_1",
+        "name": "Consulting",
+        "type": "service",
+        "unitPrice": 300,
+        "defaultUnitsPerPeriod": 18,
+        "seasonalityByMonth": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        "costOfGoodsSold": null,
+        "grossMarginPercent": 80,
+        "paymentMethod": "bank_transfer",
+        "merchantFeePercent": 0,
+        "collectionProfile": "default",
+        "gstApplies": true,
+        "isActive": true
+      }
+    ]
+  },
+  "collectionsPolicy": {
+    "defaultDebtorDays": 30,
+    "badDebtPct": 0,
+    "collectionSplitByMonthBucket": [0.7, 0.2, 0.1],
+    "receivablesBasis": "gross",
+    "openingReceivables": 0
+  },
+  "assets": { "items": [] },
+  "loans": { "items": [] },
+  "personalCashFlow": {
+    "year1Only": true,
+    "items": [
+      {
+        "id": "pcf_1",
+        "name": "Owner Household Spend",
+        "amount": 1000,
+        "frequency": "monthly",
+        "personalUsePercent": 100,
+        "businessUsePercentDerived": 0
+      }
+    ]
+  },
+  "derived": { "monthly": {}, "annual": {}, "quarterly": {}, "summaryCards": {}, "charts": {} },
+  "warnings": []
+}

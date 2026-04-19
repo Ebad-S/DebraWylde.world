@@ -1,0 +1,120 @@
+{
+  "meta": {
+    "appVersion": "0.1.0",
+    "schemaVersion": "2.0.0",
+    "createdAt": "2026-04-18T00:00:00.000Z",
+    "updatedAt": "2026-04-18T00:00:00.000Z",
+    "forecastHorizonYears": 3,
+    "currency": "AUD"
+  },
+  "setup": {
+    "businessName": "Minimal Scenario",
+    "startMonth": "jan",
+    "tradingStructure": "sole_trader",
+    "gstRegistration": "registered",
+    "chargeGstOnSales": true,
+    "basFrequency": "quarterly",
+    "openingCash": 10000,
+    "reportBasis": "dual_view"
+  },
+  "years": {
+    "year1": {
+      "assumptions": { "growthPct": 0, "cpiPct": 0, "taxRatePct": 25, "gstRatePct": 10 },
+      "salesForecast": { "lineOverrides": [] },
+      "marketing": { "lineItems": [] },
+      "costProfile": {
+        "fixedMonthlyCost": 1500,
+        "variableCostPctOfRevenue": 10,
+        "directLaborPctOfRevenue": 5,
+        "otherOperatingExpenseMonthly": 300
+      },
+      "ownerAdjustments": {
+        "modelType": "sole_trader_drawings",
+        "ownerDrawingsMonthly": 500,
+        "directorSalaryMonthly": 0,
+        "distributionsMonthly": 0,
+        "notes": ""
+      }
+    },
+    "year2": {
+      "assumptions": { "growthPct": 3, "cpiPct": 2, "taxRatePct": 25, "gstRatePct": 10 },
+      "salesForecast": { "lineOverrides": [] },
+      "marketing": { "lineItems": [] },
+      "costProfile": {
+        "fixedMonthlyCost": 1500,
+        "variableCostPctOfRevenue": 10,
+        "directLaborPctOfRevenue": 5,
+        "otherOperatingExpenseMonthly": 300
+      },
+      "ownerAdjustments": {
+        "modelType": "sole_trader_drawings",
+        "ownerDrawingsMonthly": 500,
+        "directorSalaryMonthly": 0,
+        "distributionsMonthly": 0,
+        "notes": ""
+      }
+    },
+    "year3": {
+      "assumptions": { "growthPct": 3, "cpiPct": 2, "taxRatePct": 25, "gstRatePct": 10 },
+      "salesForecast": { "lineOverrides": [] },
+      "marketing": { "lineItems": [] },
+      "costProfile": {
+        "fixedMonthlyCost": 1500,
+        "variableCostPctOfRevenue": 10,
+        "directLaborPctOfRevenue": 5,
+        "otherOperatingExpenseMonthly": 300
+      },
+      "ownerAdjustments": {
+        "modelType": "sole_trader_drawings",
+        "ownerDrawingsMonthly": 500,
+        "directorSalaryMonthly": 0,
+        "distributionsMonthly": 0,
+        "notes": ""
+      }
+    }
+  },
+  "salesDetails": {
+    "lines": [
+      {
+        "id": "line_service_1",
+        "name": "Coaching Session",
+        "type": "service",
+        "unitPrice": 550,
+        "defaultUnitsPerPeriod": 20,
+        "seasonalityByMonth": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        "costOfGoodsSold": null,
+        "grossMarginPercent": 70,
+        "paymentMethod": "bank_transfer",
+        "merchantFeePercent": 1.5,
+        "collectionProfile": "default",
+        "gstApplies": true,
+        "isActive": true
+      }
+    ]
+  },
+  "collectionsPolicy": {
+    "defaultDebtorDays": 30,
+    "badDebtPct": 0,
+    "collectionSplitByMonthBucket": [0.7, 0.2, 0.1],
+    "receivablesBasis": "gross",
+    "openingReceivables": 0
+  },
+  "assets": {
+    "items": []
+  },
+  "loans": {
+    "items": []
+  },
+  "personalCashFlow": {
+    "year1Only": true,
+    "items": []
+  },
+  "derived": {
+    "monthly": {},
+    "annual": {},
+    "quarterly": {},
+    "summaryCards": {},
+    "charts": {}
+  },
+  "warnings": []
+}

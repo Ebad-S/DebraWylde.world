@@ -213,11 +213,21 @@ p + p { margin-top: 1rem; }
 }
 
 .site-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
   font-family: var(--font-heading);
   font-size: 1.4rem;
   font-weight: 700;
   color: var(--color-text);
   letter-spacing: 0.02em;
+}
+
+.site-logo__mark {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+  flex-shrink: 0;
 }
 
 .site-logo:hover {
@@ -1963,5 +1973,113 @@ a:hover {
 
   .assessment-actions .btn {
     width: 100%;
+  }
+}
+
+/* Financial forecast page */
+.financial-forecast-page .page-hero {
+  text-align: center;
+}
+
+.forecast-layout {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 1.5rem;
+}
+
+.forecast-panel {
+  border: 1px solid var(--color-border);
+  background: rgba(14, 19, 59, 0.78);
+  padding: 1.5rem;
+}
+
+.forecast-panel__title {
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+}
+
+.forecast-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem 1rem;
+}
+
+.forecast-kpis {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.forecast-kpi {
+  border: 1px solid var(--color-border);
+  background: rgba(11, 15, 47, 0.5);
+  padding: 0.9rem;
+}
+
+.forecast-kpi h3 {
+  font-size: 0.85rem;
+  color: #e8dcb3;
+  margin-bottom: 0.35rem;
+}
+
+.forecast-kpi p {
+  font-size: 1.1rem;
+  color: #f8efcf;
+  font-weight: 700;
+}
+
+.forecast-health p {
+  color: var(--color-text-secondary);
+  font-size: 0.95rem;
+}
+
+.forecast-health p + p {
+  margin-top: 0.6rem;
+}
+
+.forecast-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+}
+
+.forecast-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 640px;
+}
+
+.forecast-table th,
+.forecast-table td {
+  border-bottom: 1px solid var(--color-border);
+  padding: 0.8rem 0.9rem;
+  text-align: right;
+  color: var(--color-text-secondary);
+}
+
+.forecast-table th:first-child,
+.forecast-table td:first-child {
+  text-align: left;
+}
+
+.forecast-table thead th {
+  color: #f1e7c5;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+@media (max-width: 900px) {
+  .forecast-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .forecast-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .forecast-kpis {
+    grid-template-columns: 1fr;
   }
 }
