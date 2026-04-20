@@ -1,6 +1,6 @@
 import { round2 } from "./timeline.js";
 
-export function calculateCashFlow(normalizedState, collections, costs, marketing, ownerAdjustments, loans, assets) {
+export function calculateCashFlow(normalizedState, collections, costs, marketing, ownerAdjustments, loans, assets, profitLoss) {
   const monthCount = normalizedState.timeline.monthCount;
 
   const netOperatingMonthly = Array(monthCount).fill(0);
@@ -8,10 +8,15 @@ export function calculateCashFlow(normalizedState, collections, costs, marketing
   const netInvestingMonthly = Array(monthCount).fill(0);
   const netCashMonthly = Array(monthCount).fill(0);
   const closingCashMonthly = Array(monthCount).fill(0);
+  const interestPaidMonthly = Array(monthCount).fill(0);
+  const taxPaidMonthly = Array(monthCount).fill(0);
 
   let rollingCash = Number(normalizedState.setup.openingCash || 0);
 
   for (let i = 0; i < monthCount; i += 1) {
+    const interestPaid = Number(loans.interestMonthly[i] || 0);
+    const taxPaid = Number(profitLoss?.taxMonthly?.[i] || 0);
+
     const operatingOut =
       Number(costs.cogsMonthly[i] || 0) +
       Number(costs.variableMonthly[i] || 0) +
@@ -20,7 +25,9 @@ export function calculateCashFlow(normalizedState, collections, costs, marketing
       Number(costs.otherOperatingMonthly[i] || 0) +
       Number(costs.fixedMonthly[i] || 0) +
       Number(marketing.monthly[i] || 0) +
-      Number(ownerAdjustments.salaryMonthly[i] || 0);
+      Number(ownerAdjustments.salaryMonthly[i] || 0) +
+      interestPaid +
+      taxPaid;
 
     const netOperating = Number(collections.cashCollectedMonthly[i] || 0) - operatingOut;
     const netFinancing =
@@ -38,6 +45,8 @@ export function calculateCashFlow(normalizedState, collections, costs, marketing
     netInvestingMonthly[i] = netInvesting;
     netCashMonthly[i] = netCash;
     closingCashMonthly[i] = rollingCash;
+    interestPaidMonthly[i] = interestPaid;
+    taxPaidMonthly[i] = taxPaid;
   }
 
   return {
@@ -45,6 +54,8 @@ export function calculateCashFlow(normalizedState, collections, costs, marketing
     netFinancingMonthly: netFinancingMonthly.map(round2),
     netInvestingMonthly: netInvestingMonthly.map(round2),
     netCashMonthly: netCashMonthly.map(round2),
-    closingCashMonthly: closingCashMonthly.map(round2)
+    closingCashMonthly: closingCashMonthly.map(round2),
+    interestPaidMonthly: interestPaidMonthly.map(round2),
+    taxPaidMonthly: taxPaidMonthly.map(round2)
   };
 }

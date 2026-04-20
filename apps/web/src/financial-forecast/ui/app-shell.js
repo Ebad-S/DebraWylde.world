@@ -3,6 +3,11 @@ import {
   createEmptyLoanItem,
   createEmptyPersonalCashFlowItem,
   createEmptySalesLine,
+  createEmptySharedCostItem,
+  createPersonalCashFlowRow,
+  createDefaultInflowRows,
+  createDefaultOutflowRows,
+  createDefaultSharedCostRows,
   createNewForecastState
 } from "../core/schema.js";
 import { loadAutosave, clearAutosave, createAutosave } from "./autosave.js";
@@ -66,6 +71,57 @@ function ensureStructures(canonical) {
   if (!canonical.collectionsPolicy.collectionSplitByMonthBucket) {
     canonical.collectionsPolicy.collectionSplitByMonthBucket = [0.7, 0.2, 0.1];
   }
+  // Migrate legacy personalCashFlow.items -> sharedCosts, and ensure default inflow/outflow rows exist.
+  if (!canonical.personalCashFlow || typeof canonical.personalCashFlow !== "object") {
+    canonical.personalCashFlow = {};
+  }
+  const pcf = canonical.personalCashFlow;
+  if (pcf.openingBalance == null) pcf.openingBalance = 0;
+  if (pcf.year1Only == null) pcf.year1Only = true;
+  const refreshCanonicalLabels = (rows, defaults) => {
+    const byId = new Map(defaults.map((d) => [d.id, d]));
+    rows.forEach((r) => {
+      const canonical = byId.get(r.id);
+      if (canonical) {
+        r.label = canonical.label;
+        r.custom = false;
+      }
+    });
+  };
+  if (!Array.isArray(pcf.inflows) || pcf.inflows.length === 0) {
+    pcf.inflows = createDefaultInflowRows();
+  } else {
+    const seen = new Set(pcf.inflows.map((r) => r.id));
+    createDefaultInflowRows().forEach((def) => {
+      if (!seen.has(def.id)) pcf.inflows.push(def);
+    });
+    refreshCanonicalLabels(pcf.inflows, createDefaultInflowRows());
+  }
+  if (!Array.isArray(pcf.outflows) || pcf.outflows.length === 0) {
+    pcf.outflows = createDefaultOutflowRows();
+  } else {
+    const seen = new Set(pcf.outflows.map((r) => r.id));
+    createDefaultOutflowRows().forEach((def) => {
+      if (!seen.has(def.id)) pcf.outflows.push(def);
+    });
+    refreshCanonicalLabels(pcf.outflows, createDefaultOutflowRows());
+  }
+  if (!Array.isArray(pcf.sharedCosts)) pcf.sharedCosts = [];
+  // Legacy `items` migration: map each item to a custom shared cost if not already present.
+  if (Array.isArray(pcf.items) && pcf.items.length > 0 && pcf.sharedCosts.length === 0) {
+    pcf.sharedCosts = pcf.items.map((it) => ({
+      id: it.id || `shared_${Math.random().toString(36).slice(2, 10)}`,
+      name: it.name || "",
+      amount: Number(it.amount || 0),
+      frequency: it.frequency || "monthly",
+      personalUsePercent: Number(it.personalUsePercent ?? 100),
+      custom: true
+    }));
+    delete pcf.items;
+  }
+  if (pcf.sharedCosts.length === 0) {
+    pcf.sharedCosts = createDefaultSharedCostRows();
+  }
 }
 
 function preserveScroll(run) {
@@ -83,7 +139,7 @@ function stepFromFieldPath(fieldPath = "") {
   if (fieldPath.startsWith("years.year2.")) return "year-2";
   if (fieldPath.startsWith("years.year3.")) return "year-3";
   if (fieldPath.startsWith("assets.") || fieldPath.startsWith("loans.")) return "assets-loans";
-  if (fieldPath.startsWith("personalCashFlow.")) return "personal";
+  if (fieldPath.startsWith("personalCashFlow.")) return "personal-cash-flow";
   return "review";
 }
 
@@ -106,6 +162,7 @@ function stepMeetsCompletionThreshold(stepId, snapshot) {
   if (stepId === "year-3") return snapshot.data.years.year3.assumptions.taxRatePct >= 0;
   if (stepId === "assets-loans") return true;
   if (stepId === "personal") return true;
+  if (stepId === "personal-cash-flow") return true;
   if (stepId === "review") return true;
   if (stepId === "results") return true;
   return false;
@@ -370,6 +427,87 @@ function runStrictNow() {
   refreshLayout({ rerenderStep: true });
 }
 
+function setImportStatus(message, tone = "info") {
+  const status = root.querySelector('[data-region="import-json-status"]');
+  if (!status) return;
+  status.textContent = message;
+  status.style.color = tone === "error" ? "#ff9e7b" : tone === "ok" ? "#a5d99f" : "";
+}
+
+function isLikelyForecastCanonical(payload) {
+  if (!payload || typeof payload !== "object") return false;
+  if (!payload.meta || typeof payload.meta !== "object") return false;
+  if (!payload.setup || typeof payload.setup !== "object") return false;
+  if (!payload.years || typeof payload.years !== "object") return false;
+  return true;
+}
+
+function importJsonFile(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onerror = () => setImportStatus("Could not read the selected file.", "error");
+  reader.onload = () => {
+    try {
+      const text = String(reader.result || "");
+      const parsed = JSON.parse(text);
+      const payload = parsed?.data && isLikelyForecastCanonical(parsed.data)
+        ? parsed
+        : isLikelyForecastCanonical(parsed?.canonical)
+          ? { data: parsed.canonical, savedAt: parsed.savedAt, currentStep: parsed.currentStep, visitedSteps: parsed.visitedSteps }
+          : isLikelyForecastCanonical(parsed)
+            ? { data: parsed }
+            : null;
+      if (!payload) {
+        setImportStatus("This JSON file does not look like a forecast scenario.", "error");
+        return;
+      }
+      store.hydrateSavedState(payload);
+      store.mutateCanonical((canonical) => ensureStructures(canonical));
+      const fresh = runLenient(store.getState().data);
+      store.setEngineResult("lenient", fresh);
+      touchedSteps.clear();
+      completedSteps.clear();
+      STEP_DEFINITIONS.forEach((_, index) => updateCompletionForStep(index));
+      autosave.flushSave();
+      refreshLayout({ rerenderStep: true, preserve: false });
+      setImportStatus(`Imported "${file.name}". Ready to continue.`, "ok");
+    } catch (err) {
+      console.warn("[ff] json import failed", err);
+      setImportStatus("That file is not valid JSON.", "error");
+    }
+  };
+  reader.readAsText(file);
+}
+
+function saveCanonicalJsonFile() {
+  const snapshot = store.getState();
+  const canonical = snapshot.data;
+  const payload = {
+    data: canonical,
+    savedAt: new Date().toISOString(),
+    currentStep: snapshot.currentStep,
+    visitedSteps: snapshot.visitedSteps,
+    schemaVersion: canonical?.meta?.schemaVersion || "2.1.0"
+  };
+  const json = JSON.stringify(payload, null, 2);
+  const blob = new Blob([json], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  const safeName = (canonical?.setup?.businessName || "forecast")
+    .toString()
+    .trim()
+    .replace(/[^a-z0-9-]+/gi, "_")
+    .replace(/^_+|_+$/g, "")
+    .toLowerCase() || "forecast";
+  const stamp = new Date().toISOString().slice(0, 10);
+  link.href = url;
+  link.download = `${safeName}_${stamp}.forecast.json`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
 root.addEventListener("input", (event) => {
   const target = event.target;
   const path = target?.dataset?.path;
@@ -392,6 +530,15 @@ root.addEventListener("input", (event) => {
 
 root.addEventListener("change", (event) => {
   const target = event.target;
+  if (target?.dataset?.region === "import-json-input") {
+    const file = target.files && target.files[0];
+    if (file) {
+      setImportStatus(`Reading "${file.name}"...`);
+      importJsonFile(file);
+    }
+    target.value = "";
+    return;
+  }
   const path = target?.dataset?.path;
   if (!path) return;
   store.updateField(path, parseInputValue(target));
@@ -495,7 +642,10 @@ root.addEventListener("click", (event) => {
   }
   if (action === "add-personal-item") {
     touchedSteps.add(store.getState().currentStep);
-    store.mutateCanonical((canonical) => canonical.personalCashFlow.items.push(createEmptyPersonalCashFlowItem()));
+    store.mutateCanonical((canonical) => {
+      if (!Array.isArray(canonical.personalCashFlow.items)) canonical.personalCashFlow.items = [];
+      canonical.personalCashFlow.items.push(createEmptyPersonalCashFlowItem());
+    });
     runLenientDebounced();
     refreshLayout({ rerenderStep: true, preserve: true });
     return;
@@ -503,7 +653,57 @@ root.addEventListener("click", (event) => {
   if (action === "remove-personal-item") {
     touchedSteps.add(store.getState().currentStep);
     const index = Number(trigger.dataset.index);
-    store.mutateCanonical((canonical) => canonical.personalCashFlow.items.splice(index, 1));
+    store.mutateCanonical((canonical) => {
+      if (Array.isArray(canonical.personalCashFlow.items)) canonical.personalCashFlow.items.splice(index, 1);
+    });
+    runLenientDebounced();
+    refreshLayout({ rerenderStep: true, preserve: true });
+    return;
+  }
+  if (action === "add-pcf-inflow" || action === "add-pcf-outflow") {
+    touchedSteps.add(store.getState().currentStep);
+    const listKey = action === "add-pcf-inflow" ? "inflows" : "outflows";
+    store.mutateCanonical((canonical) => {
+      if (!Array.isArray(canonical.personalCashFlow[listKey])) canonical.personalCashFlow[listKey] = [];
+      canonical.personalCashFlow[listKey].push(createPersonalCashFlowRow({ label: "", custom: true }));
+    });
+    runLenientDebounced();
+    refreshLayout({ rerenderStep: true, preserve: true });
+    return;
+  }
+  if (action === "remove-pcf-inflow" || action === "remove-pcf-outflow") {
+    touchedSteps.add(store.getState().currentStep);
+    const listKey = action === "remove-pcf-inflow" ? "inflows" : "outflows";
+    const rowId = trigger.dataset.rowId;
+    store.mutateCanonical((canonical) => {
+      const list = canonical.personalCashFlow[listKey];
+      if (!Array.isArray(list)) return;
+      const idx = list.findIndex((row) => row.id === rowId && row.custom);
+      if (idx >= 0) list.splice(idx, 1);
+    });
+    runLenientDebounced();
+    refreshLayout({ rerenderStep: true, preserve: true });
+    return;
+  }
+  if (action === "add-pcf-shared-cost") {
+    touchedSteps.add(store.getState().currentStep);
+    store.mutateCanonical((canonical) => {
+      if (!Array.isArray(canonical.personalCashFlow.sharedCosts)) canonical.personalCashFlow.sharedCosts = [];
+      canonical.personalCashFlow.sharedCosts.push(createEmptySharedCostItem({ custom: true }));
+    });
+    runLenientDebounced();
+    refreshLayout({ rerenderStep: true, preserve: true });
+    return;
+  }
+  if (action === "remove-pcf-shared-cost") {
+    touchedSteps.add(store.getState().currentStep);
+    const rowId = trigger.dataset.rowId;
+    store.mutateCanonical((canonical) => {
+      const list = canonical.personalCashFlow.sharedCosts;
+      if (!Array.isArray(list)) return;
+      const idx = list.findIndex((row) => row.id === rowId && row.custom);
+      if (idx >= 0) list.splice(idx, 1);
+    });
     runLenientDebounced();
     refreshLayout({ rerenderStep: true, preserve: true });
     return;
@@ -517,6 +717,15 @@ root.addEventListener("click", (event) => {
       engine: store.getState().meta.engine,
       canonical: store.getState().data
     });
+    return;
+  }
+  if (action === "import-json-file") {
+    const fileInput = root.querySelector('[data-region="import-json-input"]');
+    if (fileInput) fileInput.click();
+    return;
+  }
+  if (action === "save-json-file") {
+    saveCanonicalJsonFile();
     return;
   }
   if (action === "reset-session") {

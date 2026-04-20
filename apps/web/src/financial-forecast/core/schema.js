@@ -1,4 +1,9 @@
-import { DEFAULTS } from "./enums.js";
+import {
+  DEFAULTS,
+  DEFAULT_PERSONAL_CASHFLOW_INFLOWS,
+  DEFAULT_PERSONAL_CASHFLOW_OUTFLOWS,
+  DEFAULT_PERSONAL_CASHFLOW_SHARED_COSTS
+} from "./enums.js";
 
 export const CANONICAL_STATE_TEMPLATE = {
   meta: {
@@ -34,10 +39,7 @@ export const CANONICAL_STATE_TEMPLATE = {
   loans: {
     items: []
   },
-  personalCashFlow: {
-    year1Only: true,
-    items: []
-  },
+  personalCashFlow: createEmptyPersonalCashFlow(),
   derived: {
     monthly: {},
     annual: {},
@@ -157,6 +159,58 @@ export function createEmptyPersonalCashFlowItem() {
     frequency: DEFAULTS.personalCashFlowItem.frequency,
     personalUsePercent: DEFAULTS.personalCashFlowItem.personalUsePercent,
     businessUsePercentDerived: 0
+  };
+}
+
+function zeroMonths() {
+  return [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+}
+
+export function createPersonalCashFlowRow({ id, label, custom = false } = {}) {
+  return {
+    id: id || buildId("pcf-row"),
+    label: label || "",
+    monthly: zeroMonths(),
+    custom: Boolean(custom)
+  };
+}
+
+export function createEmptySharedCostItem({ name = "", custom = true } = {}) {
+  return {
+    id: buildId("shared"),
+    name,
+    amount: 0,
+    frequency: "monthly",
+    personalUsePercent: 100,
+    custom: Boolean(custom)
+  };
+}
+
+export function createDefaultInflowRows() {
+  return DEFAULT_PERSONAL_CASHFLOW_INFLOWS.map((row) =>
+    createPersonalCashFlowRow({ id: row.id, label: row.label, custom: false })
+  );
+}
+
+export function createDefaultOutflowRows() {
+  return DEFAULT_PERSONAL_CASHFLOW_OUTFLOWS.map((row) =>
+    createPersonalCashFlowRow({ id: row.id, label: row.label, custom: false })
+  );
+}
+
+export function createDefaultSharedCostRows() {
+  return DEFAULT_PERSONAL_CASHFLOW_SHARED_COSTS.map((row) =>
+    createEmptySharedCostItem({ name: row.name, custom: false })
+  );
+}
+
+export function createEmptyPersonalCashFlow() {
+  return {
+    year1Only: true,
+    openingBalance: 0,
+    inflows: createDefaultInflowRows(),
+    outflows: createDefaultOutflowRows(),
+    sharedCosts: createDefaultSharedCostRows()
   };
 }
 

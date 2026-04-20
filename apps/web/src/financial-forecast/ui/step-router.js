@@ -8,6 +8,7 @@ export const STEP_DEFINITIONS = [
   { id: "year-3", title: "Year 3 Plan" },
   { id: "assets-loans", title: "Assets & Finance" },
   { id: "personal", title: "Owner & Personal Inputs" },
+  { id: "personal-cash-flow", title: "Personal Cash Flow" },
   { id: "review", title: "Review" },
   { id: "results", title: "Results Dashboard" }
 ];

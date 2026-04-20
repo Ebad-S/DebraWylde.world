@@ -29,9 +29,57 @@ export const ENUMS = {
   PERSONAL_CASH_FLOW_FREQUENCY: ["weekly", "fortnightly", "monthly", "quarterly", "annual"]
 };
 
+export const DEFAULT_PERSONAL_CASHFLOW_INFLOWS = [
+  { id: "drawings-from-business", label: "Drawings from business (from business to you)" },
+  { id: "part-time-casual-work", label: "Part-time / casual work" },
+  { id: "spouse-partner-wages", label: "Spouse / partner wages" },
+  { id: "govt-payments", label: "Govt payments (e.g. Family Tax Benefit, Carers)" },
+  { id: "other-income", label: "Other income (hobby, investments)" }
+];
+
+export const DEFAULT_PERSONAL_CASHFLOW_OUTFLOWS = [
+  { id: "groceries", label: "Groceries" },
+  { id: "entertainment-recreation", label: "Entertainment / recreation" },
+  { id: "clothing-footwear", label: "Clothing / footwear" },
+  { id: "home-insurance", label: "Home insurance" },
+  { id: "health-other-insurance", label: "Health / other insurance" },
+  { id: "council-rates", label: "Council rates" },
+  { id: "medical-expenses", label: "Medical expenses" },
+  { id: "fuel-personal-use", label: "Fuel for personal use" },
+  { id: "transport-fares", label: "Transport - fares, taxi / uber" },
+  { id: "childcare", label: "Childcare" },
+  { id: "school-fees-education", label: "School fees & education costs" },
+  { id: "pets", label: "Pets" },
+  { id: "gym-membership", label: "Gym membership" },
+  { id: "holidays", label: "Holidays" },
+  { id: "gifts", label: "Gifts" },
+  { id: "books-magazines-newspapers", label: "Books, magazines, newspapers" },
+  { id: "personal-care", label: "Personal care - hair / beauty" },
+  { id: "subscriptions-netflix", label: "Subscriptions (e.g. Netflix)" },
+  { id: "miscellaneous", label: "Miscellaneous" },
+  { id: "bank-charges", label: "Bank charges" },
+  { id: "vehicle-loan", label: "Vehicle loan" },
+  { id: "personal-loan-repayments", label: "Personal loan repayments" },
+  { id: "personal-credit-card-repayments", label: "Personal credit card repayments" }
+];
+
+export const DEFAULT_PERSONAL_CASHFLOW_SHARED_COSTS = [
+  { name: "Household Rent" },
+  { name: "Telephone" },
+  { name: "Internet" },
+  { name: "Mobile" },
+  { name: "Motor vehicle - Repairs and Maintenance" },
+  { name: "Motor vehicle - Registration" },
+  { name: "Motor vehicle - Insurance" },
+  { name: "Motor vehicle - Lease or loan interest" },
+  { name: "Utilities - Gas" },
+  { name: "Utilities - Electricity" },
+  { name: "Utilities - Water" }
+];
+
 export const DEFAULTS = {
   meta: {
-    schemaVersion: "2.0.0",
+    schemaVersion: "2.1.0",
     forecastHorizonYears: 3,
     currency: "AUD"
   },

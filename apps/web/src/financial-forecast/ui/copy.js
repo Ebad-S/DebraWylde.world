@@ -1,5 +1,5 @@
 export const UI_COPY = {
-  appTitle: "Financial Forecast Engine",
+  appTitle: "Business Financial Forecast Engine",
   appSubtitle:
     "Define your assumptions, model your numbers, and generate clear, structured financial projections step by step.",
   introLead:

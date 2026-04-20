@@ -1,4 +1,8 @@
-import { DEFAULTS } from "../enums.js";
+import {
+  DEFAULTS,
+  DEFAULT_PERSONAL_CASHFLOW_INFLOWS,
+  DEFAULT_PERSONAL_CASHFLOW_OUTFLOWS
+} from "../enums.js";
 import { buildTimeline } from "./timeline.js";
 
 function cloneDeep(value) {
@@ -32,23 +36,89 @@ function toMonthlyAmount(amount, frequency) {
   return safe;
 }
 
-function normalizePersonalCashFlow(personalCashFlow) {
-  const items = (personalCashFlow?.items || []).map((item) => {
+function zeroMonths() {
+  return [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+}
+
+function normalizeMonthlyArray(value) {
+  if (!Array.isArray(value)) return zeroMonths();
+  const out = zeroMonths();
+  for (let i = 0; i < 12; i += 1) {
+    out[i] = Number(value[i] || 0) || 0;
+  }
+  return out;
+}
+
+function normalizeSharedCosts(rawShared) {
+  return (rawShared || []).map((item) => {
     const monthlyAmount = toMonthlyAmount(item.amount || 0, item.frequency || "monthly");
     const personalUsePct = Number(item.personalUsePercent || 0) / 100;
     const personalMonthlyAmount = monthlyAmount * personalUsePct;
     const businessMonthlyAmount = monthlyAmount - personalMonthlyAmount;
     return {
-      ...item,
+      id: item.id,
+      name: item.name || "",
+      amount: Number(item.amount || 0),
+      frequency: item.frequency || "monthly",
+      personalUsePercent: Number(item.personalUsePercent || 0),
+      custom: Boolean(item.custom),
       monthlyAmount,
       personalMonthlyAmount,
       businessMonthlyAmount
     };
   });
+}
 
+function normalizeRowList(rows, defaults) {
+  const list = Array.isArray(rows) ? rows : [];
+  const defaultById = new Map(defaults.map((d) => [d.id, d]));
+  const out = list.map((row) => {
+    const id = row.id || row.label || "";
+    const canonical = defaultById.get(id);
+    // For canonical rows we always refresh the label from the enum so copy
+    // changes land without needing a data migration. Custom rows keep their
+    // user-entered label.
+    const label = canonical ? canonical.label : (row.label || "");
+    return {
+      id,
+      label,
+      monthly: normalizeMonthlyArray(row.monthly),
+      custom: Boolean(row.custom) && !canonical
+    };
+  });
+  const seen = new Set(out.map((r) => r.id));
+  defaults.forEach((def) => {
+    if (!seen.has(def.id)) {
+      out.push({ id: def.id, label: def.label, monthly: zeroMonths(), custom: false });
+    }
+  });
+  return out;
+}
+
+function normalizePersonalCashFlow(personalCashFlow) {
+  const raw = personalCashFlow || {};
+  // Legacy migration: personalCashFlow.items (pre-4.2.6) maps to sharedCosts.
+  const sharedRaw =
+    Array.isArray(raw.sharedCosts) && raw.sharedCosts.length > 0
+      ? raw.sharedCosts
+      : Array.isArray(raw.items)
+        ? raw.items.map((it) => ({ ...it, custom: true }))
+        : [];
+
+  const sharedCosts = normalizeSharedCosts(sharedRaw);
+  const inflows = normalizeRowList(raw.inflows, DEFAULT_PERSONAL_CASHFLOW_INFLOWS);
+  const outflows = normalizeRowList(raw.outflows, DEFAULT_PERSONAL_CASHFLOW_OUTFLOWS);
+  const openingBalance = Number(raw.openingBalance || 0);
+  const year1Only = raw.year1Only !== false;
+
+  // `items` stays as a view of sharedCosts for backwards compatibility inside the engine run.
   return {
-    ...personalCashFlow,
-    items
+    year1Only,
+    openingBalance,
+    inflows,
+    outflows,
+    sharedCosts,
+    items: sharedCosts
   };
 }
 
