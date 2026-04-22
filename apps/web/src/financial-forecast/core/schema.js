@@ -65,11 +65,16 @@ export function createEmptyYearConfig(yearIndex) {
       growthPct: DEFAULTS.assumptions.growthPct,
       cpiPct: DEFAULTS.assumptions.cpiPct,
       taxRatePct: DEFAULTS.assumptions.taxRatePct,
-      gstRatePct: DEFAULTS.assumptions.gstRatePct
+      gstRatePct: DEFAULTS.assumptions.gstRatePct,
+      superannuationPct: DEFAULTS.assumptions.superannuationPct,
+      payrollTaxPct: DEFAULTS.assumptions.payrollTaxPct
     },
     costProfile: createEmptyCostProfile(),
     ownerAdjustments: createEmptyOwnerAdjustments(),
     marketing: {
+      lineItems: []
+    },
+    businessExpenses: {
       lineItems: []
     },
     salesForecast: {
@@ -135,6 +140,32 @@ export function createEmptyAssetItem() {
     usefulLifeYears: DEFAULTS.assetItem.usefulLifeYears,
     depreciationMethod: DEFAULTS.assetItem.depreciationMethod,
     residualValue: DEFAULTS.assetItem.residualValue
+  };
+}
+
+export function createEmptyBusinessExpenseItem({ category, label } = {}) {
+  const defaults = DEFAULTS.businessExpenseLine;
+  return {
+    id: buildId("bexp"),
+    category: category || defaults.category,
+    label: label || "",
+    monthlyAmount: defaults.monthlyAmount,
+    startMonth: defaults.startMonth,
+    endMonth: defaults.endMonth,
+    isActive: defaults.isActive,
+    notes: defaults.notes
+  };
+}
+
+export function createEmptyMarketingLine() {
+  const defaults = DEFAULTS.marketingLine;
+  return {
+    id: buildId("mktg"),
+    label: defaults.label,
+    monthlyAmount: defaults.monthlyAmount,
+    startMonth: defaults.startMonth,
+    endMonth: defaults.endMonth,
+    isActive: defaults.isActive
   };
 }
 

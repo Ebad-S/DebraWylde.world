@@ -302,6 +302,69 @@
   font-size: 0.92rem;
 }
 
+/* Phase 4.3.2: inline empty-state / validation hints.
+   Used in result panels to distinguish "calculated zero" from
+   "not yet populated by the user". Deliberately muted and non-blocking. */
+.ff-empty-note {
+  color: #e2d6c2;
+  background: rgba(216, 185, 138, 0.08);
+  border-left: 3px solid rgba(216, 185, 138, 0.55);
+  padding: 0.5rem 0.75rem;
+  margin: 0.2rem 0 0.6rem;
+  border-radius: 0 6px 6px 0;
+  font-size: 0.88rem;
+  line-height: 1.4;
+}
+
+.ff-empty-note strong {
+  color: #f2ede6;
+}
+
+.ff-inline-note {
+  color: #e2d6c2;
+  background: rgba(134, 168, 255, 0.08);
+  border-left: 3px solid rgba(134, 168, 255, 0.45);
+  padding: 0.45rem 0.7rem;
+  margin: 0.2rem 0 0.6rem;
+  border-radius: 0 6px 6px 0;
+  font-size: 0.88rem;
+  line-height: 1.4;
+}
+
+/* Phase 4.3.2: the Results Dashboard can show a lightweight
+   "data completeness" banner at the top summarising any obviously
+   missing decision-sensitive inputs. */
+.ff-data-completeness {
+  border: 1px solid rgba(216, 185, 138, 0.35);
+  background: rgba(216, 185, 138, 0.06);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  margin: 0 0 1rem;
+}
+
+.ff-data-completeness h3 {
+  margin: 0 0 0.35rem;
+  font-size: 1.02rem;
+  font-weight: 600;
+  color: #f2ede6;
+}
+
+.ff-data-completeness ul {
+  margin: 0.35rem 0 0;
+  padding-left: 1.2rem;
+  color: #e2d6c2;
+  font-size: 0.9rem;
+}
+
+.ff-data-completeness li {
+  margin: 0.15rem 0;
+}
+
+.ff-data-completeness--ok {
+  border-color: rgba(142, 214, 166, 0.45);
+  background: rgba(142, 214, 166, 0.06);
+}
+
 .ff-grid {
   display: grid;
   gap: 0.8rem;
@@ -1021,7 +1084,67 @@
     font-size: 13px;
     border-bottom: 1px solid #9ca3af;
     padding-bottom: 3px;
+    /* Never orphan a sub-heading at the bottom of a page ahead of its table. */
+    page-break-after: avoid;
+    break-after: avoid;
   }
+
+  #ff-print-layout .print-sub-heading {
+    /* Phase 4.3.2: print hardening - keep sub-headings with the following content. */
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  #ff-print-layout .print-helper {
+    /* Helper captions should stay with the table/chart they describe. */
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  #ff-print-layout .print-table,
+  #ff-print-layout .print-chart {
+    /* Phase 4.3.2: prefer not to split an entire table or chart mid-page.
+       Modern engines will still break a very tall table across pages,
+       but small/medium tables and all charts will stay intact. */
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  #ff-print-layout .print-table thead {
+    /* Repeat table headers on every page when a long table does have to split. */
+    display: table-header-group;
+  }
+
+  #ff-print-layout .print-table tfoot {
+    display: table-footer-group;
+  }
+
+  #ff-print-layout .print-table tr,
+  #ff-print-layout .print-table tbody tr {
+    /* Keep individual rows intact rather than splitting a row across pages. */
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Phase 4.3.2-G: print-only compact treatment for very wide 36-month
+     period tables. Tightens cell padding and drops font another half point
+     without affecting screen view. */
+  #ff-print-layout .print-table--period-monthly th,
+  #ff-print-layout .print-table--period-monthly td {
+    font-size: 9px;
+    padding: 2px 3px;
+  }
+
+  /* Orphan / widow tuning to reduce single-line stranded paragraphs. */
+  #ff-print-layout p,
+  #ff-print-layout .print-helper {
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* Scenario Testing is diagnostic, not client-facing. Print output comes
+     from the dedicated #ff-print-layout tree, which already excludes any
+     scenario-testing controls on the live dashboard. */
 }
 
 @media (max-width: 900px) {

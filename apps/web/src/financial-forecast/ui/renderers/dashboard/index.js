@@ -1,7 +1,6 @@
 import { renderBarChart, renderLineChart, renderMultiLineChart } from "../../charts.js";
 import { badge, panel, statCard } from "../shared/components.js";
 import { formatMoney, formatPercent, formatNumber, escapeHtml } from "../shared/format.js";
-import { computePersonalDecisionMetrics } from "../../../core/engine/personal-cash-flow.js";
 import {
   monthlyToQuarterly,
   monthlyToYearly,
@@ -69,52 +68,95 @@ function annualSummary(derived) {
   `;
 }
 
+// --- Phase 4.3.3 -----------------------------------------------------------
+// Review step presents a compact 3-year PCF coherence summary, matching the
+// 3-year Results Dashboard. Year 1 detail is kept (since Y1 is authoritative
+// from canonical inputs); Y2 and Y3 rows reflect the projected lifestyle
+// pattern with year-plan drawings substituted in. This replaces the previous
+// Year-1-only panel so the Review step and the Results Dashboard no longer
+// disagree on PCF scope.
 function personalCashFlowReviewBlock(result) {
   const pcf = result?.raw?.personalCashFlow;
   if (!pcf) return "";
-  const summary = pcf.summary || {};
-  const closing = pcf.closingMonthly || [];
-  const minClosing = Number(summary.minClosingBalance ?? 0);
-  let worstIdx = -1;
-  for (let i = 0; i < closing.length; i += 1) {
-    if (Number(closing[i]) === minClosing) { worstIdx = i; break; }
-  }
-  const calendarLabels = (pcf.monthLabels && pcf.monthLabels.length === 12)
-    ? pcf.monthLabels
-    : ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-  const worstMonth = worstIdx >= 0 ? calendarLabels[worstIdx] : "—";
-  const runwayMonths = summary.runwayMonths;
+  const perYear = pcf.perYear || {};
+
+  const yearRow = (yearLabel, slice) => {
+    const s = slice?.summary || {};
+    const runway = s.runwayMonths == null ? "No depletion" : `${s.runwayMonths} mo`;
+    return `
+      <tr>
+        <th>${yearLabel}</th>
+        <td>${formatMoney(slice?.openingBalance || 0)}</td>
+        <td>${formatMoney(s.closingEndOfYear || 0)}</td>
+        <td>${formatMoney(s.minClosingBalance || 0)}</td>
+        <td>${String(s.monthsBelowZero || 0)}</td>
+        <td>${runway}</td>
+        <td>${formatMoney(s.totalDrawingsFromBusiness || 0)}</td>
+      </tr>
+    `;
+  };
+
+  const threeYearTable = `
+    <div class="ff-table-wrap">
+      <table class="ff-table">
+        <thead>
+          <tr>
+            <th>Year</th>
+            <th>Opening</th>
+            <th>Closing (Dec)</th>
+            <th>Worst Month</th>
+            <th>Months Below Zero</th>
+            <th>Runway</th>
+            <th>Drawings From Business</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${yearRow("Year 1", perYear.year1)}
+          ${yearRow("Year 2", perYear.year2)}
+          ${yearRow("Year 3", perYear.year3)}
+        </tbody>
+      </table>
+    </div>
+  `;
+
+  // Year 1 keeps the decision-metric detail, since Y1 is the authoritative
+  // input layer and the "required drawings to stay solvent" calculation is
+  // an exact Y1 solver.
+  const y1 = perYear.year1?.summary || {};
+  const runwayMonths = y1.runwayMonths;
   const runwayLabel = runwayMonths == null
     ? "No depletion in Year 1"
     : `${runwayMonths} month${runwayMonths === 1 ? "" : "s"} before first negative`;
-  const requiredMonthly = Number(summary.requiredDrawingsMonthlyUplift || 0);
-  const requiredAnnual = Number(summary.requiredDrawingsAnnualUplift || 0);
+  const requiredMonthly = Number(y1.requiredDrawingsMonthlyUplift || 0);
+  const requiredAnnual = Number(y1.requiredDrawingsAnnualUplift || 0);
   const requiredLabel = requiredMonthly > 0
-    ? `${formatMoney(requiredMonthly)}/mo (${formatMoney(requiredAnnual)}/yr) — exact`
-    : "None needed — already solvent";
-  const dependencyPct = Number(summary.dependencyOnBusinessDrawingsPct || 0);
-  const dependencyBand = summary.dependencyBand || "none";
-  const dependencyLabel = Number(summary.totalInflows || 0) <= 0
+    ? `${formatMoney(requiredMonthly)}/mo (${formatMoney(requiredAnnual)}/yr), exact`
+    : "None needed, already solvent";
+  const dependencyPct = Number(y1.dependencyOnBusinessDrawingsPct || 0);
+  const dependencyBand = y1.dependencyBand || "none";
+  const dependencyLabel = Number(y1.totalInflows || 0) <= 0
     ? "No personal inflows yet"
     : `${formatPercent(dependencyPct)} (${dependencyBand})`;
 
-  const items = [
-    ["Opening personal balance (Jan)", formatMoney(pcf.openingBalance || 0)],
-    ["Closing personal balance (Dec)", formatMoney(summary.closingEndOfYear || 0)],
-    ["Surplus / Deficit (Year 1)", formatMoney(summary.netChange || 0)],
-    ["Worst month (min closing)", `${formatMoney(minClosing)} (${worstMonth})`],
-    ["Months with negative balance", String(summary.monthsBelowZero || 0)],
-    ["Runway (months)", runwayLabel],
-    ["Required drawings to stay solvent", requiredLabel],
-    ["Dependency on business drawings", dependencyLabel],
-    ["Drawings from business (Y1)", formatMoney(summary.totalDrawingsFromBusiness || 0)],
-    ["Total personal inflows (Y1)", formatMoney(summary.totalInflows || 0)],
-    ["Total personal outflows (Y1)", formatMoney(summary.totalOutflows || 0)]
-  ];
-  const rows = items.map(([label, value]) => `<tr><th>${label}</th><td>${value}</td></tr>`).join("");
+  const y1DetailRows = [
+    ["Runway (Year 1)", runwayLabel],
+    ["Required drawings to stay solvent (Year 1, exact)", requiredLabel],
+    ["Dependency on business drawings (Year 1)", dependencyLabel]
+  ].map(([label, value]) => `<tr><th>${label}</th><td>${value}</td></tr>`).join("");
+
   return panel(
-    "Personal Cash Flow (Year 1)",
-    `<div class="ff-table-wrap"><table class="ff-table"><tbody>${rows}</tbody></table></div>`
+    "Personal Cash Flow (3-Year View)",
+    `
+      <p class="ff-helper">
+        Year 1 uses your Personal Cash Flow inputs. Year 2 and Year 3 reuse
+        the same personal-lifestyle pattern and substitute each year's
+        drawings from the Year Plan. See the Results Dashboard for the full
+        monthly detail.
+      </p>
+      ${threeYearTable}
+      <p class="ff-helper" style="margin-top:0.75rem;"><strong>Year 1 decision metrics</strong> (exact solver applies to Year 1 only):</p>
+      <div class="ff-table-wrap"><table class="ff-table"><tbody>${y1DetailRows}</tbody></table></div>
+    `
   );
 }
 
@@ -261,7 +303,7 @@ function rowsForMonthsSnapshot(specs) {
   }));
 }
 
-function statementPanel(title, specs, { description = "", firstColHeader = "Line Item", snapshot = false, includeTotal = true } = {}) {
+function statementPanel(title, specs, { description = "", firstColHeader = "Line Item", snapshot = false, includeTotal = true, preface = "" } = {}) {
   const quarterlyRows = snapshot ? rowsForQuarterSnapshots(specs) : rowsForQuarters(specs);
   const monthlyRows = snapshot ? rowsForMonthsSnapshot(specs) : rowsForMonths(specs);
   const qHtml = buildPeriodTable({
@@ -278,6 +320,7 @@ function statementPanel(title, specs, { description = "", firstColHeader = "Line
   });
   return panel(title, `
     ${description ? `<p class="ff-helper">${description}</p>` : ""}
+    ${preface}
     ${qHtml}
     <details class="ff-details"><summary>View monthly detail</summary>${mHtml}</details>
   `);
@@ -305,6 +348,7 @@ function profitAndLossPanel(raw) {
   const costs = raw.costs || {};
   const marketing = raw.marketing || {};
   const ownerAdjustments = raw.ownerAdjustments || {};
+  const statutoryLabor = raw.statutoryLabor || {};
 
   const totalRevenue = sumArray(pl.revenueMonthly || []);
   const totalGp = sumArray(pl.grossProfitMonthly || []);
@@ -317,11 +361,14 @@ function profitAndLossPanel(raw) {
     { label: "Gross Profit", monthly: pl.grossProfitMonthly, emphasis: "subtotal" },
     { label: "Gross Margin %", kind: "percent", numeratorMonthly: pl.grossProfitMonthly, denominatorMonthly: pl.revenueMonthly, yearlyTotalOverride: safeDivide(totalGp, totalRevenue) * 100, emphasis: "subtotal" },
     { label: "Operating Expenses", monthly: (pl.operatingExpensesMonthly || []).map((v) => -Number(v || 0)), emphasis: "header" },
-    { label: "  Fixed Costs", monthly: (costs.fixedMonthly || []).map((v) => -Number(v || 0)) },
+    { label: "  Named Business Expenses", monthly: (costs.namedOperatingMonthly || []).map((v) => -Number(v || 0)) },
+    { label: "  Fixed Costs (Aggregate)", monthly: (costs.fixedMonthly || []).map((v) => -Number(v || 0)) },
     { label: "  Variable Costs", monthly: (costs.variableMonthly || []).map((v) => -Number(v || 0)) },
     { label: "  Direct Labor", monthly: (costs.directLaborMonthly || []).map((v) => -Number(v || 0)) },
+    { label: "  Superannuation", monthly: (statutoryLabor.superannuationMonthly || []).map((v) => -Number(v || 0)) },
+    { label: "  Payroll Tax", monthly: (statutoryLabor.payrollTaxMonthly || []).map((v) => -Number(v || 0)) },
     { label: "  Merchant Fees", monthly: (costs.merchantFeesMonthly || []).map((v) => -Number(v || 0)) },
-    { label: "  Other Operating", monthly: (costs.otherOperatingMonthly || []).map((v) => -Number(v || 0)) },
+    { label: "  Other Operating (Aggregate)", monthly: (costs.otherOperatingMonthly || []).map((v) => -Number(v || 0)) },
     { label: "  Marketing", monthly: (marketing.monthly || []).map((v) => -Number(v || 0)) },
     { label: "  Director Salary", monthly: (ownerAdjustments.salaryMonthly || []).map((v) => -Number(v || 0)) },
     { label: "EBITDA", monthly: pl.ebitdaMonthly, emphasis: "subtotal" },
@@ -417,12 +464,12 @@ function revenueByStreamPanel(raw, canonical) {
   activeLines.forEach((line) => {
     const unitSeries = sales?.monthly?.byLineUnits?.[line.id] || [];
     const netSeries = sales?.monthly?.byLineNet?.[line.id] || [];
-    specs.push({ label: `${line.name || "(unnamed)"} — Units`, monthly: unitSeries, kind: "number" });
-    specs.push({ label: `${line.name || "(unnamed)"} — Net Revenue`, monthly: netSeries });
+    specs.push({ label: `${line.name || "(unnamed)"}: Units`, monthly: unitSeries, kind: "number" });
+    specs.push({ label: `${line.name || "(unnamed)"}: Net Revenue`, monthly: netSeries });
   });
   specs.push({ label: "Services Total (Net)", monthly: sales.monthly?.serviceNet, emphasis: "subtotal" });
   specs.push({ label: "Products Total (Net)", monthly: sales.monthly?.productNet, emphasis: "subtotal" });
-  specs.push({ label: "Revenue — All Streams (Net)", monthly: sales.monthly?.net, emphasis: "total" });
+  specs.push({ label: "Revenue, All Streams (Net)", monthly: sales.monthly?.net, emphasis: "total" });
 
   return statementPanel("Revenue By Stream", specs, {
     firstColHeader: "Stream",
@@ -472,31 +519,64 @@ function collectionsPanel(raw) {
   `);
 }
 
-function costsBreakdownPanel(raw) {
+function costsBreakdownPanel(raw, canonical) {
   const costs = raw.costs || {};
   const marketing = raw.marketing || {};
+  const statutoryLabor = raw.statutoryLabor || {};
   const totalOpEx = sumSeries(
     costs.fixedMonthly,
     costs.variableMonthly,
     costs.directLaborMonthly,
     costs.merchantFeesMonthly,
     costs.otherOperatingMonthly,
-    marketing.monthly
+    costs.namedOperatingMonthly,
+    marketing.monthly,
+    statutoryLabor.superannuationMonthly,
+    statutoryLabor.payrollTaxMonthly
   );
   const specs = [
-    { label: "Fixed Costs", monthly: costs.fixedMonthly },
+    { label: "Named Business Expenses", monthly: costs.namedOperatingMonthly },
+    { label: "Fixed Costs (Aggregate)", monthly: costs.fixedMonthly },
     { label: "Variable Costs", monthly: costs.variableMonthly },
     { label: "Direct Labor", monthly: costs.directLaborMonthly },
+    { label: "Superannuation", monthly: statutoryLabor.superannuationMonthly },
+    { label: "Payroll Tax", monthly: statutoryLabor.payrollTaxMonthly },
     { label: "Merchant Fees", monthly: costs.merchantFeesMonthly },
-    { label: "Other Operating", monthly: costs.otherOperatingMonthly },
+    { label: "Other Operating (Aggregate)", monthly: costs.otherOperatingMonthly },
     { label: "Marketing", monthly: marketing.monthly },
     { label: "Total Operating Expenses", monthly: totalOpEx, emphasis: "total" },
     { label: "Cost Of Goods Sold", monthly: costs.cogsMonthly, emphasis: "subtotal" }
   ];
-  return statementPanel("Costs Breakdown", specs, { firstColHeader: "Cost Category" });
+
+  // Phase 4.3.2-D: empty-state hints for decision-sensitive cost areas.
+  const notes = [];
+  const hasNamed = hasActiveNamedBusinessExpenses(canonical);
+  const namedTotal = sumArray(costs.namedOperatingMonthly || []);
+  if (!hasNamed && namedTotal === 0) {
+    notes.push(`<strong>Named Business Expenses</strong> are empty. If this is intentional, ignore. Otherwise add them under each Year's Plan so rent, software, utilities, etc. are captured.`);
+  }
+  const superTotal = sumArray(statutoryLabor.superannuationMonthly || []);
+  const payrollTaxTotal = sumArray(statutoryLabor.payrollTaxMonthly || []);
+  const statutoryPcts = statutoryPercentages(canonical);
+  if (superTotal === 0 && payrollTaxTotal === 0 && !statutoryPcts.anySet) {
+    notes.push(`<strong>Statutory Labor</strong> percentages (Superannuation / Payroll Tax) are all zero. If you pay employees, review the Year Plans; if it is a pure sole-trader scenario, zero is valid.`);
+  }
+  const marketingTotal = sumArray(marketing.monthly || []);
+  const hasMarketingLines = hasActiveMarketing(canonical);
+  if (marketingTotal === 0 && !hasMarketingLines) {
+    notes.push(`<strong>Marketing</strong> has no active line items. Add them under each Year's Plan if applicable.`);
+  }
+  const preface = notes.length
+    ? notes.map((msg) => `<p class="ff-empty-note">${msg}</p>`).join("")
+    : "";
+
+  return statementPanel("Costs Breakdown", specs, {
+    firstColHeader: "Cost Category",
+    preface
+  });
 }
 
-function ownerCompPanel(raw) {
+function ownerCompPanel(raw, canonical) {
   const owner = raw.ownerAdjustments || {};
   const total = sumSeries(owner.drawingsMonthly, owner.salaryMonthly, owner.distributionsMonthly);
   const specs = [
@@ -505,7 +585,114 @@ function ownerCompPanel(raw) {
     { label: "Distributions", monthly: owner.distributionsMonthly },
     { label: "Total Owner Compensation", monthly: total, emphasis: "total" }
   ];
-  return statementPanel("Owner Compensation", specs, { firstColHeader: "Line Item" });
+
+  // Phase 4.3.2-D: surface the distinction between "zero because the model
+  // says so" and "zero because inputs are empty". We check canonical owner
+  // adjustment inputs across all three years. If *none* of drawings/salary/
+  // distributions are configured and the result is all-zero, surface a hint.
+  const totalTotal = sumArray(total);
+  const ownerInputs = ownerCompInputs(canonical);
+  let preface = "";
+  if (totalTotal === 0 && !ownerInputs.anyConfigured) {
+    preface = `<p class="ff-empty-note">No owner compensation is configured for any year. If the owner takes money out of the business, set <strong>Drawings</strong>, <strong>Director Salary</strong>, or <strong>Distributions</strong> on each Year Plan. If the owner is not paid from the business, zero is the correct answer.</p>`;
+  } else if (totalTotal === 0 && ownerInputs.anyConfigured) {
+    preface = `<p class="ff-inline-note">Owner compensation totals zero even though inputs were provided. Double-check the owner model (sole-trader drawings vs company salary/distributions) on each Year Plan.</p>`;
+  }
+
+  return statementPanel("Owner Compensation", specs, {
+    firstColHeader: "Line Item",
+    preface
+  });
+}
+
+// --- Phase 4.3.2-D validation helpers -----------------------------------
+
+function hasActiveNamedBusinessExpenses(canonical) {
+  if (!canonical) return false;
+  const years = canonical.years || {};
+  return ["year1", "year2", "year3"].some((yk) => {
+    const items = years[yk]?.businessExpenses?.lineItems || [];
+    return items.some((li) => li && li.isActive !== false && Number(li.monthlyAmount || 0) > 0);
+  });
+}
+
+function hasActiveMarketing(canonical) {
+  if (!canonical) return false;
+  const years = canonical.years || {};
+  return ["year1", "year2", "year3"].some((yk) => {
+    const items = years[yk]?.marketing?.lineItems || [];
+    return items.some((li) => li && li.isActive !== false && Number(li.monthlyAmount || 0) > 0);
+  });
+}
+
+function statutoryPercentages(canonical) {
+  if (!canonical) return { anySet: false };
+  const years = canonical.years || {};
+  const anySet = ["year1", "year2", "year3"].some((yk) => {
+    const a = years[yk]?.assumptions || {};
+    return Number(a.superannuationPct || 0) > 0 || Number(a.payrollTaxPct || 0) > 0;
+  });
+  return { anySet };
+}
+
+function ownerCompInputs(canonical) {
+  if (!canonical) return { anyConfigured: false };
+  const years = canonical.years || {};
+  const anyConfigured = ["year1", "year2", "year3"].some((yk) => {
+    const oa = years[yk]?.ownerAdjustments || {};
+    return Number(oa.ownerDrawingsMonthly || 0) > 0
+      || Number(oa.directorSalaryMonthly || 0) > 0
+      || Number(oa.distributionsMonthly || 0) > 0;
+  });
+  return { anyConfigured };
+}
+
+function personalCashFlowConfigured(canonical) {
+  if (!canonical) return false;
+  const pcf = canonical.personalCashFlow || {};
+  const rows = [
+    ...(pcf.inflows || []),
+    ...(pcf.outflows || []),
+    ...(pcf.sharedCosts || []),
+    ...(pcf.items || [])
+  ];
+  return rows.some((row) => (row.monthly || []).some((v) => Number(v || 0) !== 0));
+}
+
+function buildDataCompletenessBanner(canonical) {
+  const missing = [];
+
+  if (!ownerCompInputs(canonical).anyConfigured) {
+    missing.push(`Owner Compensation (Drawings / Salary / Distributions) is empty on every year.`);
+  }
+  if (!hasActiveNamedBusinessExpenses(canonical)) {
+    missing.push(`Named Business Expenses have no active line items.`);
+  }
+  if (!hasActiveMarketing(canonical)) {
+    missing.push(`Marketing has no active line items.`);
+  }
+  if (!statutoryPercentages(canonical).anySet) {
+    missing.push(`Statutory Labor percentages (Superannuation / Payroll Tax) are all zero.`);
+  }
+  if (!personalCashFlowConfigured(canonical)) {
+    missing.push(`Personal Cash Flow has no non-zero monthly values in any row.`);
+  }
+
+  if (!missing.length) {
+    return `
+      <div class="ff-data-completeness ff-data-completeness--ok" role="note">
+        <h3>Data Completeness</h3>
+        <p class="ff-helper" style="margin:0;">All decision-sensitive input areas have at least some non-zero data. Results are based on populated inputs across Owner Compensation, Named Business Expenses, Marketing, Statutory Labor, and Personal Cash Flow.</p>
+      </div>
+    `;
+  }
+  return `
+    <div class="ff-data-completeness" role="note">
+      <h3>Data Completeness</h3>
+      <p class="ff-helper" style="margin:0 0 0.25rem;">Some decision-sensitive input areas appear empty. If that is intentional, you can ignore this note. If not, the figures below may understate reality:</p>
+      <ul>${missing.map((m) => `<li>${m}</li>`).join("")}</ul>
+    </div>
+  `;
 }
 
 function financingPanel(raw) {
@@ -600,109 +787,63 @@ function taxGstPanel(raw) {
   });
 }
 
-function personalCashFlowPanel(raw) {
-  const pcf = raw.personalCashFlow;
-  if (!pcf) return "";
-  const summary = pcf.summary || {};
-  const openingMonthly = (pcf.openingMonthly || []).slice(0, 12);
-  const inflowsMonthly = (pcf.inflowsMonthly || []).slice(0, 12);
-  const outflowsMonthly = (pcf.outflowsMonthly || []).slice(0, 12);
-  const closingMonthly = (pcf.closingMonthly || []).slice(0, 12);
-  const netMonthly = inflowsMonthly.map((v, i) => Number(v || 0) - Number(outflowsMonthly[i] || 0));
+// --- Phase 4.3.3: Personal Cash Flow panel, 3-year view -------------------
+//
+// Presentation rules:
+//   - Year 1 is authoritative from canonical PCF inputs.
+//   - Year 2 and Year 3 project the Year 1 personal lifestyle pattern forward,
+//     substituting only the "drawings from business" row with the year-plan
+//     owner drawings for that year (see engine for the full rule).
+//   - No CPI uplift is applied to personal inflows/outflows in Y2 and Y3.
+//     This is a documented simplification surfaced in the helper copy.
 
-  const inflowRows = (pcf.inflowsByRow || [])
-    .filter((row) => row.total !== 0 || !row.custom)
-    .map((row) => ({
-      label: row.label,
-      kind: "money",
-      values: (row.monthly || []).slice(0, 12)
-    }));
-  const outflowRows = (pcf.outflowsByRow || [])
-    .filter((row) => row.total !== 0 || !row.custom)
-    .map((row) => ({
-      label: row.label,
-      kind: "money",
-      values: (row.monthly || []).slice(0, 12).map((v) => -Number(v || 0))
-    }));
-  const sharedPersonalMonthly = (pcf.sharedPersonalMonthly || []).slice(0, 12);
-  const sharedRow = sharedPersonalMonthly.some((v) => v)
-    ? [{
-        label: "Shared Costs (Personal Portion)",
-        kind: "money",
-        values: sharedPersonalMonthly.map((v) => -Number(v || 0))
-      }]
-    : [];
-
-  const totalsRows = [
-    { label: "Opening Balance", kind: "money", emphasis: "header", values: openingMonthly, skipTotal: true },
-    { label: "Total Inflows", kind: "money", emphasis: "subtotal", values: inflowsMonthly },
-    { label: "Total Outflows", kind: "money", emphasis: "subtotal", values: outflowsMonthly.map((v) => -Number(v || 0)) },
-    { label: "Net Cash Movement", kind: "money", emphasis: "total", values: netMonthly },
-    { label: "Closing Balance", kind: "money", emphasis: "header", values: closingMonthly, skipTotal: true }
-  ];
-
-  const tableHtml = buildPeriodTable({
-    rows: [
-      ...inflowRows,
-      ...outflowRows,
-      ...sharedRow,
-      ...totalsRows
-    ],
-    columns: monthLabels().slice(0, 12),
-    includeTotal: true,
-    firstColHeader: "Personal Cash Flow Line"
-  });
-
-  const minClosing = Number(summary.minClosingBalance || 0);
-  const monthsNegative = Number(summary.monthsBelowZero || 0);
-  const netChange = Number(summary.netChange || 0);
-  const totalInflowsY1 = Number(summary.totalInflows || 0);
-  const totalOutflowsY1 = Number(summary.totalOutflows || 0);
-  const totalDrawings = Number(summary.totalDrawingsFromBusiness || 0);
-  const nonDrawingsInflows = Math.max(totalInflowsY1 - totalDrawings, 0);
-
-  // Identify worst month: the minimum closing balance's first occurrence.
-  let worstIdx = -1;
-  for (let i = 0; i < closingMonthly.length; i += 1) {
-    if (Number(closingMonthly[i]) === minClosing) { worstIdx = i; break; }
-  }
-  // Prefer calendar month labels from the engine (Jan...Dec) for clarity.
-  const calendarLabels = (pcf.monthLabels && pcf.monthLabels.length === 12)
-    ? pcf.monthLabels
-    : ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-  const worstMonthLabel = worstIdx >= 0 ? calendarLabels[worstIdx] : "";
-
-  const minCardClass = minClosing < 0 ? "ff-pcf-summary-card ff-pcf-summary-card--warn" : "ff-pcf-summary-card";
-  const monthsNegCardClass = monthsNegative > 0 ? "ff-pcf-summary-card ff-pcf-summary-card--warn" : "ff-pcf-summary-card";
-  const netChangeCardClass = netChange < 0 ? "ff-pcf-summary-card ff-pcf-summary-card--warn" : "ff-pcf-summary-card";
-
-  const card = (label, value, cls = "ff-pcf-summary-card") => `
+function pcfCard(label, value, cls = "ff-pcf-summary-card") {
+  return `
     <div class="${cls}">
       <div class="ff-pcf-summary-label">${label}</div>
       <div class="ff-pcf-summary-value">${value}</div>
     </div>`;
+}
 
+function pcfYearSummaryCards(slice, yearLabel, calendarLabels) {
+  const summary = slice.summary || {};
+  const closingMonthly = slice.closingMonthly || [];
+  const minClosing = Number(summary.minClosingBalance || 0);
+  const monthsNegative = Number(summary.monthsBelowZero || 0);
+  const netChange = Number(summary.netChange || 0);
+  const totalInflows = Number(summary.totalInflows || 0);
+  const totalOutflows = Number(summary.totalOutflows || 0);
+  const totalDrawings = Number(summary.totalDrawingsFromBusiness || 0);
+  const nonDrawingInflows = Math.max(totalInflows - totalDrawings, 0);
+
+  let worstIdx = -1;
+  for (let i = 0; i < closingMonthly.length; i += 1) {
+    if (Number(closingMonthly[i]) === minClosing) { worstIdx = i; break; }
+  }
+  const worstMonthLabel = worstIdx >= 0 ? calendarLabels[worstIdx] : "";
+  const minCardClass = minClosing < 0 ? "ff-pcf-summary-card ff-pcf-summary-card--warn" : "ff-pcf-summary-card";
+  const monthsNegCardClass = monthsNegative > 0 ? "ff-pcf-summary-card ff-pcf-summary-card--warn" : "ff-pcf-summary-card";
+  const netChangeCardClass = netChange < 0 ? "ff-pcf-summary-card ff-pcf-summary-card--warn" : "ff-pcf-summary-card";
   const worstMonthCardValue = worstIdx >= 0
     ? `${formatMoney(minClosing)} <span class="ff-pcf-summary-meta">${worstMonthLabel}</span>`
     : formatMoney(minClosing);
 
-  // --- Phase 4.2.8 decision metrics -------------------------------------
   const requiredMonthlyUplift = Number(summary.requiredDrawingsMonthlyUplift || 0);
   const requiredAnnualUplift = Number(summary.requiredDrawingsAnnualUplift || 0);
   const runwayMonths = summary.runwayMonths;
   const dependencyPct = Number(summary.dependencyOnBusinessDrawingsPct || 0);
   const dependencyBand = summary.dependencyBand || "none";
-  const hasInflows = totalInflowsY1 > 0;
+  const hasInflows = totalInflows > 0;
 
   const requiredCardValue = requiredMonthlyUplift > 0
     ? `${formatMoney(requiredMonthlyUplift)}<span class="ff-pcf-summary-meta">${formatMoney(requiredAnnualUplift)} / yr · exact</span>`
-    : `${formatMoney(0)}<span class="ff-pcf-summary-meta">None needed — already solvent</span>`;
+    : `${formatMoney(0)}<span class="ff-pcf-summary-meta">None needed, already solvent</span>`;
   const requiredCardClass = requiredMonthlyUplift > 0
     ? "ff-pcf-summary-card ff-pcf-summary-card--warn"
     : "ff-pcf-summary-card";
 
   const runwayCardValue = runwayMonths == null
-    ? `<span class="ff-pcf-summary-value-small">No depletion in Year 1</span>`
+    ? `<span class="ff-pcf-summary-value-small">No depletion in ${yearLabel}</span>`
     : `${runwayMonths}<span class="ff-pcf-summary-meta">month${runwayMonths === 1 ? "" : "s"} before first negative</span>`;
   const runwayCardClass = runwayMonths == null
     ? "ff-pcf-summary-card"
@@ -715,114 +856,190 @@ function personalCashFlowPanel(raw) {
     ? "ff-pcf-summary-card ff-pcf-summary-card--warn"
     : "ff-pcf-summary-card";
 
-  // Serialise baseline monthly arrays so the stress toggle (hydrated
-  // client-side) can recompute decision metrics without mutating canonical
-  // state.
-  const baseForStress = {
-    openingBalance: Number(pcf.openingBalance || 0),
-    inflowsMonthly: (pcf.inflowsMonthly || []).slice(0, 12).map((v) => Number(v || 0)),
-    outflowsMonthly: (pcf.outflowsMonthly || []).slice(0, 12).map((v) => Number(v || 0)),
-    drawingsMonthly: (pcf.drawingsFromBusinessMonthly || []).slice(0, 12).map((v) => Number(v || 0)),
-    calendarLabels
+  return `
+    <div class="ff-pcf-group">
+      <h5 class="ff-pcf-group-title">Liquidity (${yearLabel})</h5>
+      <div class="ff-pcf-summary">
+        ${pcfCard("Opening Balance", formatMoney(slice.openingBalance || 0))}
+        ${pcfCard("Closing (Dec)", formatMoney(summary.closingEndOfYear || 0))}
+        ${pcfCard(`Surplus / Deficit (${yearLabel})`, formatMoney(netChange), netChangeCardClass)}
+      </div>
+    </div>
+    <div class="ff-pcf-group">
+      <h5 class="ff-pcf-group-title">Risk (${yearLabel})</h5>
+      <div class="ff-pcf-summary">
+        ${pcfCard("Worst Month (Min Closing)", worstMonthCardValue, minCardClass)}
+        ${pcfCard("Months Below Zero", String(monthsNegative), monthsNegCardClass)}
+        ${pcfCard("Runway (months)", runwayCardValue, runwayCardClass)}
+      </div>
+    </div>
+    <div class="ff-pcf-group">
+      <h5 class="ff-pcf-group-title">Decision &amp; Action (${yearLabel})</h5>
+      <div class="ff-pcf-summary">
+        ${pcfCard("Required Drawings To Stay Solvent", requiredCardValue, requiredCardClass)}
+        ${pcfCard("Dependency On Business Drawings", dependencyCardValue, dependencyCardClass)}
+      </div>
+    </div>
+    <div class="ff-pcf-group">
+      <h5 class="ff-pcf-group-title">Owner Extraction &amp; Inflow Mix (${yearLabel})</h5>
+      <div class="ff-pcf-summary">
+        ${pcfCard("Drawings From Business", formatMoney(totalDrawings))}
+        ${pcfCard("Other Personal Inflows", formatMoney(nonDrawingInflows))}
+        ${pcfCard("Total Inflows", formatMoney(totalInflows))}
+        ${pcfCard("Total Outflows", formatMoney(totalOutflows))}
+      </div>
+    </div>
+  `;
+}
+
+function pcfYearTable(slice, calendarLabels, { pcf, yearIndex }) {
+  const openingMonthly = (slice.openingMonthly || []).slice(0, 12);
+  const inflowsMonthly = (slice.inflowsMonthly || []).slice(0, 12);
+  const outflowsMonthly = (slice.outflowsMonthly || []).slice(0, 12);
+  const closingMonthly = (slice.closingMonthly || []).slice(0, 12);
+  const sharedPersonalMonthly = (slice.sharedPersonalMonthly || []).slice(0, 12);
+  const drawingsMonthly = (slice.drawingsFromBusinessMonthly || []).slice(0, 12);
+  const netMonthly = inflowsMonthly.map((v, i) => Number(v || 0) - Number(outflowsMonthly[i] || 0));
+
+  let inflowRows;
+  let outflowRows;
+
+  if (yearIndex === 1) {
+    // Year 1: render the full named row detail from canonical inputs.
+    inflowRows = (pcf.inflowsByRow || [])
+      .filter((row) => row.total !== 0 || !row.custom)
+      .map((row) => ({ label: row.label, kind: "money", values: (row.monthly || []).slice(0, 12) }));
+    outflowRows = (pcf.outflowsByRow || [])
+      .filter((row) => row.total !== 0 || !row.custom)
+      .map((row) => ({ label: row.label, kind: "money", values: (row.monthly || []).slice(0, 12).map((v) => -Number(v || 0)) }));
+  } else {
+    // Y2 / Y3: show the projected structure without repeating every row.
+    // We split inflows into Drawings (year-specific) vs Other (reused from Y1
+    // lifestyle pattern) so the user can see which part came from where.
+    const otherInflowsMonthly = inflowsMonthly.map((v, i) => Number(v || 0) - Number(drawingsMonthly[i] || 0));
+    inflowRows = [
+      { label: "Drawings From Business (year plan)", kind: "money", values: drawingsMonthly },
+      { label: "Other Personal Inflows (projected from Y1 pattern)", kind: "money", values: otherInflowsMonthly }
+    ];
+    outflowRows = [
+      { label: "Personal Outflows (projected from Y1 pattern)", kind: "money", values: outflowsMonthly.map((v) => -Number(v || 0)) }
+    ];
+  }
+
+  const sharedRow = (yearIndex === 1 && sharedPersonalMonthly.some((v) => v))
+    ? [{ label: "Shared Costs (Personal Portion)", kind: "money", values: sharedPersonalMonthly.map((v) => -Number(v || 0)) }]
+    : [];
+
+  const totalsRows = [
+    { label: "Opening Balance", kind: "money", emphasis: "header", values: openingMonthly, skipTotal: true },
+    { label: "Total Inflows", kind: "money", emphasis: "subtotal", values: inflowsMonthly },
+    { label: "Total Outflows", kind: "money", emphasis: "subtotal", values: outflowsMonthly.map((v) => -Number(v || 0)) },
+    { label: "Net Cash Movement", kind: "money", emphasis: "total", values: netMonthly },
+    { label: "Closing Balance", kind: "money", emphasis: "header", values: closingMonthly, skipTotal: true }
+  ];
+
+  return buildPeriodTable({
+    rows: [...inflowRows, ...outflowRows, ...sharedRow, ...totalsRows],
+    columns: calendarLabels,
+    includeTotal: true,
+    firstColHeader: "Personal Cash Flow Line"
+  });
+}
+
+function personalCashFlowPanel(raw) {
+  const pcf = raw.personalCashFlow;
+  if (!pcf) return "";
+  const perYear = pcf.perYear || { year1: {}, year2: {}, year3: {} };
+  const monthly36 = pcf.monthly36 || {};
+  const calendarLabels = (pcf.monthLabels && pcf.monthLabels.length === 12)
+    ? pcf.monthLabels
+    : ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+  // --- 3-year top-line summary across years ------------------------------
+  const perYearRollupRow = (label, kind, pickFn) => ({
+    label,
+    kind,
+    values: ["year1", "year2", "year3"].map((yk) => Number(pickFn(perYear[yk] || {}) || 0)),
+    skipTotal: kind === "percent"
+  });
+
+  const perYearTableHtml = buildPeriodTable({
+    rows: [
+      perYearRollupRow("Opening Balance", "money", (s) => s.openingBalance),
+      perYearRollupRow("Total Inflows", "money", (s) => s.summary?.totalInflows),
+      perYearRollupRow("Total Outflows", "money", (s) => s.summary?.totalOutflows),
+      { label: "Net Cash Movement", kind: "money", emphasis: "subtotal", values: ["year1","year2","year3"].map((yk) => Number(perYear[yk]?.summary?.netChange || 0)) },
+      { label: "Closing (End of Year)", kind: "money", emphasis: "header", values: ["year1","year2","year3"].map((yk) => Number(perYear[yk]?.summary?.closingEndOfYear || 0)), skipTotal: true },
+      perYearRollupRow("Worst Month (Min Closing)", "money", (s) => s.summary?.minClosingBalance),
+      perYearRollupRow("Months Below Zero", "number", (s) => s.summary?.monthsBelowZero),
+      perYearRollupRow("Drawings From Business", "money", (s) => s.summary?.totalDrawingsFromBusiness)
+    ],
+    columns: ["Year 1", "Year 2", "Year 3"],
+    includeTotal: true,
+    firstColHeader: "Metric"
+  });
+
+  // --- 36-month trend chart data ----------------------------------------
+  const labels36 = [];
+  for (let y = 1; y <= 3; y += 1) {
+    for (let m = 0; m < 12; m += 1) labels36.push(`Y${y} ${calendarLabels[m]}`);
+  }
+  const closingSeries = (monthly36.closing || []).slice(0, 36);
+  const inflowsSeries = (monthly36.inflows || []).slice(0, 36);
+  const outflowsSeries = (monthly36.outflows || []).slice(0, 36);
+  let worstIdx = -1;
+  let worstVal = Number.POSITIVE_INFINITY;
+  closingSeries.forEach((v, i) => { if (Number(v) < worstVal) { worstVal = Number(v); worstIdx = i; } });
+  const chartData = {
+    labels: labels36,
+    series: [
+      { label: "Closing Balance", values: closingSeries, stroke: "#86A8FF" },
+      { label: "Total Inflows", values: inflowsSeries, stroke: "#8ED6A6" },
+      { label: "Total Outflows", values: outflowsSeries, stroke: "#E7B6D2" }
+    ],
+    markers: worstIdx >= 0 && worstVal < 0
+      ? [{ index: worstIdx, value: worstVal, color: "#E97B7B", label: `Worst: ${labels36[worstIdx]} ${formatMoney(worstVal)}` }]
+      : []
   };
 
-  const summaryHtml = `
-    <div class="ff-pcf-group">
-      <h5 class="ff-pcf-group-title">Liquidity (Year 1)</h5>
-      <div class="ff-pcf-summary">
-        ${card("Opening Balance", formatMoney(pcf.openingBalance || 0))}
-        ${card("Closing (Dec)", formatMoney(summary.closingEndOfYear || 0))}
-        ${card("Surplus / Deficit (Year 1)", formatMoney(netChange), netChangeCardClass)}
-      </div>
-    </div>
-    <div class="ff-pcf-group">
-      <h5 class="ff-pcf-group-title">Risk (Year 1)</h5>
-      <div class="ff-pcf-summary">
-        ${card("Worst Month (Min Closing)", worstMonthCardValue, minCardClass)}
-        ${card("Months Below Zero", String(monthsNegative), monthsNegCardClass)}
-        ${card("Runway (months)", runwayCardValue, runwayCardClass)}
-      </div>
-    </div>
-    <div class="ff-pcf-group">
-      <h5 class="ff-pcf-group-title">Decision &amp; Action (Year 1)</h5>
-      <div class="ff-pcf-summary">
-        ${card("Required Drawings To Stay Solvent", requiredCardValue, requiredCardClass)}
-        ${card("Dependency On Business Drawings", dependencyCardValue, dependencyCardClass)}
-      </div>
-    </div>
-    <div class="ff-pcf-group">
-      <h5 class="ff-pcf-group-title">Owner Extraction &amp; Inflow Mix (Year 1)</h5>
-      <div class="ff-pcf-summary">
-        ${card("Drawings From Business", formatMoney(totalDrawings))}
-        ${card("Other Personal Inflows", formatMoney(nonDrawingsInflows))}
-        ${card("Total Inflows", formatMoney(totalInflowsY1))}
-        ${card("Total Outflows", formatMoney(totalOutflowsY1))}
-      </div>
-    </div>
-  `;
-
-  // Lightweight stress-testing control. This is NOT a scenario engine — it
-  // recomputes decision metrics client-side from the baseline monthly arrays
-  // using the same helper as the engine, then displays the stressed view
-  // side-by-side with the base case. Canonical state is never mutated.
-  const stressControlHtml = `
-    <div class="ff-pcf-stress" data-region="pcf-stress">
-      <div class="ff-pcf-stress-head">
-        <h5 class="ff-pcf-group-title" style="margin-bottom:0;">Lightweight Stress Test</h5>
-        <span class="ff-pcf-stress-helper">
-          Preview how key personal-cash decisions respond to a small adverse case.
-          Baseline values are unchanged.
-        </span>
-      </div>
-      <div class="ff-pcf-stress-controls">
-        <label class="ff-pcf-stress-field">
-          <span>Reduce drawings from business</span>
-          <input type="number" min="0" max="100" step="5" value="0" data-stress-input="reduceDrawingsPct" />
-          <span class="ff-pcf-stress-suffix">%</span>
-        </label>
-        <label class="ff-pcf-stress-field">
-          <span>Increase personal outflows</span>
-          <input type="number" min="0" max="100" step="5" value="0" data-stress-input="increaseOutflowsPct" />
-          <span class="ff-pcf-stress-suffix">%</span>
-        </label>
-        <button type="button" class="btn btn--outline btn--sm" data-stress-action="reset">Reset</button>
-      </div>
-      <div class="ff-pcf-stress-output" data-region="pcf-stress-output" hidden></div>
-    </div>
-    <script type="application/json" id="ff-personal-cashflow-stress-base">${JSON.stringify(baseForStress)}</script>
-  `;
-
-  const chartData = {
-    labels: calendarLabels,
-    series: [
-      { label: "Closing Balance", values: closingMonthly, stroke: "#86A8FF" },
-      { label: "Total Inflows", values: inflowsMonthly, stroke: "#8ED6A6" },
-      { label: "Total Outflows", values: outflowsMonthly, stroke: "#E7B6D2" }
-    ],
-    markers: worstIdx >= 0
-      ? [{ index: worstIdx, value: minClosing, color: "#E97B7B", label: `Worst: ${worstMonthLabel} ${formatMoney(minClosing)}` }]
-      : []
+  const yearSection = (yk, yearIndex, yearLabel, open) => {
+    const slice = perYear[yk] || {};
+    const cards = pcfYearSummaryCards(slice, yearLabel, calendarLabels);
+    const table = pcfYearTable(slice, calendarLabels, { pcf, yearIndex });
+    return `
+      <details class="ff-details" ${open ? "open" : ""}>
+        <summary><strong>${yearLabel}</strong> · Closing ${formatMoney(slice.summary?.closingEndOfYear || 0)} · Months Below Zero ${String(slice.summary?.monthsBelowZero || 0)}</summary>
+        ${cards}
+        ${table}
+      </details>
+    `;
   };
 
   const body = `
     <p class="ff-helper">
-      Your <strong>personal</strong> monthly cash flow for Year 1 &mdash; this models your personal cash, not business profit.
-      "Drawings from business" is the cash the business pays to you; it is linked to the business side to avoid double counting.
+      Your <strong>personal</strong> monthly cash flow across all 3 years. Year 1 uses the
+      inputs you entered on the Personal Cash Flow step; Year 2 and Year 3 reuse the same
+      personal-lifestyle pattern and swap in each year's owner drawings from the Year Plan.
+      "Drawings from business" is the cash the business pays to you, linked to the
+      business side to avoid double-counting. No CPI uplift is applied to personal
+      outflows in Y2/Y3; treat those years as a steady-state projection.
     </p>
-    ${summaryHtml}
-    ${stressControlHtml}
+    <h4 class="ff-pcf-group-title">3-Year Summary</h4>
+    ${perYearTableHtml}
     <div class="ff-panel" style="margin-top:0.9rem;">
-      <h4>Personal Cash Flow Trend (Year 1)</h4>
+      <h4>Personal Cash Flow Trend (36 months)</h4>
       <div class="ff-chart" data-chart="personal-cashflow-trend"></div>
-      ${worstIdx >= 0 && minClosing < 0
-        ? `<p class="ff-helper ff-pcf-trend-caption"><strong>Worst month:</strong> ${worstMonthLabel} (closing ${formatMoney(minClosing)}).</p>`
+      ${worstIdx >= 0 && worstVal < 0
+        ? `<p class="ff-helper ff-pcf-trend-caption"><strong>Worst month:</strong> ${labels36[worstIdx]} (closing ${formatMoney(worstVal)}).</p>`
         : ""}
     </div>
-    ${tableHtml}
+    ${yearSection("year1", 1, "Year 1", true)}
+    ${yearSection("year2", 2, "Year 2", false)}
+    ${yearSection("year3", 3, "Year 3", false)}
     <script type="application/json" id="ff-personal-cashflow-data">${JSON.stringify(chartData)}</script>
   `;
 
-  return panel("Personal Cash Flow (Year 1)", body);
+  return panel("Personal Cash Flow (3-Year View)", body);
 }
 
 function keyRatiosPanel(raw, derived) {
@@ -922,15 +1139,15 @@ function scenarioInputsRecap(canonical) {
     <div class="ff-inputs-recap__group">
       <h4>Setup</h4>
       <dl>
-        <dt>Business Name</dt><dd>${escapeHtml(setup.businessName || "—")}</dd>
-        <dt>Currency</dt><dd>${escapeHtml(meta.currency || "—")}</dd>
-        <dt>Forecast Horizon</dt><dd>${escapeHtml(String(meta.forecastHorizonYears || "—"))} years</dd>
-        <dt>Start Month</dt><dd>${escapeHtml(String(setup.startMonth || "—"))}</dd>
-        <dt>Trading Structure</dt><dd>${escapeHtml(String(setup.tradingStructure || "—"))}</dd>
-        <dt>GST Registration</dt><dd>${escapeHtml(String(setup.gstRegistration || "—"))}</dd>
+        <dt>Business Name</dt><dd>${escapeHtml(setup.businessName || "-")}</dd>
+        <dt>Currency</dt><dd>${escapeHtml(meta.currency || "-")}</dd>
+        <dt>Forecast Horizon</dt><dd>${escapeHtml(String(meta.forecastHorizonYears || "-"))} years</dd>
+        <dt>Start Month</dt><dd>${escapeHtml(String(setup.startMonth || "-"))}</dd>
+        <dt>Trading Structure</dt><dd>${escapeHtml(String(setup.tradingStructure || "-"))}</dd>
+        <dt>GST Registration</dt><dd>${escapeHtml(String(setup.gstRegistration || "-"))}</dd>
         <dt>Charge GST on Sales</dt><dd>${setup.chargeGstOnSales ? "Yes" : "No"}</dd>
-        <dt>BAS Frequency</dt><dd>${escapeHtml(String(setup.basFrequency || "—"))}</dd>
-        <dt>Report Basis</dt><dd>${escapeHtml(String(setup.reportBasis || "—"))}</dd>
+        <dt>BAS Frequency</dt><dd>${escapeHtml(String(setup.basFrequency || "-"))}</dd>
+        <dt>Report Basis</dt><dd>${escapeHtml(String(setup.reportBasis || "-"))}</dd>
         <dt>Opening Cash</dt><dd>${formatMoney(setup.openingCash)}</dd>
       </dl>
     </div>
@@ -940,9 +1157,9 @@ function scenarioInputsRecap(canonical) {
     <div class="ff-inputs-recap__group">
       <h4>Collections Policy</h4>
       <dl>
-        <dt>Default Debtor Days</dt><dd>${escapeHtml(String(collectionsPolicy.defaultDebtorDays ?? "—"))}</dd>
+        <dt>Default Debtor Days</dt><dd>${escapeHtml(String(collectionsPolicy.defaultDebtorDays ?? "-"))}</dd>
         <dt>Bad Debt %</dt><dd>${formatPercent((collectionsPolicy.badDebtPct ?? 0))}</dd>
-        <dt>Receivables Basis</dt><dd>${escapeHtml(String(collectionsPolicy.receivablesBasis || "—"))}</dd>
+        <dt>Receivables Basis</dt><dd>${escapeHtml(String(collectionsPolicy.receivablesBasis || "-"))}</dd>
         <dt>Opening Receivables</dt><dd>${formatMoney(collectionsPolicy.openingReceivables)}</dd>
         <dt>Collection Split (M, M+1, M+2)</dt><dd>${(collectionsPolicy.collectionSplitByMonthBucket || []).map((v) => formatPercent(Number(v) * 100)).join(" / ")}</dd>
       </dl>
@@ -956,7 +1173,10 @@ function scenarioInputsRecap(canonical) {
       const cp = y.costProfile || {};
       const oa = y.ownerAdjustments || {};
       const mktg = (y.marketing?.lineItems || [])
-        .map((m) => `${formatMoney(m.monthlyAmount)}/mo, M${m.startMonth}-M${m.endMonth}`)
+        .map((m) => `${escapeHtml(m.label || "Marketing")}: ${formatMoney(m.monthlyAmount)}/mo, M${m.startMonth}-M${m.endMonth}${m.isActive === false ? " (inactive)" : ""}`)
+        .join("; ");
+      const bizExp = (y.businessExpenses?.lineItems || [])
+        .map((b) => `${escapeHtml(b.label || b.category || "Expense")} (${escapeHtml(b.category || "-")}): ${formatMoney(b.monthlyAmount)}/mo, M${b.startMonth}-M${b.endMonth}${b.isActive === false ? " (inactive)" : ""}`)
         .join("; ");
       return `
         <div class="ff-inputs-recap__group">
@@ -966,15 +1186,18 @@ function scenarioInputsRecap(canonical) {
             <dt>CPI %</dt><dd>${formatPercent(a.cpiPct ?? 0)}</dd>
             <dt>Tax Rate %</dt><dd>${formatPercent(a.taxRatePct ?? 0)}</dd>
             <dt>GST Rate %</dt><dd>${formatPercent(a.gstRatePct ?? 0)}</dd>
-            <dt>Fixed Monthly Cost</dt><dd>${formatMoney(cp.fixedMonthlyCost)}</dd>
+            <dt>Superannuation %</dt><dd>${formatPercent(a.superannuationPct ?? 0)}</dd>
+            <dt>Payroll Tax %</dt><dd>${formatPercent(a.payrollTaxPct ?? 0)}</dd>
+            <dt>Fixed Monthly Cost (Aggregate)</dt><dd>${formatMoney(cp.fixedMonthlyCost)}</dd>
             <dt>Variable %</dt><dd>${formatPercent(cp.variableCostPctOfRevenue ?? 0)}</dd>
             <dt>Direct Labor %</dt><dd>${formatPercent(cp.directLaborPctOfRevenue ?? 0)}</dd>
-            <dt>Other Operating</dt><dd>${formatMoney(cp.otherOperatingExpenseMonthly)}</dd>
-            <dt>Owner Model</dt><dd>${escapeHtml(String(oa.modelType || "—"))}</dd>
+            <dt>Other Operating (Aggregate)</dt><dd>${formatMoney(cp.otherOperatingExpenseMonthly)}</dd>
+            <dt>Owner Model</dt><dd>${escapeHtml(String(oa.modelType || "-"))}</dd>
             <dt>Drawings Monthly</dt><dd>${formatMoney(oa.ownerDrawingsMonthly)}</dd>
             <dt>Director Salary Monthly</dt><dd>${formatMoney(oa.directorSalaryMonthly)}</dd>
             <dt>Distributions Monthly</dt><dd>${formatMoney(oa.distributionsMonthly)}</dd>
-            <dt>Marketing</dt><dd>${escapeHtml(mktg || "—")}</dd>
+            <dt>Named Business Expenses</dt><dd>${escapeHtml(bizExp || "-")}</dd>
+            <dt>Marketing Lines</dt><dd>${escapeHtml(mktg || "-")}</dd>
           </dl>
         </div>
       `;
@@ -985,11 +1208,11 @@ function scenarioInputsRecap(canonical) {
     ? `<div class="ff-table-wrap"><table class="ff-table"><thead><tr><th>Line</th><th>Type</th><th>Unit Price</th><th>Default Units/mo</th><th>COGS</th><th>Merchant Fee</th><th>GST?</th><th>Active?</th><th>Seasonality (Jan-Dec)</th></tr></thead><tbody>${
       salesLines.map((line) => `
         <tr>
-          <th>${escapeHtml(line.name || "—")}</th>
-          <td>${escapeHtml(line.type || "—")}</td>
+          <th>${escapeHtml(line.name || "-")}</th>
+          <td>${escapeHtml(line.type || "-")}</td>
           <td>${formatMoney(line.unitPrice)}</td>
           <td>${formatNumber(line.defaultUnitsPerPeriod, 1)}</td>
-          <td>${line.costOfGoodsSold != null ? formatMoney(line.costOfGoodsSold) : (line.grossMarginPercent != null ? `${formatPercent(line.grossMarginPercent)} GM` : "—")}</td>
+          <td>${line.costOfGoodsSold != null ? formatMoney(line.costOfGoodsSold) : (line.grossMarginPercent != null ? `${formatPercent(line.grossMarginPercent)} GM` : "-")}</td>
           <td>${formatPercent(line.merchantFeePercent ?? 0)}</td>
           <td>${line.gstApplies ? "Yes" : "No"}</td>
           <td>${line.isActive === false ? "No" : "Yes"}</td>
@@ -1003,12 +1226,12 @@ function scenarioInputsRecap(canonical) {
     ? `<div class="ff-table-wrap"><table class="ff-table"><thead><tr><th>Asset</th><th>Category</th><th>Purchase</th><th>Purchase Month</th><th>Useful Life (Y)</th><th>Depreciation</th><th>Residual</th></tr></thead><tbody>${
       assetItems.map((a) => `
         <tr>
-          <th>${escapeHtml(a.name || "—")}</th>
-          <td>${escapeHtml(a.category || "—")}</td>
+          <th>${escapeHtml(a.name || "-")}</th>
+          <td>${escapeHtml(a.category || "-")}</td>
           <td>${formatMoney(a.purchaseAmount)}</td>
-          <td>M${escapeHtml(String(a.purchaseMonthIndex ?? "—"))}</td>
-          <td>${escapeHtml(String(a.usefulLifeYears ?? "—"))}</td>
-          <td>${escapeHtml(a.depreciationMethod || "—")}</td>
+          <td>M${escapeHtml(String(a.purchaseMonthIndex ?? "-"))}</td>
+          <td>${escapeHtml(String(a.usefulLifeYears ?? "-"))}</td>
+          <td>${escapeHtml(a.depreciationMethod || "-")}</td>
           <td>${formatMoney(a.residualValue)}</td>
         </tr>
       `).join("")
@@ -1019,13 +1242,13 @@ function scenarioInputsRecap(canonical) {
     ? `<div class="ff-table-wrap"><table class="ff-table"><thead><tr><th>Loan</th><th>Principal</th><th>Rate</th><th>Term (Y)</th><th>Frequency</th><th>Drawdown Month</th><th>Repayment Start</th></tr></thead><tbody>${
       loanItems.map((l) => `
         <tr>
-          <th>${escapeHtml(l.name || "—")}</th>
+          <th>${escapeHtml(l.name || "-")}</th>
           <td>${formatMoney(l.principal)}</td>
           <td>${formatPercent(l.annualInterestRate ?? 0)}</td>
-          <td>${escapeHtml(String(l.termYears ?? "—"))}</td>
-          <td>${escapeHtml(l.repaymentFrequency || "—")}</td>
-          <td>M${escapeHtml(String(l.drawdownMonthIndex ?? "—"))}</td>
-          <td>M${escapeHtml(String(l.repaymentStartMonthIndex ?? "—"))}</td>
+          <td>${escapeHtml(String(l.termYears ?? "-"))}</td>
+          <td>${escapeHtml(l.repaymentFrequency || "-")}</td>
+          <td>M${escapeHtml(String(l.drawdownMonthIndex ?? "-"))}</td>
+          <td>M${escapeHtml(String(l.repaymentStartMonthIndex ?? "-"))}</td>
         </tr>
       `).join("")
     }</tbody></table></div>`
@@ -1036,7 +1259,7 @@ function scenarioInputsRecap(canonical) {
     ? `<div class="ff-table-wrap"><table class="ff-table"><thead><tr><th>Row</th><th>Y1 Total</th><th>Monthly (Jan-Dec)</th></tr></thead><tbody>${
       rows.map((r) => `
         <tr>
-          <th>${escapeHtml(r.label || r.id || "—")}</th>
+          <th>${escapeHtml(r.label || r.id || "-")}</th>
           <td>${formatMoney(rowTotal(r))}</td>
           <td>${(r.monthly || []).map((v) => formatNumber(Number(v || 0), 0)).join(", ")}</td>
         </tr>
@@ -1048,9 +1271,9 @@ function scenarioInputsRecap(canonical) {
     ? `<div class="ff-table-wrap"><table class="ff-table"><thead><tr><th>Item</th><th>Amount</th><th>Frequency</th><th>Personal Use %</th></tr></thead><tbody>${
       personalSharedCosts.map((s) => `
         <tr>
-          <th>${escapeHtml(s.name || "—")}</th>
+          <th>${escapeHtml(s.name || "-")}</th>
           <td>${formatMoney(s.amount)}</td>
-          <td>${escapeHtml(s.frequency || "—")}</td>
+          <td>${escapeHtml(s.frequency || "-")}</td>
           <td>${formatPercent(s.personalUsePercent ?? 0)}</td>
         </tr>
       `).join("")
@@ -1058,19 +1281,24 @@ function scenarioInputsRecap(canonical) {
     : `<p class="ff-helper">No shared costs.</p>`;
 
   const legacyItemsHtml = legacyPersonalItems.length
-    ? `<details class="ff-details"><summary>Legacy Items (${legacyPersonalItems.length}) — migrated</summary><div class="ff-table-wrap"><table class="ff-table"><thead><tr><th>Item</th><th>Amount</th><th>Frequency</th><th>Personal Use %</th></tr></thead><tbody>${
+    ? `<details class="ff-details"><summary>Legacy Items (${legacyPersonalItems.length}), migrated</summary><div class="ff-table-wrap"><table class="ff-table"><thead><tr><th>Item</th><th>Amount</th><th>Frequency</th><th>Personal Use %</th></tr></thead><tbody>${
       legacyPersonalItems.map((p) => `
         <tr>
-          <th>${escapeHtml(p.name || "—")}</th>
+          <th>${escapeHtml(p.name || "-")}</th>
           <td>${formatMoney(p.amount)}</td>
-          <td>${escapeHtml(p.frequency || "—")}</td>
+          <td>${escapeHtml(p.frequency || "-")}</td>
           <td>${formatPercent(p.personalUsePercent ?? 0)}</td>
         </tr>
       `).join("")
     }</tbody></table></div></details>`
     : "";
 
-  const pcfHeadingSuffix = `${pcf.year1Only ? " — Year 1 Only" : ""} · Opening Bal: ${formatMoney(pcf.openingBalance ?? 0)}`;
+  // Phase 4.3.3: the canonical PCF rows describe a single personal lifestyle
+  // pattern that is shown for Year 1 authoritatively and projected forward
+  // into Y2/Y3 on the dashboard. We surface opening balance here; we no
+  // longer label the section "Year 1 Only" because the Results Dashboard now
+  // shows PCF across all three years.
+  const pcfHeadingSuffix = ` · Opening Bal: ${formatMoney(pcf.openingBalance ?? 0)}`;
 
   const body = `
     <div class="ff-inputs-recap">
@@ -1190,6 +1418,10 @@ export function renderResultsStep(snapshot) {
           <button class="btn btn--outline" data-action="save-json-file">Save JSON Data</button>
         </div>
       </div>
+      <p class="ff-helper" style="margin:0 0 0.75rem;">
+        Final, client-facing view of your forecast. Use <strong>Step 13: Scenario Testing</strong> for pressure-testing and downside exploration.
+      </p>
+      ${buildDataCompletenessBanner(canonical)}
       <div class="ff-kpi-grid">${kpis}</div>
       <div class="ff-chart-grid">
         <div class="ff-panel">
@@ -1244,8 +1476,8 @@ export function renderResultsStep(snapshot) {
       ${balanceSheetPanel(raw)}
       ${revenueByStreamPanel(raw, canonical)}
       ${collectionsPanel(raw)}
-      ${costsBreakdownPanel(raw)}
-      ${ownerCompPanel(raw)}
+      ${costsBreakdownPanel(raw, canonical)}
+      ${ownerCompPanel(raw, canonical)}
       ${financingPanel(raw)}
       ${assetsPanel(raw)}
       ${breakEvenPanel(raw, derived)}
@@ -1313,156 +1545,7 @@ export function hydrateDashboardCharts(root, snapshot) {
 
   const pcfData = parseJsonNode(root, "#ff-personal-cashflow-data");
   if (pcfData) {
-    renderMultiLineChart(root.querySelector('[data-chart="personal-cashflow-trend"]'), pcfData.series || [], pcfData.labels || [], { title: "Personal Cash Flow (Year 1)", markers: pcfData.markers || [] });
+    renderMultiLineChart(root.querySelector('[data-chart="personal-cashflow-trend"]'), pcfData.series || [], pcfData.labels || [], { title: "Personal Cash Flow (36 months)", markers: pcfData.markers || [] });
   }
-
-  hydratePersonalCashFlowStress(root);
 }
 
-function formatRunway(months) {
-  if (months == null) return "No depletion in Year 1";
-  return `${months} month${months === 1 ? "" : "s"}`;
-}
-
-function formatRequired(monthly) {
-  if (monthly <= 0) return "None needed";
-  return `${formatMoney(monthly)}/mo`;
-}
-
-function formatMinClosing(min, worstIdx, calendarLabels) {
-  const label = worstIdx >= 0 && calendarLabels[worstIdx] ? ` (${calendarLabels[worstIdx]})` : "";
-  return `${formatMoney(min)}${label}`;
-}
-
-function renderStressOutput(base, stressed, reducePct, increasePct) {
-  const baseMin = Number(base.risk.minClosingBalance || 0);
-  const baseMinIdx = base.closingMonthly.findIndex((v) => Number(v) === baseMin);
-  const stressMin = Number(stressed.risk.minClosingBalance || 0);
-  const stressMinIdx = stressed.closingMonthly.findIndex((v) => Number(v) === stressMin);
-
-  const row = (label, baseVal, stressVal, delta) => `
-    <tr>
-      <th>${escapeHtml(label)}</th>
-      <td>${baseVal}</td>
-      <td>${stressVal}</td>
-      <td class="ff-pcf-stress-delta">${delta || ""}</td>
-    </tr>
-  `;
-
-  const baseRequiredMonthly = Number(base.decision.requiredDrawingsMonthlyUplift || 0);
-  const stressRequiredMonthly = Number(stressed.decision.requiredDrawingsMonthlyUplift || 0);
-  const requiredDelta = stressRequiredMonthly - baseRequiredMonthly;
-
-  return `
-    <h5 class="ff-pcf-group-title">Stressed Decision View</h5>
-    <p class="ff-helper">
-      Applying: drawings &minus;${reducePct}% and outflows +${increasePct}%. Canonical
-      data is unchanged; base column reflects the saved scenario.
-    </p>
-    <div class="ff-table-wrap">
-      <table class="ff-table ff-pcf-stress-table">
-        <thead>
-          <tr><th>Metric</th><th>Base Case</th><th>Stressed</th><th>Change</th></tr>
-        </thead>
-        <tbody>
-          ${row(
-            "Worst Month (Min Closing)",
-            formatMinClosing(baseMin, baseMinIdx, base.calendarLabels),
-            formatMinClosing(stressMin, stressMinIdx, base.calendarLabels),
-            formatMoney(stressMin - baseMin)
-          )}
-          ${row(
-            "Runway (months)",
-            formatRunway(base.decision.runwayMonths),
-            formatRunway(stressed.decision.runwayMonths),
-            ""
-          )}
-          ${row(
-            "Months Below Zero",
-            String(base.risk.monthsBelowZero || 0),
-            String(stressed.risk.monthsBelowZero || 0),
-            ""
-          )}
-          ${row(
-            "Required Drawings To Stay Solvent",
-            formatRequired(baseRequiredMonthly),
-            formatRequired(stressRequiredMonthly),
-            requiredDelta === 0 ? "" : `${requiredDelta > 0 ? "+" : ""}${formatMoney(requiredDelta)}/mo`
-          )}
-        </tbody>
-      </table>
-    </div>
-  `;
-}
-
-function hydratePersonalCashFlowStress(root) {
-  const stressRegion = root.querySelector('[data-region="pcf-stress"]');
-  const baseNode = root.querySelector("#ff-personal-cashflow-stress-base");
-  if (!stressRegion || !baseNode) return;
-  let base;
-  try {
-    base = JSON.parse(baseNode.textContent || "{}");
-  } catch (error) {
-    console.debug("[ff] stress base parse failed", error);
-    return;
-  }
-  const calendarLabels = Array.isArray(base.calendarLabels) ? base.calendarLabels : [];
-  const outputNode = stressRegion.querySelector('[data-region="pcf-stress-output"]');
-  const reduceInput = stressRegion.querySelector('[data-stress-input="reduceDrawingsPct"]');
-  const increaseInput = stressRegion.querySelector('[data-stress-input="increaseOutflowsPct"]');
-  const resetBtn = stressRegion.querySelector('[data-stress-action="reset"]');
-
-  const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
-
-  const rebuildStressed = () => {
-    const reducePct = clamp(Number(reduceInput?.value || 0), 0, 100);
-    const increasePct = clamp(Number(increaseInput?.value || 0), 0, 100);
-    if (reducePct === 0 && increasePct === 0) {
-      if (outputNode) {
-        outputNode.hidden = true;
-        outputNode.innerHTML = "";
-      }
-      return;
-    }
-
-    const drawings = Array.isArray(base.drawingsMonthly) ? base.drawingsMonthly : [];
-    const inflows = Array.isArray(base.inflowsMonthly) ? base.inflowsMonthly : [];
-    const outflows = Array.isArray(base.outflowsMonthly) ? base.outflowsMonthly : [];
-    const stressedDrawings = drawings.map((v) => Number(v || 0) * (1 - reducePct / 100));
-    const stressedInflows = inflows.map((v, i) => {
-      const other = Number(v || 0) - Number(drawings[i] || 0);
-      return other + stressedDrawings[i];
-    });
-    const stressedOutflows = outflows.map((v) => Number(v || 0) * (1 + increasePct / 100));
-
-    const baseMetrics = computePersonalDecisionMetrics({
-      openingBalance: base.openingBalance || 0,
-      inflowsMonthly: inflows,
-      outflowsMonthly: outflows,
-      drawingsMonthly: drawings
-    });
-    baseMetrics.calendarLabels = calendarLabels;
-
-    const stressedMetrics = computePersonalDecisionMetrics({
-      openingBalance: base.openingBalance || 0,
-      inflowsMonthly: stressedInflows,
-      outflowsMonthly: stressedOutflows,
-      drawingsMonthly: stressedDrawings
-    });
-    stressedMetrics.calendarLabels = calendarLabels;
-
-    if (outputNode) {
-      outputNode.hidden = false;
-      outputNode.innerHTML = renderStressOutput(baseMetrics, stressedMetrics, reducePct, increasePct);
-    }
-  };
-
-  reduceInput?.addEventListener("input", rebuildStressed);
-  increaseInput?.addEventListener("input", rebuildStressed);
-  resetBtn?.addEventListener("click", (event) => {
-    event.preventDefault();
-    if (reduceInput) reduceInput.value = "0";
-    if (increaseInput) increaseInput.value = "0";
-    rebuildStressed();
-  });
-}

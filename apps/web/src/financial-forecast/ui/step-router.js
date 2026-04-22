@@ -10,7 +10,8 @@ export const STEP_DEFINITIONS = [
   { id: "personal", title: "Owner & Personal Inputs" },
   { id: "personal-cash-flow", title: "Personal Cash Flow" },
   { id: "review", title: "Review" },
-  { id: "results", title: "Results Dashboard" }
+  { id: "results", title: "Results Dashboard" },
+  { id: "scenario-testing", title: "Scenario Testing" }
 ];
 
 export function getStepIndex(stepId) {

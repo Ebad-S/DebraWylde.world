@@ -62,7 +62,7 @@ function buildPrintPeriodTable({ rows = [], columns = [], includeTotal = false, 
         if (row.totalOverride != null) {
           totalCell = `<td>${formatCell(row.totalOverride, kind)}</td>`;
         } else if (kind === "percent" || row.skipTotal) {
-          totalCell = "<td>&mdash;</td>";
+          totalCell = "<td>-</td>";
         } else {
           totalCell = `<td>${formatCell(sumArray(row.values || []), kind)}</td>`;
         }
@@ -391,6 +391,7 @@ function buildProfitAndLossSection(raw) {
   const costs = raw.costs || {};
   const marketing = raw.marketing || {};
   const ownerAdjustments = raw.ownerAdjustments || {};
+  const statutoryLabor = raw.statutoryLabor || {};
 
   const totalRevenue = sumArray(pl.revenueMonthly || []);
   const totalGp = sumArray(pl.grossProfitMonthly || []);
@@ -403,11 +404,14 @@ function buildProfitAndLossSection(raw) {
     { label: "Gross Profit", monthly: pl.grossProfitMonthly, emphasis: "subtotal" },
     { label: "Gross Margin %", kind: "percent", numeratorMonthly: pl.grossProfitMonthly, denominatorMonthly: pl.revenueMonthly, yearlyTotalOverride: safeDivide(totalGp, totalRevenue) * 100, emphasis: "subtotal" },
     { label: "Operating Expenses", monthly: (pl.operatingExpensesMonthly || []).map((v) => -Number(v || 0)), emphasis: "header" },
-    { label: "  Fixed Costs", monthly: (costs.fixedMonthly || []).map((v) => -Number(v || 0)) },
+    { label: "  Named Business Expenses", monthly: (costs.namedOperatingMonthly || []).map((v) => -Number(v || 0)) },
+    { label: "  Fixed Costs (Aggregate)", monthly: (costs.fixedMonthly || []).map((v) => -Number(v || 0)) },
     { label: "  Variable Costs", monthly: (costs.variableMonthly || []).map((v) => -Number(v || 0)) },
     { label: "  Direct Labor", monthly: (costs.directLaborMonthly || []).map((v) => -Number(v || 0)) },
+    { label: "  Superannuation", monthly: (statutoryLabor.superannuationMonthly || []).map((v) => -Number(v || 0)) },
+    { label: "  Payroll Tax", monthly: (statutoryLabor.payrollTaxMonthly || []).map((v) => -Number(v || 0)) },
     { label: "  Merchant Fees", monthly: (costs.merchantFeesMonthly || []).map((v) => -Number(v || 0)) },
-    { label: "  Other Operating", monthly: (costs.otherOperatingMonthly || []).map((v) => -Number(v || 0)) },
+    { label: "  Other Operating (Aggregate)", monthly: (costs.otherOperatingMonthly || []).map((v) => -Number(v || 0)) },
     { label: "  Marketing", monthly: (marketing.monthly || []).map((v) => -Number(v || 0)) },
     { label: "  Director Salary", monthly: (ownerAdjustments.salaryMonthly || []).map((v) => -Number(v || 0)) },
     { label: "EBITDA", monthly: pl.ebitdaMonthly, emphasis: "subtotal" },
@@ -477,12 +481,12 @@ function buildRevenueByStreamSection(raw, canonical) {
   active.forEach((line) => {
     const unitSeries = sales.monthly?.byLineUnits?.[line.id] || [];
     const netSeries = sales.monthly?.byLineNet?.[line.id] || [];
-    specs.push({ label: `${line.name || "(unnamed)"} — Units`, monthly: unitSeries, kind: "number" });
-    specs.push({ label: `${line.name || "(unnamed)"} — Net Revenue`, monthly: netSeries });
+    specs.push({ label: `${line.name || "(unnamed)"}: Units`, monthly: unitSeries, kind: "number" });
+    specs.push({ label: `${line.name || "(unnamed)"}: Net Revenue`, monthly: netSeries });
   });
   specs.push({ label: "Services Total (Net)", monthly: sales.monthly?.serviceNet, emphasis: "subtotal" });
   specs.push({ label: "Products Total (Net)", monthly: sales.monthly?.productNet, emphasis: "subtotal" });
-  specs.push({ label: "Revenue — All Streams (Net)", monthly: sales.monthly?.net, emphasis: "total" });
+  specs.push({ label: "Revenue, All Streams (Net)", monthly: sales.monthly?.net, emphasis: "total" });
 
   return statementPrintSection("Revenue By Stream", specs, {
     firstColHeader: "Stream",
@@ -508,16 +512,22 @@ function buildCollectionsSection(raw) {
 function buildCostsBreakdownSection(raw) {
   const costs = raw.costs || {};
   const marketing = raw.marketing || {};
+  const statutoryLabor = raw.statutoryLabor || {};
   const totalOpEx = sumSeries(
     costs.fixedMonthly, costs.variableMonthly, costs.directLaborMonthly,
-    costs.merchantFeesMonthly, costs.otherOperatingMonthly, marketing.monthly
+    costs.merchantFeesMonthly, costs.otherOperatingMonthly, costs.namedOperatingMonthly,
+    marketing.monthly,
+    statutoryLabor.superannuationMonthly, statutoryLabor.payrollTaxMonthly
   );
   const specs = [
-    { label: "Fixed Costs", monthly: costs.fixedMonthly },
+    { label: "Named Business Expenses", monthly: costs.namedOperatingMonthly },
+    { label: "Fixed Costs (Aggregate)", monthly: costs.fixedMonthly },
     { label: "Variable Costs", monthly: costs.variableMonthly },
     { label: "Direct Labor", monthly: costs.directLaborMonthly },
+    { label: "Superannuation", monthly: statutoryLabor.superannuationMonthly },
+    { label: "Payroll Tax", monthly: statutoryLabor.payrollTaxMonthly },
     { label: "Merchant Fees", monthly: costs.merchantFeesMonthly },
-    { label: "Other Operating", monthly: costs.otherOperatingMonthly },
+    { label: "Other Operating (Aggregate)", monthly: costs.otherOperatingMonthly },
     { label: "Marketing", monthly: marketing.monthly },
     { label: "Total Operating Expenses", monthly: totalOpEx, emphasis: "total" },
     { label: "Cost Of Goods Sold", monthly: costs.cogsMonthly, emphasis: "subtotal" }
@@ -662,9 +672,9 @@ function buildKeyRatiosSection(raw) {
 
   return `
     <section class="print-subsection">
-      <h3>Key Ratios — Yearly</h3>
+      <h3>Key Ratios: Yearly</h3>
       ${buildPrintPeriodTable({ rows, columns: yearLabels(), includeTotal: false, firstColHeader: "Ratio" })}
-      <h3>Key Ratios — Overall</h3>
+      <h3>Key Ratios: Overall</h3>
       ${overallTable}
     </section>
   `;
@@ -684,7 +694,7 @@ function buildPersonalCashFlowSection(raw) {
   for (let i = 0; i < closing.length; i += 1) {
     if (Number(closing[i]) === minClosing) { worstIdx = i; break; }
   }
-  const worstMonth = worstIdx >= 0 ? monthCols[worstIdx] : "—";
+  const worstMonth = worstIdx >= 0 ? monthCols[worstIdx] : "-";
   const totalInflowsY1 = Number(summary.totalInflows || 0);
   const totalDrawings = Number(summary.totalDrawingsFromBusiness || 0);
   const nonDrawingsInflows = Math.max(totalInflowsY1 - totalDrawings, 0);
@@ -699,8 +709,8 @@ function buildPersonalCashFlowSection(raw) {
   const avgMonthlyOutflows = Number(summary.averageMonthlyOutflows || 0);
 
   const requiredLine = requiredMonthly > 0
-    ? `${formatMoney(requiredMonthly)} / mo (${formatMoney(requiredAnnual)} / yr)${requiredIsExact ? " — exact minimum" : " — approximate"}`
-    : "None needed — Year 1 is already solvent";
+    ? `${formatMoney(requiredMonthly)} / mo (${formatMoney(requiredAnnual)} / yr)${requiredIsExact ? ", exact minimum" : ", approximate"}`
+    : "None needed, Year 1 is already solvent";
   const runwayLine = runwayMonths == null
     ? "No depletion in Year 1"
     : `${runwayMonths} month${runwayMonths === 1 ? "" : "s"} before first negative`;
@@ -781,9 +791,9 @@ function buildPersonalCashFlowSection(raw) {
          <tbody>${
            (pcf.sharedCostsRows || []).map((row) => `
              <tr>
-               <th>${escapeHtml(row.name || "—")}</th>
+               <th>${escapeHtml(row.name || "-")}</th>
                <td>${formatMoney(row.amount || 0)}</td>
-               <td>${escapeHtml(row.frequency || "—")}</td>
+               <td>${escapeHtml(row.frequency || "-")}</td>
                <td>${formatPercent(row.personalUsePercent || 0)}</td>
                <td>${formatMoney(row.personalMonthlyAmount || 0)}</td>
                <td>${formatMoney(row.businessMonthlyAmount || 0)}</td>
@@ -793,17 +803,66 @@ function buildPersonalCashFlowSection(raw) {
        </table>`
     : "";
 
+  // --- Phase 4.3.3: 3-year summary table to keep print output coherent
+  // with the on-screen Results Dashboard. Year 1 uses canonical PCF inputs;
+  // Year 2 and Year 3 project the same lifestyle pattern forward with each
+  // year's owner drawings from the Year Plan substituted in. The exact
+  // decision solver (required drawings uplift) remains a Year 1 calculation
+  // and is shown in the Year 1 decision summary below.
+  const perYear = pcf.perYear || {};
+  const perYearRow = (label, yk) => {
+    const s = perYear[yk]?.summary || {};
+    const runway = s.runwayMonths == null ? "No depletion" : `${s.runwayMonths} mo`;
+    return `
+      <tr>
+        <th>${label}</th>
+        <td>${formatMoney(perYear[yk]?.openingBalance || 0)}</td>
+        <td>${formatMoney(s.closingEndOfYear || 0)}</td>
+        <td>${formatMoney(s.minClosingBalance || 0)}</td>
+        <td>${String(s.monthsBelowZero || 0)}</td>
+        <td>${runway}</td>
+        <td>${formatMoney(s.totalDrawingsFromBusiness || 0)}</td>
+      </tr>
+    `;
+  };
+  const threeYearTable = `
+    <table class="print-table">
+      <thead>
+        <tr>
+          <th>Year</th>
+          <th>Opening</th>
+          <th>Closing (Dec)</th>
+          <th>Worst Month</th>
+          <th>Months Below Zero</th>
+          <th>Runway</th>
+          <th>Drawings From Business</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${perYearRow("Year 1", "year1")}
+        ${perYearRow("Year 2", "year2")}
+        ${perYearRow("Year 3", "year3")}
+      </tbody>
+    </table>
+  `;
+
   return `
     <section class="print-subsection">
-      <h3>Personal Cash Flow (Year 1)</h3>
+      <h3>Personal Cash Flow (3-Year View)</h3>
       <p class="print-helper">
-        Owner's personal liquidity model for Year 1. This models the owner's personal
-        cash, not business profit. "Drawings from business" is linked to business
-        drawings to avoid double counting.
+        Owner's personal liquidity model across all 3 years. This models the
+        owner's personal cash, not business profit. "Drawings from business"
+        is linked to business drawings to avoid double counting. Year 1 uses
+        your Personal Cash Flow inputs; Year 2 and Year 3 reuse the same
+        lifestyle pattern with each year's owner drawings from the Year Plan
+        substituted in. No CPI uplift is applied to personal outflows in
+        Y2 / Y3.
       </p>
-      <h4 class="print-sub-heading">Decision Summary</h4>
+      <h4 class="print-sub-heading">3-Year Summary</h4>
+      ${threeYearTable}
+      <h4 class="print-sub-heading">Year 1 Decision Summary</h4>
       ${summaryTable}
-      <h4 class="print-sub-heading">Monthly Detail</h4>
+      <h4 class="print-sub-heading">Year 1 Monthly Detail</h4>
       ${table}
       ${sharedCostsDetail}
     </section>
@@ -829,22 +888,22 @@ function buildScenarioInputsRecap(canonical) {
   const dl = (items) => `<table class="print-table print-table--kv"><tbody>${items.map(([k, v]) => `<tr><th>${escapeHtml(k)}</th><td>${v}</td></tr>`).join("")}</tbody></table>`;
 
   const setupBlock = dl([
-    ["Business Name", escapeHtml(setup.businessName || "—")],
-    ["Currency", escapeHtml(meta.currency || "—")],
-    ["Forecast Horizon (years)", escapeHtml(String(meta.forecastHorizonYears || "—"))],
-    ["Start Month", escapeHtml(String(setup.startMonth || "—"))],
-    ["Trading Structure", escapeHtml(String(setup.tradingStructure || "—"))],
-    ["GST Registration", escapeHtml(String(setup.gstRegistration || "—"))],
+    ["Business Name", escapeHtml(setup.businessName || "-")],
+    ["Currency", escapeHtml(meta.currency || "-")],
+    ["Forecast Horizon (years)", escapeHtml(String(meta.forecastHorizonYears || "-"))],
+    ["Start Month", escapeHtml(String(setup.startMonth || "-"))],
+    ["Trading Structure", escapeHtml(String(setup.tradingStructure || "-"))],
+    ["GST Registration", escapeHtml(String(setup.gstRegistration || "-"))],
     ["Charge GST On Sales", setup.chargeGstOnSales ? "Yes" : "No"],
-    ["BAS Frequency", escapeHtml(String(setup.basFrequency || "—"))],
-    ["Report Basis", escapeHtml(String(setup.reportBasis || "—"))],
+    ["BAS Frequency", escapeHtml(String(setup.basFrequency || "-"))],
+    ["Report Basis", escapeHtml(String(setup.reportBasis || "-"))],
     ["Opening Cash", formatMoney(setup.openingCash)]
   ]);
 
   const collectionsBlock = dl([
-    ["Default Debtor Days", escapeHtml(String(collectionsPolicy.defaultDebtorDays ?? "—"))],
+    ["Default Debtor Days", escapeHtml(String(collectionsPolicy.defaultDebtorDays ?? "-"))],
     ["Bad Debt %", formatPercent(collectionsPolicy.badDebtPct ?? 0)],
-    ["Receivables Basis", escapeHtml(String(collectionsPolicy.receivablesBasis || "—"))],
+    ["Receivables Basis", escapeHtml(String(collectionsPolicy.receivablesBasis || "-"))],
     ["Opening Receivables", formatMoney(collectionsPolicy.openingReceivables)],
     ["Collection Split (M, M+1, M+2)", (collectionsPolicy.collectionSplitByMonthBucket || []).map((v) => formatPercent(Number(v) * 100)).join(" / ")]
   ]);
@@ -856,22 +915,28 @@ function buildScenarioInputsRecap(canonical) {
       const cp = y.costProfile || {};
       const oa = y.ownerAdjustments || {};
       const mktg = (y.marketing?.lineItems || [])
-        .map((m) => `${formatMoney(m.monthlyAmount)}/mo, M${m.startMonth}-M${m.endMonth}`)
+        .map((m) => `${escapeHtml(m.label || "Marketing")}: ${formatMoney(m.monthlyAmount)}/mo, M${m.startMonth}-M${m.endMonth}${m.isActive === false ? " (inactive)" : ""}`)
+        .join("; ");
+      const bizExp = (y.businessExpenses?.lineItems || [])
+        .map((b) => `${escapeHtml(b.label || b.category || "Expense")} (${escapeHtml(b.category || "-")}): ${formatMoney(b.monthlyAmount)}/mo, M${b.startMonth}-M${b.endMonth}${b.isActive === false ? " (inactive)" : ""}`)
         .join("; ");
       return `<h4 class="print-sub-heading">Year ${idx + 1} Plan</h4>${dl([
         ["Growth %", formatPercent(a.growthPct ?? 0)],
         ["CPI %", formatPercent(a.cpiPct ?? 0)],
         ["Tax Rate %", formatPercent(a.taxRatePct ?? 0)],
         ["GST Rate %", formatPercent(a.gstRatePct ?? 0)],
-        ["Fixed Monthly Cost", formatMoney(cp.fixedMonthlyCost)],
+        ["Superannuation %", formatPercent(a.superannuationPct ?? 0)],
+        ["Payroll Tax %", formatPercent(a.payrollTaxPct ?? 0)],
+        ["Fixed Monthly Cost (Aggregate)", formatMoney(cp.fixedMonthlyCost)],
         ["Variable %", formatPercent(cp.variableCostPctOfRevenue ?? 0)],
         ["Direct Labor %", formatPercent(cp.directLaborPctOfRevenue ?? 0)],
-        ["Other Operating", formatMoney(cp.otherOperatingExpenseMonthly)],
-        ["Owner Model", escapeHtml(String(oa.modelType || "—"))],
+        ["Other Operating (Aggregate)", formatMoney(cp.otherOperatingExpenseMonthly)],
+        ["Owner Model", escapeHtml(String(oa.modelType || "-"))],
         ["Drawings Monthly", formatMoney(oa.ownerDrawingsMonthly)],
         ["Director Salary Monthly", formatMoney(oa.directorSalaryMonthly)],
         ["Distributions Monthly", formatMoney(oa.distributionsMonthly)],
-        ["Marketing", escapeHtml(mktg || "—")]
+        ["Named Business Expenses", bizExp ? bizExp : "-"],
+        ["Marketing Lines", mktg ? mktg : "-"]
       ])}`;
     })
     .join("");
@@ -880,11 +945,11 @@ function buildScenarioInputsRecap(canonical) {
     ? `<table class="print-table"><thead><tr><th>Line</th><th>Type</th><th>Unit Price</th><th>Default Units/mo</th><th>COGS</th><th>Merchant Fee</th><th>GST?</th><th>Active?</th><th>Seasonality (Jan-Dec)</th></tr></thead><tbody>${
       salesLines.map((line) => `
         <tr>
-          <th>${escapeHtml(line.name || "—")}</th>
-          <td>${escapeHtml(line.type || "—")}</td>
+          <th>${escapeHtml(line.name || "-")}</th>
+          <td>${escapeHtml(line.type || "-")}</td>
           <td>${formatMoney(line.unitPrice)}</td>
           <td>${formatNumber(line.defaultUnitsPerPeriod, 1)}</td>
-          <td>${line.costOfGoodsSold != null ? formatMoney(line.costOfGoodsSold) : (line.grossMarginPercent != null ? `${formatPercent(line.grossMarginPercent)} GM` : "—")}</td>
+          <td>${line.costOfGoodsSold != null ? formatMoney(line.costOfGoodsSold) : (line.grossMarginPercent != null ? `${formatPercent(line.grossMarginPercent)} GM` : "-")}</td>
           <td>${formatPercent(line.merchantFeePercent ?? 0)}</td>
           <td>${line.gstApplies ? "Yes" : "No"}</td>
           <td>${line.isActive === false ? "No" : "Yes"}</td>
@@ -898,12 +963,12 @@ function buildScenarioInputsRecap(canonical) {
     ? `<table class="print-table"><thead><tr><th>Asset</th><th>Category</th><th>Purchase</th><th>Purchase Month</th><th>Useful Life (Y)</th><th>Depreciation</th><th>Residual</th></tr></thead><tbody>${
       assetItems.map((a) => `
         <tr>
-          <th>${escapeHtml(a.name || "—")}</th>
-          <td>${escapeHtml(a.category || "—")}</td>
+          <th>${escapeHtml(a.name || "-")}</th>
+          <td>${escapeHtml(a.category || "-")}</td>
           <td>${formatMoney(a.purchaseAmount)}</td>
-          <td>M${escapeHtml(String(a.purchaseMonthIndex ?? "—"))}</td>
-          <td>${escapeHtml(String(a.usefulLifeYears ?? "—"))}</td>
-          <td>${escapeHtml(a.depreciationMethod || "—")}</td>
+          <td>M${escapeHtml(String(a.purchaseMonthIndex ?? "-"))}</td>
+          <td>${escapeHtml(String(a.usefulLifeYears ?? "-"))}</td>
+          <td>${escapeHtml(a.depreciationMethod || "-")}</td>
           <td>${formatMoney(a.residualValue)}</td>
         </tr>
       `).join("")
@@ -914,13 +979,13 @@ function buildScenarioInputsRecap(canonical) {
     ? `<table class="print-table"><thead><tr><th>Loan</th><th>Principal</th><th>Rate</th><th>Term (Y)</th><th>Frequency</th><th>Drawdown Month</th><th>Repayment Start</th></tr></thead><tbody>${
       loanItems.map((l) => `
         <tr>
-          <th>${escapeHtml(l.name || "—")}</th>
+          <th>${escapeHtml(l.name || "-")}</th>
           <td>${formatMoney(l.principal)}</td>
           <td>${formatPercent(l.annualInterestRate ?? 0)}</td>
-          <td>${escapeHtml(String(l.termYears ?? "—"))}</td>
-          <td>${escapeHtml(l.repaymentFrequency || "—")}</td>
-          <td>M${escapeHtml(String(l.drawdownMonthIndex ?? "—"))}</td>
-          <td>M${escapeHtml(String(l.repaymentStartMonthIndex ?? "—"))}</td>
+          <td>${escapeHtml(String(l.termYears ?? "-"))}</td>
+          <td>${escapeHtml(l.repaymentFrequency || "-")}</td>
+          <td>M${escapeHtml(String(l.drawdownMonthIndex ?? "-"))}</td>
+          <td>M${escapeHtml(String(l.repaymentStartMonthIndex ?? "-"))}</td>
         </tr>
       `).join("")
     }</tbody></table>`
@@ -931,7 +996,7 @@ function buildScenarioInputsRecap(canonical) {
         rows.map((row) => {
           const cells = (row.monthly || []).slice(0, 12).map((v) => `<td>${formatMoney(v || 0)}</td>`).join("");
           const total = (row.monthly || []).reduce((a, b) => a + Number(b || 0), 0);
-          return `<tr><th>${escapeHtml(row.label || "—")}</th>${cells}<td>${formatMoney(total)}</td></tr>`;
+          return `<tr><th>${escapeHtml(row.label || "-")}</th>${cells}<td>${formatMoney(total)}</td></tr>`;
         }).join("")
       }</tbody></table>`
     : `<p class='print-helper'>${emptyMsg}</p>`;
@@ -942,9 +1007,9 @@ function buildScenarioInputsRecap(canonical) {
     ? `<table class="print-table"><thead><tr><th>Name</th><th>Amount</th><th>Frequency</th><th>Personal Use %</th></tr></thead><tbody>${
       personalSharedCosts.map((c) => `
         <tr>
-          <th>${escapeHtml(c.name || "—")}</th>
+          <th>${escapeHtml(c.name || "-")}</th>
           <td>${formatMoney(c.amount ?? 0)}</td>
-          <td>${escapeHtml(c.frequency || "—")}</td>
+          <td>${escapeHtml(c.frequency || "-")}</td>
           <td>${formatPercent(c.personalUsePercent ?? 0)}</td>
         </tr>
       `).join("")
@@ -956,9 +1021,9 @@ function buildScenarioInputsRecap(canonical) {
        <table class="print-table"><thead><tr><th>Item</th><th>Amount</th><th>Frequency</th><th>Personal Use %</th></tr></thead><tbody>${
       legacyPersonalItems.map((p) => `
         <tr>
-          <th>${escapeHtml(p.name || "—")}</th>
+          <th>${escapeHtml(p.name || "-")}</th>
           <td>${formatMoney(p.amount)}</td>
-          <td>${escapeHtml(p.frequency || "—")}</td>
+          <td>${escapeHtml(p.frequency || "-")}</td>
           <td>${formatPercent(p.personalUsePercent ?? 0)}</td>
         </tr>
       `).join("")
@@ -972,7 +1037,7 @@ function buildScenarioInputsRecap(canonical) {
     <h4 class="print-sub-heading">Revenue Streams (${salesLines.length})</h4>${salesTable}
     <h4 class="print-sub-heading">Assets (${assetItems.length})</h4>${assetsTable}
     <h4 class="print-sub-heading">Loans (${loanItems.length})</h4>${loansTable}
-    <h4 class="print-sub-heading">Personal Cash Flow — Opening Balance: ${formatMoney(personalCashFlow.openingBalance ?? 0)}${personalCashFlow.year1Only ? " · Year 1 Only" : ""}</h4>
+    <h4 class="print-sub-heading">Personal Cash Flow, Opening Balance: ${formatMoney(personalCashFlow.openingBalance ?? 0)}</h4>
     <h4 class="print-sub-heading">Personal Inflows (${personalInflows.length})</h4>${inflowsBlock}
     <h4 class="print-sub-heading">Personal Outflows (${personalOutflows.length})</h4>${outflowsBlock}
     <h4 class="print-sub-heading">Shared Costs (${personalSharedCosts.length})</h4>${sharedCostsBlock}
@@ -1093,7 +1158,7 @@ export async function openPrintSummary(snapshot) {
     { id: "break_even", title: "Break-Even Analysis", html: buildBreakEvenSection(raw, result.derived) },
     { id: "tax_gst", title: "Tax & GST", html: buildTaxGstSection(raw) },
     { id: "key_ratios", title: "Key Ratios", html: buildKeyRatiosSection(raw) },
-    { id: "personal_cash_flow", title: "Personal Cash Flow (Year 1)", html: buildPersonalCashFlowSection(raw) },
+    { id: "personal_cash_flow", title: "Personal Cash Flow (3-Year View)", html: buildPersonalCashFlowSection(raw) },
     { id: "warnings_and_issues", title: "Warnings And Issues", html: buildWarningsTable(result.warnings || []) },
     { id: "scenario_inputs", title: "Scenario Inputs Recap", html: buildScenarioInputsRecap(canonical) }
   ];

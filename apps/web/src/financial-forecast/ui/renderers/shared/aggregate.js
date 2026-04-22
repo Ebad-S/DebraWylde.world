@@ -108,7 +108,7 @@ export function buildPeriodTable({ rows = [], columns = [], includeTotal = false
         if (row.totalOverride != null) {
           totalCell = `<td>${formatCellValue(row.totalOverride, kind)}</td>`;
         } else if (kind === "percent" || row.skipTotal) {
-          totalCell = "<td>&mdash;</td>";
+          totalCell = "<td>-</td>";
         } else {
           totalCell = `<td>${formatCellValue(sumArray(row.values || []), kind)}</td>`;
         }

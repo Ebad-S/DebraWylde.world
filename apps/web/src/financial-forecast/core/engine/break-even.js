@@ -8,14 +8,21 @@ function computeBreakEvenRevenue(revenue, variableCosts, fixedCosts) {
   return fixedCosts / ratio;
 }
 
-export function calculateBreakEven(normalizedState, sales, costs, marketing) {
+export function calculateBreakEven(normalizedState, sales, costs, marketing, statutoryLabor) {
   const revenueByYear = sumByYear(sales.monthly.net, normalizedState.timeline);
   const serviceRevenueByYear = sumByYear(sales.monthly.serviceNet, normalizedState.timeline);
   const productRevenueByYear = sumByYear(sales.monthly.productNet, normalizedState.timeline);
 
   const variableByYear = sumByYear(costs.variableMonthly, normalizedState.timeline);
   const fixedByYear = sumByYear(
-    costs.fixedMonthly.map((v, i) => Number(v || 0) + Number(costs.otherOperatingMonthly[i] || 0) + Number(marketing.monthly[i] || 0)),
+    costs.fixedMonthly.map((v, i) =>
+      Number(v || 0) +
+      Number(costs.otherOperatingMonthly[i] || 0) +
+      Number(costs.namedOperatingMonthly?.[i] || 0) +
+      Number(marketing.monthly[i] || 0) +
+      Number(statutoryLabor?.superannuationMonthly?.[i] || 0) +
+      Number(statutoryLabor?.payrollTaxMonthly?.[i] || 0)
+    ),
     normalizedState.timeline
   );
 

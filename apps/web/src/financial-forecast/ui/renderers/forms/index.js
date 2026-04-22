@@ -1,6 +1,8 @@
 import { escapeHtml } from "../shared/format.js";
+import { BUSINESS_EXPENSE_CATEGORY_LABELS, ENUMS } from "../../../core/enums.js";
 
 const MONTH_LABELS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const BUSINESS_EXPENSE_CATEGORIES = ENUMS.BUSINESS_EXPENSE_CATEGORY;
 
 function tooltipText(label) {
   if (label.includes("(%)")) return `${label}: Enter a percentage value.`;
@@ -161,28 +163,155 @@ function renderCollections(state) {
   `;
 }
 
-function renderYearPlan(state, yearKey, title) {
+function renderBusinessExpensesPanel(yearKey, lineItems) {
+  const categoryOptions = BUSINESS_EXPENSE_CATEGORIES
+    .map((cat) => `<option value="${cat}">${escapeHtml(BUSINESS_EXPENSE_CATEGORY_LABELS[cat])}</option>`)
+    .join("");
+
+  const rows = (lineItems || [])
+    .map((row, index) => {
+      const basePath = `years.${yearKey}.businessExpenses.lineItems.${index}`;
+      const categorySelect = `
+        <select data-path="${basePath}.category">
+          ${BUSINESS_EXPENSE_CATEGORIES
+            .map((cat) => `<option value="${cat}" ${cat === row.category ? "selected" : ""}>${escapeHtml(BUSINESS_EXPENSE_CATEGORY_LABELS[cat])}</option>`)
+            .join("")}
+        </select>
+      `;
+      return `
+        <tr data-row-id="${escapeHtml(row.id || "")}">
+          <td>${categorySelect}</td>
+          <td><input type="text" data-path="${basePath}.label" value="${escapeHtml(row.label ?? "")}" placeholder="e.g. Office rent"></td>
+          <td><input type="number" step="1" data-path="${basePath}.monthlyAmount" value="${Number(row.monthlyAmount || 0)}"></td>
+          <td><input type="number" step="1" min="1" max="12" data-path="${basePath}.startMonth" value="${Number(row.startMonth || 1)}"></td>
+          <td><input type="number" step="1" min="1" max="12" data-path="${basePath}.endMonth" value="${Number(row.endMonth || 12)}"></td>
+          <td style="text-align:center"><input type="checkbox" data-path="${basePath}.isActive" data-type="boolean" ${row.isActive === false ? "" : "checked"}></td>
+          <td><input type="text" data-path="${basePath}.notes" value="${escapeHtml(row.notes ?? "")}" placeholder="Notes (optional)"></td>
+          <td><button class="btn btn--outline" data-action="remove-business-expense" data-year-key="${yearKey}" data-index="${index}">Remove</button></td>
+        </tr>
+      `;
+    })
+    .join("");
+
+  return `
+    <article class="ff-subpanel">
+      <div class="ff-subsection-head">
+        <h3>Business Expenses</h3>
+      </div>
+      <p class="ff-helper">
+        List your real business costs the way you think about them: Rent, Insurance, Xero, Phone, Bookkeeper, etc.
+        Each row is a flat monthly amount that applies between its Start and End month (inclusive).
+      </p>
+      <div class="ff-pcf-table-wrap">
+        <table class="ff-pcf-table">
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>Label</th>
+              <th>Monthly ($)</th>
+              <th>Start M</th>
+              <th>End M</th>
+              <th>Active</th>
+              <th>Notes</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>${rows || `<tr><td colspan="8" class="ff-pcf-col-label">No business expenses yet. Add the ones that matter to you.</td></tr>`}</tbody>
+        </table>
+      </div>
+      <div class="ff-bottom-actions">
+        <button class="btn btn--outline" data-action="add-business-expense" data-year-key="${yearKey}">Add Business Expense</button>
+      </div>
+      <datalist id="ff-bexp-categories-${yearKey}">${categoryOptions}</datalist>
+    </article>
+  `;
+}
+
+function renderMarketingPanel(yearKey, lineItems) {
+  const rows = (lineItems || [])
+    .map((row, index) => {
+      const basePath = `years.${yearKey}.marketing.lineItems.${index}`;
+      return `
+        <tr data-row-id="${escapeHtml(row.id || "")}">
+          <td><input type="text" data-path="${basePath}.label" value="${escapeHtml(row.label ?? "")}" placeholder="e.g. Facebook ads"></td>
+          <td><input type="number" step="1" data-path="${basePath}.monthlyAmount" value="${Number(row.monthlyAmount || 0)}"></td>
+          <td><input type="number" step="1" min="1" max="12" data-path="${basePath}.startMonth" value="${Number(row.startMonth || 1)}"></td>
+          <td><input type="number" step="1" min="1" max="12" data-path="${basePath}.endMonth" value="${Number(row.endMonth || 12)}"></td>
+          <td style="text-align:center"><input type="checkbox" data-path="${basePath}.isActive" data-type="boolean" ${row.isActive === false ? "" : "checked"}></td>
+          <td><button class="btn btn--outline" data-action="remove-marketing-line" data-year-key="${yearKey}" data-index="${index}">Remove</button></td>
+        </tr>
+      `;
+    })
+    .join("");
+
+  return `
+    <article class="ff-subpanel">
+      <div class="ff-subsection-head">
+        <h3>Marketing &amp; Advertising</h3>
+      </div>
+      <p class="ff-helper">
+        Add as many marketing spends as you want (e.g. a launch campaign in Q1, ongoing ads all year). Each line applies within its Start/End month window.
+      </p>
+      <div class="ff-pcf-table-wrap">
+        <table class="ff-pcf-table">
+          <thead>
+            <tr>
+              <th>Label</th>
+              <th>Monthly ($)</th>
+              <th>Start M</th>
+              <th>End M</th>
+              <th>Active</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>${rows || `<tr><td colspan="6" class="ff-pcf-col-label">No marketing lines yet.</td></tr>`}</tbody>
+        </table>
+      </div>
+      <div class="ff-bottom-actions">
+        <button class="btn btn--outline" data-action="add-marketing-line" data-year-key="${yearKey}">Add Marketing Line</button>
+      </div>
+    </article>
+  `;
+}
+
+function renderYearPlan(state, yearKey) {
   const year = state.years[yearKey];
-  const marketingLine = year.marketing.lineItems[0] || { monthlyAmount: 0, startMonth: 1, endMonth: 12 };
   return `
     <section class="ff-panel">
-      <div class="ff-grid ff-grid--3">
-        ${field("Growth (%)", `years.${yearKey}.assumptions.growthPct`, year.assumptions.growthPct, "number", `step="0.01"`)}
-        ${field("CPI (%)", `years.${yearKey}.assumptions.cpiPct`, year.assumptions.cpiPct, "number", `step="0.01"`)}
-        ${field("Tax Rate (%)", `years.${yearKey}.assumptions.taxRatePct`, year.assumptions.taxRatePct, "number", `step="0.01" data-tax-rate="1"`)}
-        ${field("GST Rate (%)", `years.${yearKey}.assumptions.gstRatePct`, year.assumptions.gstRatePct, "number", `step="0.01"`)}
-        ${field("Fixed Monthly Costs ($)", `years.${yearKey}.costProfile.fixedMonthlyCost`, year.costProfile.fixedMonthlyCost, "number", `step="1"`)}
-        ${field("Variable Cost (%) Of Revenue", `years.${yearKey}.costProfile.variableCostPctOfRevenue`, year.costProfile.variableCostPctOfRevenue, "number", `step="0.01"`)}
-        ${field("Direct Labor (%) Of Revenue", `years.${yearKey}.costProfile.directLaborPctOfRevenue`, year.costProfile.directLaborPctOfRevenue, "number", `step="0.01"`)}
-        ${field("Other Operating Monthly ($)", `years.${yearKey}.costProfile.otherOperatingExpenseMonthly`, year.costProfile.otherOperatingExpenseMonthly, "number", `step="1"`)}
-        ${selectField("Owner Model", `years.${yearKey}.ownerAdjustments.modelType`, year.ownerAdjustments.modelType, ["sole_trader_drawings", "company_salary_and_distributions", "hybrid"])}
-        ${field("Owner Drawings Monthly ($)", `years.${yearKey}.ownerAdjustments.ownerDrawingsMonthly`, year.ownerAdjustments.ownerDrawingsMonthly, "number", `step="1"`)}
-        ${field("Director Salary Monthly ($)", `years.${yearKey}.ownerAdjustments.directorSalaryMonthly`, year.ownerAdjustments.directorSalaryMonthly, "number", `step="1"`)}
-        ${field("Distributions Monthly ($)", `years.${yearKey}.ownerAdjustments.distributionsMonthly`, year.ownerAdjustments.distributionsMonthly, "number", `step="1"`)}
-        ${field("Marketing Monthly Amount ($)", `years.${yearKey}.marketing.lineItems.0.monthlyAmount`, marketingLine.monthlyAmount, "number", `step="1"`)}
-        ${field("Marketing Start Month (1-12)", `years.${yearKey}.marketing.lineItems.0.startMonth`, marketingLine.startMonth, "number", `step="1"`)}
-        ${field("Marketing End Month (1-12)", `years.${yearKey}.marketing.lineItems.0.endMonth`, marketingLine.endMonth, "number", `step="1"`)}
-      </div>
+      <article class="ff-subpanel">
+        <div class="ff-subsection-head"><h3>Year Assumptions</h3></div>
+        <div class="ff-grid ff-grid--3">
+          ${field("Growth (%)", `years.${yearKey}.assumptions.growthPct`, year.assumptions.growthPct, "number", `step="0.01"`)}
+          ${field("CPI (%)", `years.${yearKey}.assumptions.cpiPct`, year.assumptions.cpiPct, "number", `step="0.01"`)}
+          ${field("Tax Rate (%)", `years.${yearKey}.assumptions.taxRatePct`, year.assumptions.taxRatePct, "number", `step="0.01" data-tax-rate="1"`)}
+          ${field("GST Rate (%)", `years.${yearKey}.assumptions.gstRatePct`, year.assumptions.gstRatePct, "number", `step="0.01"`)}
+          ${field("Variable Cost (%) Of Revenue", `years.${yearKey}.costProfile.variableCostPctOfRevenue`, year.costProfile.variableCostPctOfRevenue, "number", `step="0.01"`, "Variable costs that scale directly with revenue (e.g. production consumables).")}
+          ${field("Direct Labor (%) Of Revenue", `years.${yearKey}.costProfile.directLaborPctOfRevenue`, year.costProfile.directLaborPctOfRevenue, "number", `step="0.01"`, "Wages that scale with revenue (e.g. service billable staff, production labor).")}
+          ${field("Superannuation (%)", `years.${yearKey}.assumptions.superannuationPct`, year.assumptions.superannuationPct ?? 0, "number", `step="0.01"`, "Applies on top of Direct Labor and Director Salary. Leave 0 if not applicable.")}
+          ${field("Payroll Tax (%)", `years.${yearKey}.assumptions.payrollTaxPct`, year.assumptions.payrollTaxPct ?? 0, "number", `step="0.01"`, "Planning approximation. Applies on top of Direct Labor and Director Salary; real-world payroll tax has state thresholds not modelled here.")}
+        </div>
+      </article>
+
+      ${renderBusinessExpensesPanel(yearKey, year.businessExpenses?.lineItems || [])}
+
+      ${renderMarketingPanel(yearKey, year.marketing?.lineItems || [])}
+
+      <article class="ff-subpanel">
+        <div class="ff-subsection-head"><h3>Fallback Aggregate Costs</h3></div>
+        <p class="ff-helper">
+          Use these only for costs <em>not</em> already listed in <strong>Business Expenses</strong> or <strong>Marketing</strong> above.
+          There is no automatic overlap detection, whatever you enter here is added on top.
+        </p>
+        <div class="ff-grid ff-grid--2">
+          ${field("Fixed Monthly Costs ($)", `years.${yearKey}.costProfile.fixedMonthlyCost`, year.costProfile.fixedMonthlyCost, "number", `step="1"`, "Flat monthly overhead not captured by any named Business Expense above.")}
+          ${field("Other Operating Monthly ($)", `years.${yearKey}.costProfile.otherOperatingExpenseMonthly`, year.costProfile.otherOperatingExpenseMonthly, "number", `step="1"`, "Residual operating costs that you haven't split into named Business Expenses.")}
+        </div>
+      </article>
+
+      <p class="ff-helper">
+        Owner compensation (drawings, director salary, distributions) is now entered once on the <strong>Owner &amp; Personal Inputs</strong> step
+        to keep a single source of truth.
+      </p>
     </section>
   `;
 }
@@ -261,8 +390,10 @@ function renderPersonal(state) {
     <section class="ff-panel">
       <p class="ff-helper">
         Choose how the owner extracts money from the business for each year. Personal household spending now lives in the
-        next step, <strong>Personal Cash Flow</strong>, where the Year 1 "Drawings from business" row is treated as the
-        authoritative cash extraction.
+        next step, <strong>Personal Cash Flow</strong>. For Year 1, the PCF "Drawings from business" row is treated as
+        the authoritative cash extraction if populated. For Year 2 and Year 3, the Year Plan drawings figure below is
+        used directly. If the model you pick excludes drawings (e.g. company salary + distributions), any drawings set
+        on that year will be flagged on the Results Dashboard.
       </p>
       ${ownerModelsByYear}
     </section>
@@ -399,17 +530,20 @@ function renderPersonalCashFlow(state) {
     <section class="ff-panel">
       <p class="ff-helper">
         <strong>This models your personal cash, not business profit.</strong>
-        Enter your household money movements for Year 1. The "Drawings from business"
-        row is the cash the business pays to you &mdash; whatever you enter here becomes
-        the Year 1 drawings on the business side, so the two views stay in sync.
+        Enter your household money movements for Year 1. These rows describe your
+        personal lifestyle pattern and are the authoritative input for Year 1. The
+        Results Dashboard projects the same pattern forward into Year 2 and Year 3,
+        substituting each year's drawings from the Year Plan. The "Drawings from
+        business" row is the cash the business pays to you in Year 1, whatever you
+        enter here becomes the Year 1 drawings on the business side, so the two
+        views stay in sync.
       </p>
       <div class="ff-grid ff-grid--2">
         ${field("Opening Personal Bank Balance ($)", "personalCashFlow.openingBalance", pcf.openingBalance ?? 0, "number", `step="1"`)}
-        ${field("Year 1 Only", "personalCashFlow.year1Only", pcf.year1Only, "checkbox")}
       </div>
 
       <article class="ff-subpanel">
-        <div class="ff-subsection-head"><h3>Personal Inflows (Year 1)</h3></div>
+        <div class="ff-subsection-head"><h3>Personal Inflows (Year 1 pattern)</h3></div>
         ${renderPcfTable({
           title: "Inflow",
           rows: inflows,
@@ -421,7 +555,7 @@ function renderPersonalCashFlow(state) {
       </article>
 
       <article class="ff-subpanel">
-        <div class="ff-subsection-head"><h3>Personal Outflows (Year 1)</h3></div>
+        <div class="ff-subsection-head"><h3>Personal Outflows (Year 1 pattern)</h3></div>
         ${renderPcfTable({
           title: "Outflow",
           rows: outflows,
@@ -449,9 +583,9 @@ export function renderFormStep(stepId, state) {
   if (stepId === "setup") return renderSetup(state);
   if (stepId === "sales-details") return renderSalesDetails(state);
   if (stepId === "collections") return renderCollections(state);
-  if (stepId === "year-1") return renderYearPlan(state, "year1", "Year 1 Plan");
-  if (stepId === "year-2") return renderYearPlan(state, "year2", "Year 2 Plan");
-  if (stepId === "year-3") return renderYearPlan(state, "year3", "Year 3 Plan");
+  if (stepId === "year-1") return renderYearPlan(state, "year1");
+  if (stepId === "year-2") return renderYearPlan(state, "year2");
+  if (stepId === "year-3") return renderYearPlan(state, "year3");
   if (stepId === "assets-loans") return renderAssetsLoans(state);
   if (stepId === "personal") return renderPersonal(state);
   if (stepId === "personal-cash-flow") return renderPersonalCashFlow(state);

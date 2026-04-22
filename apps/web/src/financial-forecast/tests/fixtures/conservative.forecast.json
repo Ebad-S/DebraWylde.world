@@ -1,0 +1,238 @@
+{
+  "schemaVersion": "2.1.0",
+  "savedAt": "2026-04-21T00:00:00.000Z",
+  "currentStep": 0,
+  "visitedSteps": [0],
+  "data": {
+    "meta": {
+      "appVersion": "0.4.0",
+      "schemaVersion": "2.1.0",
+      "createdAt": "2026-04-21T00:00:00.000Z",
+      "updatedAt": "2026-04-21T00:00:00.000Z",
+      "forecastHorizonYears": 3,
+      "currency": "AUD"
+    },
+    "setup": {
+      "businessName": "Corner Studio (Conservative)",
+      "startMonth": "jul",
+      "tradingStructure": "sole_trader",
+      "gstRegistration": "registered",
+      "chargeGstOnSales": true,
+      "basFrequency": "quarterly",
+      "openingCash": 8000,
+      "reportBasis": "dual_view"
+    },
+    "years": {
+      "year1": {
+        "assumptions": {
+          "growthPct": 0,
+          "cpiPct": 3,
+          "taxRatePct": 25,
+          "gstRatePct": 10,
+          "superannuationPct": 11.5,
+          "payrollTaxPct": 0
+        },
+        "salesForecast": { "lineOverrides": [] },
+        "marketing": {
+          "lineItems": [
+            { "id": "mkt_c_y1_a", "label": "Local print & flyers", "monthlyAmount": 150, "startMonth": 1, "endMonth": 12, "isActive": true },
+            { "id": "mkt_c_y1_b", "label": "Instagram boosted posts", "monthlyAmount": 200, "startMonth": 1, "endMonth": 12, "isActive": true }
+          ]
+        },
+        "businessExpenses": {
+          "lineItems": [
+            { "id": "be_c_y1_rent", "category": "rent_lease", "label": "Studio rent (shared)", "monthlyAmount": 850, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "Half of a shared creative studio lease" },
+            { "id": "be_c_y1_insurance", "category": "insurance", "label": "Public liability + contents", "monthlyAmount": 180, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_c_y1_phone", "category": "internet_phone", "label": "Mobile + NBN business share", "monthlyAmount": 110, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_c_y1_book", "category": "accounting_bookkeeping", "label": "Bookkeeper (monthly retainer)", "monthlyAmount": 220, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_c_y1_saas", "category": "software_saas", "label": "Xero + Canva + Adobe", "monthlyAmount": 120, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_c_y1_travel", "category": "travel_motor_vehicle", "label": "Vehicle running costs (business share)", "monthlyAmount": 180, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_c_y1_training", "category": "training_compliance_licences", "label": "Licences + one short course", "monthlyAmount": 60, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "Averaged monthly" }
+          ]
+        },
+        "costProfile": {
+          "fixedMonthlyCost": 0,
+          "variableCostPctOfRevenue": 0,
+          "directLaborPctOfRevenue": 0,
+          "otherOperatingExpenseMonthly": 150
+        },
+        "ownerAdjustments": {
+          "modelType": "sole_trader_drawings",
+          "ownerDrawingsMonthly": 3500,
+          "directorSalaryMonthly": 0,
+          "distributionsMonthly": 0,
+          "notes": "Owner draws a steady amount from the business to cover household."
+        }
+      },
+      "year2": {
+        "assumptions": {
+          "growthPct": 5,
+          "cpiPct": 3,
+          "taxRatePct": 25,
+          "gstRatePct": 10,
+          "superannuationPct": 12,
+          "payrollTaxPct": 0
+        },
+        "salesForecast": { "lineOverrides": [] },
+        "marketing": {
+          "lineItems": [
+            { "id": "mkt_c_y2_a", "label": "Local print & flyers", "monthlyAmount": 180, "startMonth": 1, "endMonth": 12, "isActive": true },
+            { "id": "mkt_c_y2_b", "label": "Instagram + TikTok ads", "monthlyAmount": 260, "startMonth": 1, "endMonth": 12, "isActive": true }
+          ]
+        },
+        "businessExpenses": {
+          "lineItems": [
+            { "id": "be_c_y2_rent", "category": "rent_lease", "label": "Studio rent (shared)", "monthlyAmount": 900, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_c_y2_insurance", "category": "insurance", "label": "Public liability + contents", "monthlyAmount": 195, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_c_y2_phone", "category": "internet_phone", "label": "Mobile + NBN business share", "monthlyAmount": 115, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_c_y2_book", "category": "accounting_bookkeeping", "label": "Bookkeeper (monthly retainer)", "monthlyAmount": 240, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_c_y2_saas", "category": "software_saas", "label": "Xero + Canva + Adobe", "monthlyAmount": 130, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_c_y2_travel", "category": "travel_motor_vehicle", "label": "Vehicle running costs (business share)", "monthlyAmount": 190, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_c_y2_training", "category": "training_compliance_licences", "label": "Licences + CPD", "monthlyAmount": 80, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" }
+          ]
+        },
+        "costProfile": {
+          "fixedMonthlyCost": 0,
+          "variableCostPctOfRevenue": 0,
+          "directLaborPctOfRevenue": 0,
+          "otherOperatingExpenseMonthly": 160
+        },
+        "ownerAdjustments": {
+          "modelType": "sole_trader_drawings",
+          "ownerDrawingsMonthly": 3800,
+          "directorSalaryMonthly": 0,
+          "distributionsMonthly": 0,
+          "notes": ""
+        }
+      },
+      "year3": {
+        "assumptions": {
+          "growthPct": 5,
+          "cpiPct": 3,
+          "taxRatePct": 25,
+          "gstRatePct": 10,
+          "superannuationPct": 12,
+          "payrollTaxPct": 0
+        },
+        "salesForecast": { "lineOverrides": [] },
+        "marketing": {
+          "lineItems": [
+            { "id": "mkt_c_y3_a", "label": "Local print & flyers", "monthlyAmount": 200, "startMonth": 1, "endMonth": 12, "isActive": true },
+            { "id": "mkt_c_y3_b", "label": "Paid social ads", "monthlyAmount": 320, "startMonth": 1, "endMonth": 12, "isActive": true }
+          ]
+        },
+        "businessExpenses": {
+          "lineItems": [
+            { "id": "be_c_y3_rent", "category": "rent_lease", "label": "Studio rent (shared)", "monthlyAmount": 950, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_c_y3_insurance", "category": "insurance", "label": "Public liability + contents", "monthlyAmount": 205, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_c_y3_phone", "category": "internet_phone", "label": "Mobile + NBN business share", "monthlyAmount": 120, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_c_y3_book", "category": "accounting_bookkeeping", "label": "Bookkeeper (monthly retainer)", "monthlyAmount": 260, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_c_y3_saas", "category": "software_saas", "label": "Xero + Canva + Adobe", "monthlyAmount": 140, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_c_y3_travel", "category": "travel_motor_vehicle", "label": "Vehicle running costs (business share)", "monthlyAmount": 200, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_c_y3_training", "category": "training_compliance_licences", "label": "Licences + CPD", "monthlyAmount": 80, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" }
+          ]
+        },
+        "costProfile": {
+          "fixedMonthlyCost": 0,
+          "variableCostPctOfRevenue": 0,
+          "directLaborPctOfRevenue": 0,
+          "otherOperatingExpenseMonthly": 170
+        },
+        "ownerAdjustments": {
+          "modelType": "sole_trader_drawings",
+          "ownerDrawingsMonthly": 4000,
+          "directorSalaryMonthly": 0,
+          "distributionsMonthly": 0,
+          "notes": ""
+        }
+      }
+    },
+    "salesDetails": {
+      "lines": [
+        {
+          "id": "svc_coaching",
+          "name": "1:1 Coaching Session",
+          "type": "service",
+          "unitPrice": 220,
+          "defaultUnitsPerPeriod": 28,
+          "seasonalityByMonth": [0.8, 0.9, 1.0, 1.0, 1.0, 1.1, 1.0, 1.0, 1.1, 1.0, 0.9, 0.7],
+          "costOfGoodsSold": null,
+          "grossMarginPercent": 85,
+          "paymentMethod": "card",
+          "merchantFeePercent": 1.6,
+          "collectionProfile": "default",
+          "gstApplies": true,
+          "isActive": true
+        },
+        {
+          "id": "prod_ebook",
+          "name": "Printable Workbook",
+          "type": "product",
+          "unitPrice": 39,
+          "defaultUnitsPerPeriod": 30,
+          "seasonalityByMonth": [0.7, 0.8, 1.0, 1.0, 1.0, 1.2, 1.2, 1.1, 1.0, 1.0, 0.9, 0.8],
+          "costOfGoodsSold": 8,
+          "grossMarginPercent": null,
+          "paymentMethod": "card",
+          "merchantFeePercent": 2.2,
+          "collectionProfile": "default",
+          "gstApplies": true,
+          "isActive": true
+        }
+      ]
+    },
+    "collectionsPolicy": {
+      "defaultDebtorDays": 14,
+      "badDebtPct": 0.5,
+      "collectionSplitByMonthBucket": [0.85, 0.12, 0.03],
+      "receivablesBasis": "gross",
+      "openingReceivables": 0
+    },
+    "assets": {
+      "items": [
+        {
+          "id": "asset_laptop",
+          "name": "Laptop (refurb)",
+          "category": "it_hardware",
+          "purchaseAmount": 1800,
+          "purchaseMonthIndex": 1,
+          "usefulLifeYears": 3,
+          "depreciationMethod": "straight_line",
+          "residualValue": 0
+        }
+      ]
+    },
+    "loans": { "items": [] },
+    "personalCashFlow": {
+      "year1Only": true,
+      "openingBalance": 2500,
+      "inflows": [
+        { "id": "drawings-from-business", "label": "Drawings from business", "monthly": [3500, 3500, 3500, 3500, 3500, 3500, 3500, 3500, 3500, 3500, 3500, 3500], "custom": false },
+        { "id": "part-time-casual-work", "label": "Part-time / casual work", "monthly": [600, 600, 600, 600, 600, 600, 600, 600, 600, 600, 600, 600], "custom": false },
+        { "id": "spouse-partner-wages", "label": "Spouse / partner wages", "monthly": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "custom": false },
+        { "id": "govt-payments", "label": "Govt payments", "monthly": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "custom": false },
+        { "id": "other-income", "label": "Other income", "monthly": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "custom": false }
+      ],
+      "outflows": [
+        { "id": "groceries", "label": "Groceries", "monthly": [900, 900, 900, 900, 900, 900, 900, 900, 900, 900, 900, 900], "custom": false },
+        { "id": "entertainment-recreation", "label": "Entertainment / recreation", "monthly": [120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 200, 200], "custom": false },
+        { "id": "clothing-footwear", "label": "Clothing / footwear", "monthly": [40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 80, 120], "custom": false },
+        { "id": "health-other-insurance", "label": "Health / other insurance", "monthly": [260, 260, 260, 260, 260, 260, 260, 260, 260, 260, 260, 260], "custom": false },
+        { "id": "council-rates", "label": "Council rates", "monthly": [0, 0, 550, 0, 0, 550, 0, 0, 550, 0, 0, 550], "custom": false },
+        { "id": "medical-expenses", "label": "Medical expenses", "monthly": [60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60], "custom": false },
+        { "id": "fuel-personal-use", "label": "Fuel for personal use", "monthly": [120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120], "custom": false },
+        { "id": "gym-membership", "label": "Gym membership", "monthly": [65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65], "custom": false },
+        { "id": "subscriptions-netflix", "label": "Streaming subscriptions", "monthly": [35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35], "custom": false },
+        { "id": "personal-loan-repayments", "label": "Personal loan repayments", "monthly": [280, 280, 280, 280, 280, 280, 280, 280, 280, 280, 280, 280], "custom": false }
+      ],
+      "sharedCosts": [
+        { "id": "sc_rent", "name": "Household Rent", "amount": 2200, "frequency": "monthly", "personalUsePercent": 85, "custom": false },
+        { "id": "sc_phone", "name": "Mobile", "amount": 80, "frequency": "monthly", "personalUsePercent": 40, "custom": false },
+        { "id": "sc_internet", "name": "Internet", "amount": 90, "frequency": "monthly", "personalUsePercent": 60, "custom": false },
+        { "id": "sc_elec", "name": "Utilities - Electricity", "amount": 320, "frequency": "quarterly", "personalUsePercent": 85, "custom": false }
+      ]
+    },
+    "derived": { "monthly": {}, "annual": {}, "quarterly": {}, "summaryCards": {}, "charts": {} },
+    "warnings": []
+  }
+}

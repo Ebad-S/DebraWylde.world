@@ -1,6 +1,6 @@
 import { round2 } from "./timeline.js";
 
-export function calculateCashFlow(normalizedState, collections, costs, marketing, ownerAdjustments, loans, assets, profitLoss) {
+export function calculateCashFlow(normalizedState, collections, costs, marketing, ownerAdjustments, loans, assets, profitLoss, statutoryLabor) {
   const monthCount = normalizedState.timeline.monthCount;
 
   const netOperatingMonthly = Array(monthCount).fill(0);
@@ -24,8 +24,11 @@ export function calculateCashFlow(normalizedState, collections, costs, marketing
       Number(costs.merchantFeesMonthly[i] || 0) +
       Number(costs.otherOperatingMonthly[i] || 0) +
       Number(costs.fixedMonthly[i] || 0) +
+      Number(costs.namedOperatingMonthly?.[i] || 0) +
       Number(marketing.monthly[i] || 0) +
       Number(ownerAdjustments.salaryMonthly[i] || 0) +
+      Number(statutoryLabor?.superannuationMonthly?.[i] || 0) +
+      Number(statutoryLabor?.payrollTaxMonthly?.[i] || 0) +
       interestPaid +
       taxPaid;
 

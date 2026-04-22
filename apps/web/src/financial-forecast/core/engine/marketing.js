@@ -8,6 +8,7 @@ export function calculateMarketing(normalizedState) {
     const lineItems = years[period.yearKey]?.marketing?.lineItems || [];
     let total = 0;
     lineItems.forEach((item) => {
+      if (item.isActive === false) return;
       const start = Number(item.startMonth || 1);
       const end = Number(item.endMonth || 12);
       const amount = Number(item.monthlyAmount || 0);

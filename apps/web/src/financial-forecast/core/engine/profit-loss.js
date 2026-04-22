@@ -1,6 +1,6 @@
 import { round2 } from "./timeline.js";
 
-export function calculateProfitAndLoss(normalizedState, sales, costs, marketing, ownerAdjustments, loans, assets, collections) {
+export function calculateProfitAndLoss(normalizedState, sales, costs, marketing, ownerAdjustments, loans, assets, collections, statutoryLabor) {
   const monthCount = normalizedState.timeline.monthCount;
   const revenueMonthly = Array(monthCount).fill(0);
   const cogsMonthly = Array(monthCount).fill(0);
@@ -20,14 +20,20 @@ export function calculateProfitAndLoss(normalizedState, sales, costs, marketing,
     const grossProfit = revenue - cogs;
 
     const badDebt = Number(collections?.badDebtWrittenOffMonthly?.[i] || 0);
+    const namedOperating = Number(costs.namedOperatingMonthly?.[i] || 0);
+    const superannuation = Number(statutoryLabor?.superannuationMonthly?.[i] || 0);
+    const payrollTax = Number(statutoryLabor?.payrollTaxMonthly?.[i] || 0);
     const operatingExpenses =
       Number(costs.variableMonthly[i] || 0) +
       Number(costs.fixedMonthly[i] || 0) +
       Number(costs.otherOperatingMonthly[i] || 0) +
       Number(costs.directLaborMonthly[i] || 0) +
       Number(costs.merchantFeesMonthly[i] || 0) +
+      namedOperating +
       Number(marketing.monthly[i] || 0) +
       Number(ownerAdjustments.salaryMonthly[i] || 0) +
+      superannuation +
+      payrollTax +
       badDebt;
 
     const ebitda = grossProfit - operatingExpenses;

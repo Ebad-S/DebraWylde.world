@@ -1,0 +1,325 @@
+{
+  "schemaVersion": "2.1.0",
+  "savedAt": "2026-04-21T00:00:00.000Z",
+  "currentStep": 0,
+  "visitedSteps": [0],
+  "data": {
+    "meta": {
+      "appVersion": "0.4.0",
+      "schemaVersion": "2.1.0",
+      "createdAt": "2026-04-21T00:00:00.000Z",
+      "updatedAt": "2026-04-21T00:00:00.000Z",
+      "forecastHorizonYears": 3,
+      "currency": "AUD"
+    },
+    "setup": {
+      "businessName": "Pulse Collective Pty Ltd (Aggressive)",
+      "startMonth": "jul",
+      "tradingStructure": "company",
+      "gstRegistration": "registered",
+      "chargeGstOnSales": true,
+      "basFrequency": "monthly",
+      "openingCash": 120000,
+      "reportBasis": "dual_view"
+    },
+    "years": {
+      "year1": {
+        "assumptions": {
+          "growthPct": 0,
+          "cpiPct": 3.5,
+          "taxRatePct": 25,
+          "gstRatePct": 10,
+          "superannuationPct": 11.5,
+          "payrollTaxPct": 4.85
+        },
+        "salesForecast": { "lineOverrides": [] },
+        "marketing": {
+          "lineItems": [
+            { "id": "mkt_a_y1_google", "label": "Google Ads (search + pmax)", "monthlyAmount": 4500, "startMonth": 1, "endMonth": 12, "isActive": true },
+            { "id": "mkt_a_y1_meta", "label": "Meta Ads (FB + IG)", "monthlyAmount": 3200, "startMonth": 1, "endMonth": 12, "isActive": true },
+            { "id": "mkt_a_y1_linkedin", "label": "LinkedIn Ads (ABM)", "monthlyAmount": 2500, "startMonth": 2, "endMonth": 12, "isActive": true },
+            { "id": "mkt_a_y1_launch", "label": "Launch campaign (video + PR)", "monthlyAmount": 6000, "startMonth": 1, "endMonth": 3, "isActive": true },
+            { "id": "mkt_a_y1_influencer", "label": "Influencer / affiliate program", "monthlyAmount": 1800, "startMonth": 4, "endMonth": 12, "isActive": true },
+            { "id": "mkt_a_y1_events", "label": "Industry events + sponsorships", "monthlyAmount": 2200, "startMonth": 3, "endMonth": 11, "isActive": true }
+          ]
+        },
+        "businessExpenses": {
+          "lineItems": [
+            { "id": "be_a_y1_rent", "category": "rent_lease", "label": "HQ office lease", "monthlyAmount": 5200, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "A-grade CBD-edge office" },
+            { "id": "be_a_y1_utils", "category": "utilities", "label": "Electricity + water + gas", "monthlyAmount": 780, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_a_y1_phone", "category": "internet_phone", "label": "Business fibre + mobile fleet", "monthlyAmount": 650, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_a_y1_insurance", "category": "insurance", "label": "PI + cyber + D&O + public liability", "monthlyAmount": 1100, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_a_y1_account", "category": "accounting_bookkeeping", "label": "External CFO + accountants", "monthlyAmount": 1800, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_a_y1_legal", "category": "legal_consulting", "label": "Commercial legal + advisors", "monthlyAmount": 900, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_a_y1_saas", "category": "software_saas", "label": "Full SaaS stack (Salesforce, HubSpot, Gong, MS365, Atlassian)", "monthlyAmount": 2400, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_a_y1_web", "category": "website_hosting", "label": "Cloud hosting + CDN + domains", "monthlyAmount": 450, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_a_y1_travel", "category": "travel_motor_vehicle", "label": "Client + sales travel", "monthlyAmount": 1600, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_a_y1_repairs", "category": "repairs_maintenance", "label": "Office + equipment", "monthlyAmount": 380, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_a_y1_bank", "category": "bank_merchant_finance_fees", "label": "Bank + finance fees (non-transactional)", "monthlyAmount": 320, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_a_y1_train", "category": "training_compliance_licences", "label": "Training + compliance + licences", "monthlyAmount": 550, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_a_y1_onboard", "category": "miscellaneous", "label": "New-hire onboarding (kit + training)", "monthlyAmount": 1200, "startMonth": 1, "endMonth": 6, "isActive": true, "notes": "Front-loaded hiring push" }
+          ]
+        },
+        "costProfile": {
+          "fixedMonthlyCost": 0,
+          "variableCostPctOfRevenue": 0,
+          "directLaborPctOfRevenue": 32,
+          "otherOperatingExpenseMonthly": 800
+        },
+        "ownerAdjustments": {
+          "modelType": "company_salary_and_distributions",
+          "ownerDrawingsMonthly": 0,
+          "directorSalaryMonthly": 9000,
+          "distributionsMonthly": 3500,
+          "notes": "Director draws salary; distributions paid from retained profits. Payroll tax applies (>$1.2M threshold projected)."
+        }
+      },
+      "year2": {
+        "assumptions": {
+          "growthPct": 35,
+          "cpiPct": 3.5,
+          "taxRatePct": 25,
+          "gstRatePct": 10,
+          "superannuationPct": 12,
+          "payrollTaxPct": 4.85
+        },
+        "salesForecast": { "lineOverrides": [] },
+        "marketing": {
+          "lineItems": [
+            { "id": "mkt_a_y2_google", "label": "Google Ads", "monthlyAmount": 6000, "startMonth": 1, "endMonth": 12, "isActive": true },
+            { "id": "mkt_a_y2_meta", "label": "Meta Ads", "monthlyAmount": 4200, "startMonth": 1, "endMonth": 12, "isActive": true },
+            { "id": "mkt_a_y2_linkedin", "label": "LinkedIn Ads (ABM)", "monthlyAmount": 3500, "startMonth": 1, "endMonth": 12, "isActive": true },
+            { "id": "mkt_a_y2_influencer", "label": "Influencer / affiliate program", "monthlyAmount": 2600, "startMonth": 1, "endMonth": 12, "isActive": true },
+            { "id": "mkt_a_y2_events", "label": "Industry events + sponsorships", "monthlyAmount": 3000, "startMonth": 2, "endMonth": 11, "isActive": true },
+            { "id": "mkt_a_y2_pr", "label": "PR retainer", "monthlyAmount": 3800, "startMonth": 1, "endMonth": 12, "isActive": true }
+          ]
+        },
+        "businessExpenses": {
+          "lineItems": [
+            { "id": "be_a_y2_rent", "category": "rent_lease", "label": "HQ office lease", "monthlyAmount": 5500, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_a_y2_utils", "category": "utilities", "label": "Electricity + water + gas", "monthlyAmount": 850, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_a_y2_phone", "category": "internet_phone", "label": "Business fibre + mobile fleet", "monthlyAmount": 780, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_a_y2_insurance", "category": "insurance", "label": "PI + cyber + D&O + public liability", "monthlyAmount": 1250, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_a_y2_account", "category": "accounting_bookkeeping", "label": "External CFO + accountants", "monthlyAmount": 2100, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_a_y2_legal", "category": "legal_consulting", "label": "Commercial legal + advisors", "monthlyAmount": 1100, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_a_y2_saas", "category": "software_saas", "label": "Full SaaS stack", "monthlyAmount": 3100, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_a_y2_web", "category": "website_hosting", "label": "Cloud hosting + CDN + domains", "monthlyAmount": 620, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "Scaling infra" },
+            { "id": "be_a_y2_travel", "category": "travel_motor_vehicle", "label": "Client + sales travel", "monthlyAmount": 2100, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_a_y2_repairs", "category": "repairs_maintenance", "label": "Office + equipment", "monthlyAmount": 450, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_a_y2_bank", "category": "bank_merchant_finance_fees", "label": "Bank + finance fees", "monthlyAmount": 420, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_a_y2_train", "category": "training_compliance_licences", "label": "Training + compliance + licences", "monthlyAmount": 680, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" }
+          ]
+        },
+        "costProfile": {
+          "fixedMonthlyCost": 0,
+          "variableCostPctOfRevenue": 0,
+          "directLaborPctOfRevenue": 34,
+          "otherOperatingExpenseMonthly": 900
+        },
+        "ownerAdjustments": {
+          "modelType": "company_salary_and_distributions",
+          "ownerDrawingsMonthly": 0,
+          "directorSalaryMonthly": 10000,
+          "distributionsMonthly": 5000,
+          "notes": ""
+        }
+      },
+      "year3": {
+        "assumptions": {
+          "growthPct": 25,
+          "cpiPct": 3.5,
+          "taxRatePct": 25,
+          "gstRatePct": 10,
+          "superannuationPct": 12,
+          "payrollTaxPct": 4.85
+        },
+        "salesForecast": { "lineOverrides": [] },
+        "marketing": {
+          "lineItems": [
+            { "id": "mkt_a_y3_google", "label": "Google Ads", "monthlyAmount": 7200, "startMonth": 1, "endMonth": 12, "isActive": true },
+            { "id": "mkt_a_y3_meta", "label": "Meta Ads", "monthlyAmount": 4800, "startMonth": 1, "endMonth": 12, "isActive": true },
+            { "id": "mkt_a_y3_linkedin", "label": "LinkedIn Ads (ABM)", "monthlyAmount": 4200, "startMonth": 1, "endMonth": 12, "isActive": true },
+            { "id": "mkt_a_y3_influencer", "label": "Influencer / affiliate program", "monthlyAmount": 3000, "startMonth": 1, "endMonth": 12, "isActive": true },
+            { "id": "mkt_a_y3_events", "label": "Industry events + sponsorships", "monthlyAmount": 3500, "startMonth": 2, "endMonth": 11, "isActive": true },
+            { "id": "mkt_a_y3_pr", "label": "PR retainer", "monthlyAmount": 4200, "startMonth": 1, "endMonth": 12, "isActive": true }
+          ]
+        },
+        "businessExpenses": {
+          "lineItems": [
+            { "id": "be_a_y3_rent", "category": "rent_lease", "label": "HQ office lease", "monthlyAmount": 5800, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_a_y3_utils", "category": "utilities", "label": "Electricity + water + gas", "monthlyAmount": 920, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_a_y3_phone", "category": "internet_phone", "label": "Business fibre + mobile fleet", "monthlyAmount": 880, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_a_y3_insurance", "category": "insurance", "label": "PI + cyber + D&O + public liability", "monthlyAmount": 1400, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_a_y3_account", "category": "accounting_bookkeeping", "label": "External CFO + accountants", "monthlyAmount": 2400, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_a_y3_legal", "category": "legal_consulting", "label": "Commercial legal + advisors", "monthlyAmount": 1250, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_a_y3_saas", "category": "software_saas", "label": "Full SaaS stack", "monthlyAmount": 3700, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_a_y3_web", "category": "website_hosting", "label": "Cloud hosting + CDN + domains", "monthlyAmount": 780, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_a_y3_travel", "category": "travel_motor_vehicle", "label": "Client + sales travel", "monthlyAmount": 2500, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_a_y3_repairs", "category": "repairs_maintenance", "label": "Office + equipment", "monthlyAmount": 520, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_a_y3_bank", "category": "bank_merchant_finance_fees", "label": "Bank + finance fees", "monthlyAmount": 500, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" },
+            { "id": "be_a_y3_train", "category": "training_compliance_licences", "label": "Training + compliance + licences", "monthlyAmount": 800, "startMonth": 1, "endMonth": 12, "isActive": true, "notes": "" }
+          ]
+        },
+        "costProfile": {
+          "fixedMonthlyCost": 0,
+          "variableCostPctOfRevenue": 0,
+          "directLaborPctOfRevenue": 35,
+          "otherOperatingExpenseMonthly": 1000
+        },
+        "ownerAdjustments": {
+          "modelType": "company_salary_and_distributions",
+          "ownerDrawingsMonthly": 0,
+          "directorSalaryMonthly": 11000,
+          "distributionsMonthly": 7000,
+          "notes": ""
+        }
+      }
+    },
+    "salesDetails": {
+      "lines": [
+        {
+          "id": "svc_enterprise",
+          "name": "Enterprise Engagement",
+          "type": "service",
+          "unitPrice": 18000,
+          "defaultUnitsPerPeriod": 2,
+          "seasonalityByMonth": [0.5, 0.8, 1.0, 1.2, 1.2, 1.3, 1.2, 1.1, 1.3, 1.3, 1.1, 0.7],
+          "costOfGoodsSold": null,
+          "grossMarginPercent": 62,
+          "paymentMethod": "bank_transfer",
+          "merchantFeePercent": 0,
+          "collectionProfile": "default",
+          "gstApplies": true,
+          "isActive": true
+        },
+        {
+          "id": "svc_growth",
+          "name": "Growth Retainer",
+          "type": "service",
+          "unitPrice": 8500,
+          "defaultUnitsPerPeriod": 6,
+          "seasonalityByMonth": [0.7, 0.9, 1.0, 1.1, 1.1, 1.1, 1.0, 1.0, 1.2, 1.2, 1.1, 0.9],
+          "costOfGoodsSold": null,
+          "grossMarginPercent": 58,
+          "paymentMethod": "bank_transfer",
+          "merchantFeePercent": 0,
+          "collectionProfile": "default",
+          "gstApplies": true,
+          "isActive": true
+        },
+        {
+          "id": "prod_platform",
+          "name": "Platform Subscription",
+          "type": "product",
+          "unitPrice": 495,
+          "defaultUnitsPerPeriod": 120,
+          "seasonalityByMonth": [0.8, 0.9, 1.0, 1.05, 1.1, 1.15, 1.1, 1.1, 1.2, 1.2, 1.1, 0.9],
+          "costOfGoodsSold": 75,
+          "grossMarginPercent": null,
+          "paymentMethod": "card",
+          "merchantFeePercent": 2.0,
+          "collectionProfile": "default",
+          "gstApplies": true,
+          "isActive": true
+        }
+      ]
+    },
+    "collectionsPolicy": {
+      "defaultDebtorDays": 45,
+      "badDebtPct": 1.2,
+      "collectionSplitByMonthBucket": [0.45, 0.4, 0.15],
+      "receivablesBasis": "gross",
+      "openingReceivables": 38000
+    },
+    "assets": {
+      "items": [
+        {
+          "id": "asset_fleet",
+          "name": "Team equipment fleet",
+          "category": "it_hardware",
+          "purchaseAmount": 48000,
+          "purchaseMonthIndex": 1,
+          "usefulLifeYears": 3,
+          "depreciationMethod": "straight_line",
+          "residualValue": 0
+        },
+        {
+          "id": "asset_fitout",
+          "name": "HQ fitout + furniture",
+          "category": "furniture",
+          "purchaseAmount": 65000,
+          "purchaseMonthIndex": 2,
+          "usefulLifeYears": 7,
+          "depreciationMethod": "straight_line",
+          "residualValue": 5000
+        },
+        {
+          "id": "asset_platform",
+          "name": "Platform IP (capitalised build)",
+          "category": "intangible",
+          "purchaseAmount": 80000,
+          "purchaseMonthIndex": 4,
+          "usefulLifeYears": 5,
+          "depreciationMethod": "straight_line",
+          "residualValue": 0
+        }
+      ]
+    },
+    "loans": {
+      "items": [
+        {
+          "id": "loan_growth",
+          "name": "Growth facility",
+          "principal": 150000,
+          "annualInterestRate": 9.25,
+          "termYears": 4,
+          "repaymentFrequency": "monthly",
+          "drawdownMonthIndex": 1,
+          "repaymentStartMonthIndex": 2
+        }
+      ]
+    },
+    "personalCashFlow": {
+      "year1Only": true,
+      "openingBalance": 15000,
+      "inflows": [
+        { "id": "drawings-from-business", "label": "Drawings from business", "monthly": [9000, 9000, 9000, 9000, 9000, 9000, 9000, 9000, 9000, 9000, 9000, 9000], "custom": false },
+        { "id": "part-time-casual-work", "label": "Part-time / casual work", "monthly": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "custom": false },
+        { "id": "spouse-partner-wages", "label": "Spouse / partner wages", "monthly": [5800, 5800, 5800, 5800, 5800, 5800, 5800, 5800, 5800, 5800, 5800, 5800], "custom": false },
+        { "id": "govt-payments", "label": "Govt payments", "monthly": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "custom": false },
+        { "id": "other-income", "label": "Other income (investment)", "monthly": [350, 350, 350, 350, 350, 350, 350, 350, 350, 350, 350, 350], "custom": false }
+      ],
+      "outflows": [
+        { "id": "groceries", "label": "Groceries", "monthly": [1800, 1800, 1800, 1800, 1800, 1800, 1800, 1800, 1800, 1800, 2100, 2500], "custom": false },
+        { "id": "entertainment-recreation", "label": "Entertainment / recreation", "monthly": [500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 800, 800], "custom": false },
+        { "id": "clothing-footwear", "label": "Clothing / footwear", "monthly": [180, 180, 180, 180, 180, 180, 180, 180, 180, 180, 350, 450], "custom": false },
+        { "id": "home-insurance", "label": "Home insurance", "monthly": [260, 260, 260, 260, 260, 260, 260, 260, 260, 260, 260, 260], "custom": false },
+        { "id": "health-other-insurance", "label": "Health + life insurance", "monthly": [620, 620, 620, 620, 620, 620, 620, 620, 620, 620, 620, 620], "custom": false },
+        { "id": "council-rates", "label": "Council rates", "monthly": [0, 0, 1100, 0, 0, 1100, 0, 0, 1100, 0, 0, 1100], "custom": false },
+        { "id": "medical-expenses", "label": "Medical expenses", "monthly": [220, 220, 220, 220, 220, 220, 220, 220, 220, 220, 220, 220], "custom": false },
+        { "id": "fuel-personal-use", "label": "Fuel for personal use", "monthly": [280, 280, 280, 280, 280, 280, 280, 280, 280, 280, 280, 280], "custom": false },
+        { "id": "childcare", "label": "Childcare", "monthly": [2800, 2800, 2800, 2800, 2800, 2800, 2800, 2800, 2800, 2800, 2800, 2800], "custom": false },
+        { "id": "school-fees-education", "label": "Private school fees", "monthly": [0, 0, 3200, 0, 0, 3200, 0, 0, 3200, 0, 0, 3200], "custom": false },
+        { "id": "gym-membership", "label": "Gym + wellness", "monthly": [240, 240, 240, 240, 240, 240, 240, 240, 240, 240, 240, 240], "custom": false },
+        { "id": "holidays", "label": "Holidays", "monthly": [0, 0, 0, 0, 0, 0, 3500, 0, 0, 0, 0, 4500], "custom": false },
+        { "id": "subscriptions-netflix", "label": "Subscriptions", "monthly": [120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120], "custom": false },
+        { "id": "vehicle-loan", "label": "Vehicle loan", "monthly": [980, 980, 980, 980, 980, 980, 980, 980, 980, 980, 980, 980], "custom": false },
+        { "id": "personal-loan-repayments", "label": "Personal loan repayments", "monthly": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "custom": false },
+        { "id": "personal-credit-card-repayments", "label": "Personal credit card repayments", "monthly": [600, 600, 600, 600, 600, 600, 600, 600, 600, 600, 600, 600], "custom": false }
+      ],
+      "sharedCosts": [
+        { "id": "sc_a_rent", "name": "Household Mortgage", "amount": 5200, "frequency": "monthly", "personalUsePercent": 100, "custom": true },
+        { "id": "sc_a_phone", "name": "Mobile", "amount": 180, "frequency": "monthly", "personalUsePercent": 40, "custom": false },
+        { "id": "sc_a_internet", "name": "Internet", "amount": 130, "frequency": "monthly", "personalUsePercent": 60, "custom": false },
+        { "id": "sc_a_elec", "name": "Utilities - Electricity", "amount": 720, "frequency": "quarterly", "personalUsePercent": 80, "custom": false },
+        { "id": "sc_a_gas", "name": "Utilities - Gas", "amount": 380, "frequency": "quarterly", "personalUsePercent": 90, "custom": false },
+        { "id": "sc_a_water", "name": "Utilities - Water", "amount": 260, "frequency": "quarterly", "personalUsePercent": 95, "custom": false },
+        { "id": "sc_a_mv_reg", "name": "Motor vehicle - Registration", "amount": 1250, "frequency": "annual", "personalUsePercent": 60, "custom": false },
+        { "id": "sc_a_mv_ins", "name": "Motor vehicle - Insurance", "amount": 2100, "frequency": "annual", "personalUsePercent": 60, "custom": false },
+        { "id": "sc_a_mv_rm", "name": "Motor vehicle - Repairs and Maintenance", "amount": 420, "frequency": "quarterly", "personalUsePercent": 60, "custom": false }
+      ]
+    },
+    "derived": { "monthly": {}, "annual": {}, "quarterly": {}, "summaryCards": {}, "charts": {} },
+    "warnings": []
+  }
+}

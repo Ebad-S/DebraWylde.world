@@ -1,6 +1,8 @@
 import {
   createEmptyAssetItem,
+  createEmptyBusinessExpenseItem,
   createEmptyLoanItem,
+  createEmptyMarketingLine,
   createEmptyPersonalCashFlowItem,
   createEmptySalesLine,
   createEmptySharedCostItem,
@@ -17,6 +19,7 @@ import { renderSidebar } from "./navigation.js";
 import { createStateStore } from "./state-store.js";
 import { STEP_DEFINITIONS, getStepByIndex, getNextStepIndex, getPreviousStepIndex } from "./step-router.js";
 import { renderResultsStep, renderReviewStep, hydrateDashboardCharts } from "./renderers/dashboard/index.js";
+import { renderScenarioTestingStep, hydrateScenarioTestingStep } from "./renderers/scenario-testing/index.js";
 import { renderFormStep } from "./renderers/forms/index.js";
 import { badge } from "./renderers/shared/components.js";
 import { openPrintSummary } from "./export-summary.js";
@@ -63,10 +66,27 @@ const refs = {};
 
 function ensureStructures(canonical) {
   ["year1", "year2", "year3"].forEach((yearKey) => {
-    if (!canonical.years[yearKey].marketing.lineItems) canonical.years[yearKey].marketing.lineItems = [];
-    if (!canonical.years[yearKey].marketing.lineItems[0]) {
-      canonical.years[yearKey].marketing.lineItems[0] = { monthlyAmount: 0, startMonth: 1, endMonth: 12 };
+    const year = canonical.years[yearKey];
+    if (!year.marketing || typeof year.marketing !== "object") year.marketing = {};
+    if (!Array.isArray(year.marketing.lineItems)) year.marketing.lineItems = [];
+    // Back-compat: older scenarios stored a single marketing line without
+    // id/label/isActive. Upgrade them in place rather than silently migrating
+    // to a guessed category.
+    year.marketing.lineItems = year.marketing.lineItems.map((m) => ({
+      id: m.id || `mktg_${Math.random().toString(36).slice(2, 10)}`,
+      label: m.label || "",
+      monthlyAmount: Number(m.monthlyAmount || 0),
+      startMonth: Number(m.startMonth || 1),
+      endMonth: Number(m.endMonth || 12),
+      isActive: m.isActive === false ? false : true
+    }));
+    if (!year.businessExpenses || typeof year.businessExpenses !== "object") {
+      year.businessExpenses = { lineItems: [] };
     }
+    if (!Array.isArray(year.businessExpenses.lineItems)) year.businessExpenses.lineItems = [];
+    if (!year.assumptions || typeof year.assumptions !== "object") year.assumptions = {};
+    if (year.assumptions.superannuationPct == null) year.assumptions.superannuationPct = 0;
+    if (year.assumptions.payrollTaxPct == null) year.assumptions.payrollTaxPct = 0;
   });
   if (!canonical.collectionsPolicy.collectionSplitByMonthBucket) {
     canonical.collectionsPolicy.collectionSplitByMonthBucket = [0.7, 0.2, 0.1];
@@ -165,6 +185,7 @@ function stepMeetsCompletionThreshold(stepId, snapshot) {
   if (stepId === "personal-cash-flow") return true;
   if (stepId === "review") return true;
   if (stepId === "results") return true;
+  if (stepId === "scenario-testing") return true;
   return false;
 }
 
@@ -377,6 +398,12 @@ function renderStepContent(snapshot, stepStatusMap, preserve = true) {
         canonical: snapshot.data
       });
       hydrateDashboardCharts(root, { engine: snapshot.meta.engine, canonical: snapshot.data });
+    } else if (currentStep.id === "scenario-testing") {
+      refs.stepContent.innerHTML = renderScenarioTestingStep({
+        engine: snapshot.meta.engine,
+        canonical: snapshot.data
+      });
+      hydrateScenarioTestingStep(root);
     } else {
       refs.stepContent.innerHTML = renderFormStep(currentStep.id, snapshot.data);
     }
@@ -442,6 +469,31 @@ function isLikelyForecastCanonical(payload) {
   return true;
 }
 
+function hydrateFromParsedJson(parsed, sourceLabel) {
+  const payload = parsed?.data && isLikelyForecastCanonical(parsed.data)
+    ? parsed
+    : isLikelyForecastCanonical(parsed?.canonical)
+      ? { data: parsed.canonical, savedAt: parsed.savedAt, currentStep: parsed.currentStep, visitedSteps: parsed.visitedSteps }
+      : isLikelyForecastCanonical(parsed)
+        ? { data: parsed }
+        : null;
+  if (!payload) {
+    setImportStatus(`${sourceLabel} does not look like a forecast scenario.`, "error");
+    return false;
+  }
+  store.hydrateSavedState(payload);
+  store.mutateCanonical((canonical) => ensureStructures(canonical));
+  const fresh = runLenient(store.getState().data);
+  store.setEngineResult("lenient", fresh);
+  touchedSteps.clear();
+  completedSteps.clear();
+  STEP_DEFINITIONS.forEach((_, index) => updateCompletionForStep(index));
+  autosave.flushSave();
+  refreshLayout({ rerenderStep: true, preserve: false });
+  setImportStatus(`Imported "${sourceLabel}". Ready to continue.`, "ok");
+  return true;
+}
+
 function importJsonFile(file) {
   if (!file) return;
   const reader = new FileReader();
@@ -450,27 +502,7 @@ function importJsonFile(file) {
     try {
       const text = String(reader.result || "");
       const parsed = JSON.parse(text);
-      const payload = parsed?.data && isLikelyForecastCanonical(parsed.data)
-        ? parsed
-        : isLikelyForecastCanonical(parsed?.canonical)
-          ? { data: parsed.canonical, savedAt: parsed.savedAt, currentStep: parsed.currentStep, visitedSteps: parsed.visitedSteps }
-          : isLikelyForecastCanonical(parsed)
-            ? { data: parsed }
-            : null;
-      if (!payload) {
-        setImportStatus("This JSON file does not look like a forecast scenario.", "error");
-        return;
-      }
-      store.hydrateSavedState(payload);
-      store.mutateCanonical((canonical) => ensureStructures(canonical));
-      const fresh = runLenient(store.getState().data);
-      store.setEngineResult("lenient", fresh);
-      touchedSteps.clear();
-      completedSteps.clear();
-      STEP_DEFINITIONS.forEach((_, index) => updateCompletionForStep(index));
-      autosave.flushSave();
-      refreshLayout({ rerenderStep: true, preserve: false });
-      setImportStatus(`Imported "${file.name}". Ready to continue.`, "ok");
+      hydrateFromParsedJson(parsed, file.name);
     } catch (err) {
       console.warn("[ff] json import failed", err);
       setImportStatus("That file is not valid JSON.", "error");
@@ -621,6 +653,60 @@ root.addEventListener("click", (event) => {
     touchedSteps.add(store.getState().currentStep);
     const index = Number(trigger.dataset.index);
     store.mutateCanonical((canonical) => canonical.assets.items.splice(index, 1));
+    runLenientDebounced();
+    refreshLayout({ rerenderStep: true, preserve: true });
+    return;
+  }
+  if (action === "add-business-expense") {
+    touchedSteps.add(store.getState().currentStep);
+    const yearKey = trigger.dataset.yearKey;
+    if (!yearKey) return;
+    store.mutateCanonical((canonical) => {
+      const year = canonical.years[yearKey];
+      if (!year.businessExpenses) year.businessExpenses = { lineItems: [] };
+      if (!Array.isArray(year.businessExpenses.lineItems)) year.businessExpenses.lineItems = [];
+      year.businessExpenses.lineItems.push(createEmptyBusinessExpenseItem());
+    });
+    runLenientDebounced();
+    refreshLayout({ rerenderStep: true, preserve: true });
+    return;
+  }
+  if (action === "remove-business-expense") {
+    touchedSteps.add(store.getState().currentStep);
+    const yearKey = trigger.dataset.yearKey;
+    const index = Number(trigger.dataset.index);
+    if (!yearKey || !Number.isFinite(index)) return;
+    store.mutateCanonical((canonical) => {
+      const list = canonical.years[yearKey]?.businessExpenses?.lineItems;
+      if (Array.isArray(list)) list.splice(index, 1);
+    });
+    runLenientDebounced();
+    refreshLayout({ rerenderStep: true, preserve: true });
+    return;
+  }
+  if (action === "add-marketing-line") {
+    touchedSteps.add(store.getState().currentStep);
+    const yearKey = trigger.dataset.yearKey;
+    if (!yearKey) return;
+    store.mutateCanonical((canonical) => {
+      const year = canonical.years[yearKey];
+      if (!year.marketing) year.marketing = { lineItems: [] };
+      if (!Array.isArray(year.marketing.lineItems)) year.marketing.lineItems = [];
+      year.marketing.lineItems.push(createEmptyMarketingLine());
+    });
+    runLenientDebounced();
+    refreshLayout({ rerenderStep: true, preserve: true });
+    return;
+  }
+  if (action === "remove-marketing-line") {
+    touchedSteps.add(store.getState().currentStep);
+    const yearKey = trigger.dataset.yearKey;
+    const index = Number(trigger.dataset.index);
+    if (!yearKey || !Number.isFinite(index)) return;
+    store.mutateCanonical((canonical) => {
+      const list = canonical.years[yearKey]?.marketing?.lineItems;
+      if (Array.isArray(list)) list.splice(index, 1);
+    });
     runLenientDebounced();
     refreshLayout({ rerenderStep: true, preserve: true });
     return;

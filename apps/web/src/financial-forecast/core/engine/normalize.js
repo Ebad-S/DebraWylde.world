@@ -40,6 +40,14 @@ function zeroMonths() {
   return [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 }
 
+function clampMonth(value, fallback) {
+  const numeric = Math.floor(Number(value));
+  if (!Number.isFinite(numeric)) return fallback;
+  if (numeric < 1) return 1;
+  if (numeric > 12) return 12;
+  return numeric;
+}
+
 function normalizeMonthlyArray(value) {
   if (!Array.isArray(value)) return zeroMonths();
   const out = zeroMonths();
@@ -145,14 +153,41 @@ export function normalizeState(rawState) {
       cpiPct: Number(assumptions.cpiPct ?? DEFAULTS.assumptions.cpiPct),
       taxRatePct: Number(assumptions.taxRatePct ?? DEFAULTS.assumptions.taxRatePct),
       gstRatePct: Number(assumptions.gstRatePct ?? DEFAULTS.assumptions.gstRatePct),
+      superannuationPct: Number(assumptions.superannuationPct ?? DEFAULTS.assumptions.superannuationPct),
+      payrollTaxPct: Number(assumptions.payrollTaxPct ?? DEFAULTS.assumptions.payrollTaxPct),
       growthRate: normalizePct(assumptions.growthPct ?? DEFAULTS.assumptions.growthPct),
       cpiRate: normalizePct(assumptions.cpiPct ?? DEFAULTS.assumptions.cpiPct),
       taxRate: normalizePct(assumptions.taxRatePct ?? DEFAULTS.assumptions.taxRatePct),
-      gstRate: normalizePct(assumptions.gstRatePct ?? DEFAULTS.assumptions.gstRatePct)
+      gstRate: normalizePct(assumptions.gstRatePct ?? DEFAULTS.assumptions.gstRatePct),
+      superannuationRate: normalizePct(assumptions.superannuationPct ?? DEFAULTS.assumptions.superannuationPct),
+      payrollTaxRate: normalizePct(assumptions.payrollTaxPct ?? DEFAULTS.assumptions.payrollTaxPct)
     };
 
     year.salesForecast = year.salesForecast || { lineOverrides: [] };
     year.marketing = year.marketing || { lineItems: [] };
+    year.marketing.lineItems = Array.isArray(year.marketing.lineItems)
+      ? year.marketing.lineItems.map((item) => ({
+          id: item.id || null,
+          label: item.label || "",
+          monthlyAmount: Number(item.monthlyAmount || 0),
+          startMonth: clampMonth(item.startMonth, 1),
+          endMonth: clampMonth(item.endMonth, 12),
+          isActive: item.isActive === false ? false : true
+        }))
+      : [];
+    year.businessExpenses = year.businessExpenses || { lineItems: [] };
+    year.businessExpenses.lineItems = Array.isArray(year.businessExpenses.lineItems)
+      ? year.businessExpenses.lineItems.map((item) => ({
+          id: item.id || null,
+          category: item.category || DEFAULTS.businessExpenseLine.category,
+          label: item.label || "",
+          monthlyAmount: Number(item.monthlyAmount || 0),
+          startMonth: clampMonth(item.startMonth, 1),
+          endMonth: clampMonth(item.endMonth, 12),
+          isActive: item.isActive === false ? false : true,
+          notes: item.notes || ""
+        }))
+      : [];
     year.costProfile = year.costProfile || cloneDeep(DEFAULTS.costProfile);
     year.ownerAdjustments = year.ownerAdjustments || cloneDeep(DEFAULTS.ownerAdjustments);
     year.yearIndex = i + 1;

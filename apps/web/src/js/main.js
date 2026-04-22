@@ -1,5 +1,5 @@
 /* ============================================
-   DebraWylde.world — Phase 1 Prototype JS
+   DebraWylde.world - Phase 1 Prototype JS
    Mobile nav, FAQ accordion, form validation
    ============================================ */
 

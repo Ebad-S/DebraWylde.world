@@ -6,6 +6,7 @@ import { calculateCollections } from "./collections.js";
 import { calculateCosts } from "./costs.js";
 import { calculateMarketing } from "./marketing.js";
 import { calculateOwnerAdjustments } from "./owner-adjustments.js";
+import { calculateStatutoryLabor } from "./statutory-labor.js";
 import { calculateLoans } from "./loans.js";
 import { calculateAssets } from "./assets.js";
 import { calculateCashFlow } from "./cashflow.js";
@@ -62,18 +63,19 @@ export function runForecastEngine(rawState, options = {}) {
   const costs = calculateCosts(normalized, sales);
   const marketing = calculateMarketing(normalized);
   const ownerAdjustments = calculateOwnerAdjustments(normalized);
+  const statutoryLabor = calculateStatutoryLabor(normalized, costs, ownerAdjustments);
   const loans = calculateLoans(normalized);
   const assets = calculateAssets(normalized);
   // P&L runs before cash flow so tax can flow through as an operating cash outflow.
-  const profitLoss = calculateProfitAndLoss(normalized, sales, costs, marketing, ownerAdjustments, loans, assets, collections);
-  const cashFlow = calculateCashFlow(normalized, collections, costs, marketing, ownerAdjustments, loans, assets, profitLoss);
+  const profitLoss = calculateProfitAndLoss(normalized, sales, costs, marketing, ownerAdjustments, loans, assets, collections, statutoryLabor);
+  const cashFlow = calculateCashFlow(normalized, collections, costs, marketing, ownerAdjustments, loans, assets, profitLoss, statutoryLabor);
   const balanceSheet = calculateBalanceSheet(normalized, collections, assets, loans, cashFlow, profitLoss, ownerAdjustments, sales);
-  const breakEven = calculateBreakEven(normalized, sales, costs, marketing);
+  const breakEven = calculateBreakEven(normalized, sales, costs, marketing, statutoryLabor);
   const quarterly = calculateQuarterly(normalized, sales, cashFlow, profitLoss, balanceSheet, collections);
   const personalCashFlow = calculatePersonalCashFlow(normalized);
   const reconciliation = runReconciliation(normalized, collections, cashFlow, balanceSheet, loans, assets, ownerAdjustments);
   const warnings = buildWarnings(validation, reconciliation, normalized, profitLoss, cashFlow, personalCashFlow);
-  const shaped = shapeReport(normalized, { sales, collections, costs, marketing, ownerAdjustments, loans, assets, cashFlow, profitLoss, balanceSheet, breakEven, quarterly, personalCashFlow }, warnings);
+  const shaped = shapeReport(normalized, { sales, collections, costs, marketing, ownerAdjustments, statutoryLabor, loans, assets, cashFlow, profitLoss, balanceSheet, breakEven, quarterly, personalCashFlow }, warnings);
 
   return {
     meta: {
@@ -92,6 +94,7 @@ export function runForecastEngine(rawState, options = {}) {
       costs,
       marketing,
       ownerAdjustments,
+      statutoryLabor,
       loans,
       assets,
       cashFlow,

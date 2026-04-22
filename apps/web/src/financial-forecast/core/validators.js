@@ -268,6 +268,97 @@ export function validateYearStructures(state) {
         }));
       }
     });
+
+    const assumptions = value?.assumptions || {};
+    ["superannuationPct", "payrollTaxPct"].forEach((pctField) => {
+      const raw = assumptions[pctField];
+      if (raw == null || raw === "") return;
+      if (!isNumber(raw) || raw < 0 || raw > 100) {
+        issues.push(buildIssue({
+          code: "STATUTORY_LABOR_INVALID_PCT",
+          severity: RULE_SEVERITY.ERROR,
+          domain: "costs",
+          fieldPath: `years.${key}.assumptions.${pctField}`,
+          message: `${pctField} must be between 0 and 100.`,
+          blocking: true
+        }));
+      }
+    });
+
+    const businessExpenseLines = Array.isArray(value?.businessExpenses?.lineItems)
+      ? value.businessExpenses.lineItems
+      : [];
+    businessExpenseLines.forEach((row, index) => {
+      const path = `years.${key}.businessExpenses.lineItems[${index}]`;
+      if (row.monthlyAmount != null && row.monthlyAmount !== "" && (!isNumber(row.monthlyAmount) || row.monthlyAmount < 0)) {
+        issues.push(buildIssue({
+          code: "BUSINESS_EXPENSE_INVALID_AMOUNT",
+          severity: RULE_SEVERITY.ERROR,
+          domain: "costs",
+          fieldPath: `${path}.monthlyAmount`,
+          message: "Business expense monthly amount must be a non-negative number.",
+          blocking: true
+        }));
+      }
+      const start = Number(row.startMonth);
+      const end = Number(row.endMonth);
+      if (!isNumber(start) || start < 1 || start > 12 || !isNumber(end) || end < 1 || end > 12) {
+        issues.push(buildIssue({
+          code: "BUSINESS_EXPENSE_INVALID_MONTH",
+          severity: RULE_SEVERITY.ERROR,
+          domain: "costs",
+          fieldPath: `${path}.startMonth`,
+          message: "Business expense Start/End month must be between 1 and 12.",
+          blocking: true
+        }));
+      } else if (start > end) {
+        issues.push(buildIssue({
+          code: "BUSINESS_EXPENSE_MONTH_INVERTED",
+          severity: RULE_SEVERITY.WARNING,
+          domain: "costs",
+          fieldPath: `${path}.endMonth`,
+          message: "Business expense Start month is after End month; this row will not contribute any cost.",
+          blocking: false
+        }));
+      }
+      if (row.isActive !== false && (!row.label || !String(row.label).trim())) {
+        issues.push(buildIssue({
+          code: "BUSINESS_EXPENSE_MISSING_LABEL",
+          severity: RULE_SEVERITY.WARNING,
+          domain: "costs",
+          fieldPath: `${path}.label`,
+          message: "Give this business expense a short label so you can recognise it on the dashboard.",
+          blocking: false
+        }));
+      }
+    });
+
+    const marketingLines = Array.isArray(value?.marketing?.lineItems) ? value.marketing.lineItems : [];
+    marketingLines.forEach((row, index) => {
+      const path = `years.${key}.marketing.lineItems[${index}]`;
+      if (row.monthlyAmount != null && row.monthlyAmount !== "" && (!isNumber(row.monthlyAmount) || row.monthlyAmount < 0)) {
+        issues.push(buildIssue({
+          code: "MARKETING_LINE_INVALID_AMOUNT",
+          severity: RULE_SEVERITY.ERROR,
+          domain: "costs",
+          fieldPath: `${path}.monthlyAmount`,
+          message: "Marketing monthly amount must be a non-negative number.",
+          blocking: true
+        }));
+      }
+      const start = Number(row.startMonth);
+      const end = Number(row.endMonth);
+      if (!isNumber(start) || start < 1 || start > 12 || !isNumber(end) || end < 1 || end > 12) {
+        issues.push(buildIssue({
+          code: "MARKETING_LINE_INVALID_MONTH",
+          severity: RULE_SEVERITY.ERROR,
+          domain: "costs",
+          fieldPath: `${path}.startMonth`,
+          message: "Marketing Start/End month must be between 1 and 12.",
+          blocking: true
+        }));
+      }
+    });
   });
 
   return issues;

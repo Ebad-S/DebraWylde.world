@@ -26,7 +26,40 @@ export const ENUMS = {
   OWNER_ADJUSTMENT_MODEL_TYPE: ["sole_trader_drawings", "company_salary_and_distributions", "hybrid"],
   PROVENANCE_TYPE: ["input", "derived", "assumption", "override", "system"],
   RECEIVABLES_BASIS: ["gross", "net"],
-  PERSONAL_CASH_FLOW_FREQUENCY: ["weekly", "fortnightly", "monthly", "quarterly", "annual"]
+  PERSONAL_CASH_FLOW_FREQUENCY: ["weekly", "fortnightly", "monthly", "quarterly", "annual"],
+  BUSINESS_EXPENSE_CATEGORY: [
+    "rent_lease",
+    "utilities",
+    "internet_phone",
+    "insurance",
+    "accounting_bookkeeping",
+    "legal_consulting",
+    "software_saas",
+    "website_hosting",
+    "marketing_advertising",
+    "travel_motor_vehicle",
+    "repairs_maintenance",
+    "bank_merchant_finance_fees",
+    "training_compliance_licences",
+    "miscellaneous"
+  ]
+};
+
+export const BUSINESS_EXPENSE_CATEGORY_LABELS = {
+  rent_lease: "Rent / Lease",
+  utilities: "Utilities",
+  internet_phone: "Internet / Phone",
+  insurance: "Insurance",
+  accounting_bookkeeping: "Accounting / Bookkeeping",
+  legal_consulting: "Legal / Consulting",
+  software_saas: "Software / SaaS / Subscriptions",
+  website_hosting: "Website / Hosting / Domains",
+  marketing_advertising: "Marketing / Advertising",
+  travel_motor_vehicle: "Travel / Motor Vehicle",
+  repairs_maintenance: "Repairs / Maintenance",
+  bank_merchant_finance_fees: "Bank / Merchant / Finance Fees",
+  training_compliance_licences: "Training / Compliance / Licences",
+  miscellaneous: "Miscellaneous"
 };
 
 export const DEFAULT_PERSONAL_CASHFLOW_INFLOWS = [
@@ -96,13 +129,31 @@ export const DEFAULTS = {
     growthPct: 0,
     cpiPct: 0,
     taxRatePct: 25,
-    gstRatePct: 10
+    gstRatePct: 10,
+    superannuationPct: 0,
+    payrollTaxPct: 0
   },
   costProfile: {
     fixedMonthlyCost: 0,
     variableCostPctOfRevenue: 0,
     directLaborPctOfRevenue: 0,
     otherOperatingExpenseMonthly: 0
+  },
+  businessExpenseLine: {
+    category: "miscellaneous",
+    label: "",
+    monthlyAmount: 0,
+    startMonth: 1,
+    endMonth: 12,
+    isActive: true,
+    notes: ""
+  },
+  marketingLine: {
+    label: "",
+    monthlyAmount: 0,
+    startMonth: 1,
+    endMonth: 12,
+    isActive: true
   },
   ownerAdjustments: {
     modelType: "sole_trader_drawings",
@@ -168,5 +219,9 @@ export const SELECT_OPTIONS = {
   reportMode: ENUMS.REPORT_MODE.map((value) => ({ value, label: value.replaceAll("_", " ") })),
   ownerAdjustmentModelType: ENUMS.OWNER_ADJUSTMENT_MODEL_TYPE.map((value) => ({ value, label: value.replaceAll("_", " ") })),
   receivablesBasis: ENUMS.RECEIVABLES_BASIS.map((value) => ({ value, label: value })),
-  personalCashFlowFrequency: ENUMS.PERSONAL_CASH_FLOW_FREQUENCY.map((value) => ({ value, label: value }))
+  personalCashFlowFrequency: ENUMS.PERSONAL_CASH_FLOW_FREQUENCY.map((value) => ({ value, label: value })),
+  businessExpenseCategory: ENUMS.BUSINESS_EXPENSE_CATEGORY.map((value) => ({
+    value,
+    label: BUSINESS_EXPENSE_CATEGORY_LABELS[value] || value
+  }))
 };
