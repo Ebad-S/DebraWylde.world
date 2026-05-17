@@ -130,9 +130,13 @@
 
   /* --- Active Nav Highlight --- */
   const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+  const isHomePath =
+    currentPage === '' ||
+    currentPage === 'index.html' ||
+    currentPage === 'index';
   document.querySelectorAll('.nav-list a:not(.btn)').forEach(function (link) {
     const href = link.getAttribute('href');
-    if (href === currentPage || (currentPage === '' && href === 'index.html')) {
+    if (href === currentPage || (isHomePath && (href === './' || href === 'index.html'))) {
       link.classList.add('active');
     }
   });

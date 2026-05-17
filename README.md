@@ -33,11 +33,17 @@ For local development with live reload:
 ```bash
 npx serve .
 ```
+Then navigate to `apps/web`.
+
+**Alternatively, you can run a Python server:**
 
 ```bash
 cd apps/web
 python -m http.server 8000
 ```
+
+**Local Homepage Preview:**  
+[http://localhost:3000/apps/web/](http://localhost:3000/apps/web/)
 
 ## Tech Stack
 

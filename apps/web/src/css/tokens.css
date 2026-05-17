@@ -1,0 +1,63 @@
+:root {
+  /* Brand colours */
+  --dw-indigo-900: #0b0f2f;
+  --dw-indigo-850: #0d1235;
+  --dw-indigo-800: #121642;
+  --dw-indigo-700: #141a47;
+  --dw-indigo-650: #1a1b4b;
+
+  --dw-gold-500: #c6a85a;
+  --dw-gold-400: #d3b46a;
+  --dw-gold-300: #e3c977;
+
+  --dw-ivory-100: #f5eedf;
+  --dw-ivory-90: rgba(245, 238, 223, 0.9);
+  --dw-ivory-80: rgba(245, 238, 223, 0.8);
+  --dw-ivory-70: rgba(245, 238, 223, 0.7);
+
+  --dw-border-gold-soft: rgba(198, 168, 90, 0.25);
+  --dw-border-gold-mid: rgba(198, 168, 90, 0.45);
+
+  /* Existing semantic aliases */
+  --color-bg: var(--dw-indigo-900);
+  --color-surface: var(--dw-indigo-800);
+  --color-surface-soft: var(--dw-indigo-650);
+  --color-text: var(--dw-ivory-100);
+  --color-text-secondary: var(--dw-ivory-80);
+  --color-accent: var(--dw-gold-500);
+  --color-accent-hover: var(--dw-gold-300);
+  --color-accent-soft: rgba(198, 168, 90, 0.16);
+  --color-border: var(--dw-border-gold-soft);
+
+  /* Typography */
+  --font-heading: "Playfair Display", "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --font-body: "Inter", "Lato", "Segoe UI", Arial, sans-serif;
+
+  /* Layout */
+  --max-width: 1200px;
+  --dw-container-wide: 1280px;
+  --dw-container-page: 1180px;
+  --gutter: clamp(1.25rem, 4vw, 5.5rem);
+
+  /* Radius / shadow / motion */
+  --radius: 4px;
+  --dw-radius-card: 6px;
+  --shadow-sm: none;
+  --shadow-md: none;
+  --transition: 220ms ease;
+  --dw-transition-slow: 350ms ease;
+
+  /* Background recipes */
+  --dw-bg-premium:
+    radial-gradient(circle at 15% 15%, rgba(72, 56, 130, 0.22), transparent 42%),
+    radial-gradient(circle at 85% 10%, rgba(38, 70, 124, 0.2), transparent 40%),
+    linear-gradient(180deg, #0b0f2f 0%, #0d1235 45%, #111645 100%);
+
+  --dw-bg-section:
+    radial-gradient(circle at 78% 38%, rgba(198, 168, 90, 0.14) 0%, rgba(198, 168, 90, 0) 42%),
+    linear-gradient(180deg, #0b0f2f 0%, #1a1b4b 52%, #0b0f2f 100%);
+
+  --dw-bg-private-advisory:
+    radial-gradient(circle at center, rgba(26, 27, 75, 0.55) 0%, rgba(11, 15, 47, 0.95) 55%, #050816 100%),
+    linear-gradient(180deg, #0b0f2f 0%, #1a1b4b 50%, #0b0f2f 100%);
+}
