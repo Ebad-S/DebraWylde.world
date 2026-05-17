@@ -28,12 +28,19 @@ DebraWylde.world/
 
 The frontend prototype lives in `apps/web/`. Use `Live Server` or open `apps/web/index.html` in any browser to preview.
 
+from the root folder run:
+
+```bash
+npx serve apps/web -l 3000
+```
+
 For local development with live reload:
 
 ```bash
+cd apps/web
 npx serve .
+
 ```
-Then navigate to `apps/web`.
 
 **Alternatively, you can run a Python server:**
 

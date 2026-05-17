@@ -1809,7 +1809,7 @@ a:hover {
   border: 1px solid var(--color-border);
   background:
     linear-gradient(165deg, rgba(198, 168, 90, 0.14), rgba(11, 15, 47, 0.18)),
-    var(--dw-hero-image, none) center / cover no-repeat,
+    var(--dw-hero-image, none) var(--dw-hero-image-position, center) / cover no-repeat,
     linear-gradient(160deg, rgba(26, 27, 75, 0.95), rgba(11, 15, 47, 0.98));
 }
 
@@ -1832,7 +1832,7 @@ a:hover {
   border: 1px solid var(--color-border);
   background:
     linear-gradient(155deg, rgba(198, 168, 90, 0.08), rgba(11, 15, 47, 0.22)),
-    var(--dw-transition-image, none) center / cover no-repeat,
+    var(--dw-transition-image, none) var(--dw-transition-image-position, center) / cover no-repeat,
     linear-gradient(150deg, rgba(20, 26, 71, 0.95), rgba(9, 12, 37, 0.98));
 }
 
@@ -1881,7 +1881,7 @@ a:hover {
   border: 1px solid var(--color-border);
   background:
     linear-gradient(145deg, rgba(198, 168, 90, 0.1), rgba(11, 15, 47, 0.25)),
-    var(--dw-next-chapter-image, none) center / cover no-repeat,
+    var(--dw-next-chapter-image, none) var(--dw-next-chapter-image-position, center) / cover no-repeat,
     var(--dw-next-chapter-texture, none) center / cover no-repeat,
     linear-gradient(150deg, rgba(17, 22, 69, 0.96), rgba(11, 15, 47, 0.99));
 }
@@ -2030,7 +2030,7 @@ a:hover {
   margin-bottom: 1.8rem;
   background:
     linear-gradient(145deg, rgba(198, 168, 90, 0.14), rgba(11, 15, 47, 0.25)),
-    var(--dw-path-image, none) center / cover no-repeat,
+    var(--dw-path-image, none) var(--dw-path-image-position, center) / cover no-repeat,
     linear-gradient(150deg, rgba(17, 22, 69, 0.96), rgba(11, 15, 47, 0.99));
 }
 
@@ -2398,6 +2398,300 @@ a:hover {
   .offer-card p,
   .offer-card ul li {
     font-size: 0.92rem;
+  }
+}
+
+/* ============================================
+   Phase 3D Homepage Sections
+   ============================================ */
+
+.dw-forecast-bridge {
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  background:
+    radial-gradient(circle at 14% 20%, rgba(198, 168, 90, 0.08), rgba(198, 168, 90, 0) 40%),
+    linear-gradient(180deg, rgba(11, 15, 47, 0.9) 0%, rgba(13, 18, 53, 0.74) 100%);
+}
+
+.dw-forecast-bridge__inner {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 1.4rem;
+  align-items: center;
+}
+
+.dw-forecast-bridge__content {
+  max-width: 62ch;
+}
+
+.dw-forecast-bridge__support {
+  margin-top: 0.9rem;
+  color: var(--dw-ivory-90);
+}
+
+.dw-forecast-bridge__actions {
+  margin-top: 1.4rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.95rem 1.25rem;
+  align-items: center;
+}
+
+.dw-forecast-bridge__secondary {
+  color: var(--dw-ivory-90);
+  text-decoration: underline;
+  text-decoration-color: rgba(232, 220, 179, 0.55);
+  text-underline-offset: 0.18em;
+}
+
+.dw-forecast-bridge__secondary:hover {
+  color: #f6edcf;
+  text-decoration-color: #f6edcf;
+}
+
+.dw-forecast-bridge__preview {
+  min-height: 260px;
+  border: 1px solid var(--dw-border-gold-soft);
+  background:
+    linear-gradient(160deg, rgba(198, 168, 90, 0.12), rgba(11, 15, 47, 0.26)),
+    var(--dw-forecast-preview-image, none) var(--dw-forecast-preview-position, center) / cover no-repeat,
+    linear-gradient(145deg, rgba(17, 22, 69, 0.95), rgba(10, 14, 44, 0.98));
+}
+
+.dw-final-cta {
+  text-align: center;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(198, 168, 90, 0.13), rgba(198, 168, 90, 0) 52%),
+    linear-gradient(180deg, rgba(10, 14, 44, 0.95) 0%, rgba(9, 13, 40, 0.98) 100%);
+}
+
+.dw-final-cta .container {
+  max-width: 820px;
+}
+
+.dw-final-cta .section__title {
+  margin-bottom: 1.05rem;
+}
+
+.dw-final-cta__body {
+  max-width: 60ch;
+  margin: 0 auto 1.55rem;
+  color: var(--color-text-secondary);
+}
+
+.dw-final-cta__microcopy {
+  margin-top: 1rem;
+  color: var(--dw-ivory-90);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+}
+
+@media (max-width: 1024px) {
+  .dw-forecast-bridge__inner {
+    grid-template-columns: 1fr 0.9fr;
+    gap: 1.1rem;
+  }
+
+  .dw-forecast-bridge__preview {
+    min-height: 230px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dw-forecast-bridge__inner {
+    grid-template-columns: 1fr;
+  }
+
+  .dw-forecast-bridge__preview {
+    min-height: 220px;
+  }
+
+  .dw-final-cta__body {
+    margin-bottom: 1.35rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .dw-forecast-bridge__actions .btn {
+    width: 100%;
+  }
+
+  .dw-forecast-bridge__secondary {
+    display: inline-block;
+  }
+
+  .dw-forecast-bridge__preview {
+    min-height: 200px;
+  }
+
+  .dw-final-cta__microcopy {
+    letter-spacing: 0.1em;
+  }
+}
+
+/* Phase 4 Homepage QA Polish */
+.dw-hero .hero__actions .btn,
+.next-chapter .hero__actions .btn,
+.dw-sales-section__actions .btn,
+.dw-final-cta .hero__actions .btn,
+.dw-forecast-bridge__actions .btn {
+  min-height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Phase 5 Image Integration */
+@media (max-width: 768px) {
+  .dw-hero__media {
+    --dw-hero-image-position: center 34%;
+  }
+
+  .dw-transition-block__media {
+    --dw-transition-image-position: center 48%;
+  }
+
+  .next-chapter__media {
+    --dw-next-chapter-image-position: center 24%;
+  }
+
+  .dw-path-section__media {
+    --dw-path-image-position: center 20%;
+  }
+
+  .dw-forecast-bridge__preview {
+    --dw-forecast-preview-position: center 36%;
+  }
+}
+
+/* Phase 5B Image Crop Fix */
+.dw-hero__media,
+.dw-transition-block__media,
+.next-chapter__media,
+.dw-path-section__media,
+.dw-forecast-bridge__preview {
+  overflow: hidden;
+  max-width: 100%;
+}
+
+.dw-hero__media {
+  --dw-hero-image-position: 60% 46%;
+  aspect-ratio: 9 / 10;
+  border-radius: clamp(10px, 1.5vw, 18px);
+}
+
+.dw-transition-block__media {
+  --dw-transition-image-position: 58% 45%;
+  aspect-ratio: 6 / 5;
+  border-radius: clamp(10px, 1.3vw, 16px);
+}
+
+.next-chapter__media {
+  --dw-next-chapter-image-position: 52% 28%;
+  aspect-ratio: 9 / 10;
+  border-radius: clamp(10px, 1.3vw, 16px);
+}
+
+.dw-path-section__media {
+  --dw-path-image-position: 50% 14%;
+  aspect-ratio: 16 / 10;
+  border-radius: clamp(10px, 1.2vw, 15px);
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.dw-forecast-bridge__preview {
+  --dw-forecast-preview-position: center center;
+  background-size: cover;
+}
+
+@media (max-width: 1024px) {
+  .dw-hero__media {
+    --dw-hero-image-position: 58% 42%;
+  }
+
+  .dw-transition-block__media {
+    --dw-transition-image-position: 56% 42%;
+  }
+
+  .next-chapter__media {
+    --dw-next-chapter-image-position: 52% 24%;
+  }
+
+  .dw-path-section__media {
+    --dw-path-image-position: 50% 12%;
+  }
+}
+
+@media (max-width: 768px) {
+  .dw-hero__media {
+    --dw-hero-image-position: 56% 38%;
+    aspect-ratio: 4 / 3;
+  }
+
+  .dw-transition-block__media {
+    --dw-transition-image-position: 54% 40%;
+    aspect-ratio: 16 / 10;
+    margin-bottom: 0.6rem;
+  }
+
+  .next-chapter__media {
+    --dw-next-chapter-image-position: 50% 22%;
+    aspect-ratio: 4 / 3;
+    margin-top: 0.3rem;
+  }
+
+  .dw-path-section__media {
+    --dw-path-image-position: 50% 12%;
+    aspect-ratio: 3 / 2;
+  }
+}
+
+@media (max-width: 1024px) {
+  .dw-path-section__timeline {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .dw-forecast-bridge__actions {
+    align-items: stretch;
+  }
+
+  .dw-forecast-bridge__actions .btn {
+    width: 100%;
+    max-width: 420px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dw-hero__media {
+    --dw-hero-image-position: 58% 36%;
+    aspect-ratio: 5 / 4;
+  }
+
+  .dw-transition-block__media {
+    --dw-transition-image-position: 56% 38%;
+    aspect-ratio: 5 / 4;
+  }
+
+  .next-chapter__media {
+    --dw-next-chapter-image-position: 50% 20%;
+    aspect-ratio: 5 / 4;
+  }
+
+  .dw-path-section__media {
+    --dw-path-image-position: 50% 10%;
+    aspect-ratio: 4 / 3;
+  }
+
+  .dw-hero .hero__actions .btn,
+  .next-chapter .hero__actions .btn,
+  .dw-sales-section__actions .btn,
+  .dw-final-cta .hero__actions .btn {
+    width: 100%;
   }
 }
 
