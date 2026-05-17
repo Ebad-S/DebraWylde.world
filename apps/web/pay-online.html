@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pay Online - Debra Wylde</title>
+  <meta name="description" content="Access Debra Wylde's secure Stripe payment portal for invoices and payment requests.">
+  <meta property="og:title" content="Pay Online - Debra Wylde">
+  <meta property="og:description" content="Use Debra Wylde's secure Stripe payment portal for online payments.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://debrawylde.world/pay-online.html">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;500;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="public/images/Logo.png" type="image/png">
+  <script>
+    // TODO: Replace with Debra's live Stripe Payment Link.
+    const STRIPE_PAYMENT_LINK = "https://buy.stripe.com/REPLACE_WITH_DEBRA_PAYMENT_LINK";
+  </script>
+  <link rel="stylesheet" href="src/css/styles.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container">
+      <a href="./" class="site-logo"><img src="public/images/Logo.png" alt="" class="site-logo__mark" aria-hidden="true">Debra Wylde</a>
+      <button class="mobile-nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <nav class="nav" aria-label="Main navigation">
+        <ul class="nav-list">
+          <li><a href="./">Home</a></li>
+          <li><a href="program.html">Program</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+          <li><a href="assessment.html">Assessment</a></li>
+          <li><a href="financial-forecast.html">Financial Forecast</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="discovery-call.html" class="btn btn--primary nav-cta">Discovery Call</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- Page Hero -->
+    <section class="page-hero">
+      <div class="container">
+        <p class="section__eyebrow">Payments</p>
+        <h1 class="page-hero__title">Pay Online Securely</h1>
+        <p class="page-hero__subtitle">If you have received an invoice, payment request, or confirmation from Debra, you can use this page to access the secure online payment portal. Payments are processed securely through Stripe.</p>
+        <div class="hero__actions mt-3">
+          <a href="#" class="btn btn--primary btn--large" data-stripe-link target="_blank" rel="noopener noreferrer">Pay securely online</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Payment Guidance -->
+    <section class="section">
+      <div class="container centered-narrow-800">
+        <div class="calendar-widget">
+          <h2 class="calendar-widget__title">Payment Details (Optional)</h2>
+          <p class="calendar-widget__text">Use this section to prepare your details before continuing to Stripe. These fields are interface-only at this stage and are not sent or saved.</p>
+
+          <form novalidate>
+            <div class="form-group">
+              <label for="pay-name">Client name (optional)</label>
+              <input type="text" id="pay-name" name="client_name" placeholder="Your full name">
+            </div>
+            <div class="form-group">
+              <label for="pay-email">Email (optional)</label>
+              <input type="email" id="pay-email" name="client_email" placeholder="you@example.com">
+            </div>
+            <div class="form-group">
+              <label for="pay-reference">Invoice or reference number (optional)</label>
+              <input type="text" id="pay-reference" name="reference_number" placeholder="Invoice # or payment reference">
+            </div>
+            <div class="form-group">
+              <label for="pay-amount">Custom amount (AUD, optional)</label>
+              <input type="number" id="pay-amount" name="custom_amount_aud" min="0" step="0.01" placeholder="0.00">
+              <p class="form-hint">Custom amount payments will be confirmed by Debra before processing. For now, please use the secure payment link provided by Debra or continue to the payment portal if instructed.</p>
+            </div>
+            <p class="calendar-widget__text" id="amount-notice" hidden>Amount captured here is not processed on this website. Final payment amount is managed securely in Stripe.</p>
+            <a href="#" class="btn btn--primary" data-stripe-link target="_blank" rel="noopener noreferrer">Pay securely online</a>
+          </form>
+
+          <p class="calendar-widget__text mt-3">If Debra has sent you a Stripe invoice directly, please use the secure payment link inside that invoice email.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <p class="footer-brand__name">Debra Wylde</p>
+          <p class="footer-brand__text">Helping ambitious women unlock clarity, confidence, and lasting transformation through personalised coaching.</p>
+        </div>
+        <div>
+          <h4>Quick Links</h4>
+          <ul class="footer-links">
+            <li><a href="./">Home</a></li>
+            <li><a href="program.html">Program</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="blog.html">Blog</a></li>
+            <li><a href="faq.html">FAQ</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="pay-online.html">Pay Online</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Get in Touch</h4>
+          <ul class="footer-links">
+            <li><a href="mailto:hello@debrawylde.world">hello@debrawylde.world</a></li>
+            <li><a href="discovery-call.html">Book a Discovery Call</a></li>
+          </ul>
+          <div class="social-links mt-3">
+            <a href="https://www.instagram.com/debra.wylde/" aria-label="Instagram" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+            <a href="#" aria-label="LinkedIn"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+            <a href="#" aria-label="Facebook"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="footer-bottom__col footer-bottom__col--left">&copy; 2026 Debra Wylde. All rights reserved.</p>
+        <p class="footer-bottom__col footer-bottom__col--center">Your transformation starts with a single conversation.</p>
+        <p class="footer-bottom__col footer-bottom__col--right">Build with care by <a href="https://serenity-webcrafts.com.au/" target="_blank" rel="noopener">Serenity WebCrafts</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var paymentLinks = document.querySelectorAll('[data-stripe-link]');
+      paymentLinks.forEach(function (linkEl) {
+        linkEl.setAttribute('href', STRIPE_PAYMENT_LINK);
+      });
+
+      var amountInput = document.getElementById('pay-amount');
+      var amountNotice = document.getElementById('amount-notice');
+      if (!amountInput || !amountNotice) return;
+
+      amountInput.addEventListener('input', function () {
+        var hasAmount = amountInput.value.trim().length > 0;
+        amountNotice.hidden = !hasAmount;
+      });
+    })();
+  </script>
+  <script src="src/js/main.js"></script>
+</body>
+</html>
