@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pay Online | Debra Wylde</title>
-  <meta name="description" content="Payment guidance for Debra Wylde clients using secure Stripe invoices and approved backup payment links.">
+  <meta name="description" content="Pay Online for Debra Wylde clients. A secure payment area is ready for Stripe configuration.">
   <meta property="og:title" content="Pay Online | Debra Wylde">
-  <meta property="og:description" content="Use the secure payment link in your Stripe invoice email, or an approved backup link Debra has supplied.">
+  <meta property="og:description" content="A secure online payment area for existing Debra Wylde clients, ready for Stripe configuration.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://debra.preview.serenity-webcrafts.com.au/pay-online.html">
   <meta property="og:image" content="https://debra.preview.serenity-webcrafts.com.au/public/images/Logo.png">
@@ -15,10 +15,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;500;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="icon" href="/public/images/Logo.png" type="image/png">
-  <script>
-    // TODO: Replace with Debra's live Stripe Payment Link.
-    const STRIPE_PAYMENT_LINK = "https://buy.stripe.com/REPLACE_WITH_DEBRA_PAYMENT_LINK";
-  </script>
   <link rel="stylesheet" href="src/css/styles.css">
 </head>
 <body>
@@ -49,72 +45,73 @@
   <main>
 
     <!-- Page Hero -->
-    <section class="page-hero">
+    <section class="page-hero page-hero--image" style="--page-hero-image: url('/public/images/gate.png'); --page-hero-position: 58% center;">
       <div class="container">
-        <p class="section__eyebrow">Payments</p>
-        <h1 class="page-hero__title">Payment Guidance</h1>
-        <p class="page-hero__subtitle">If Debra has sent you a Stripe invoice, please use the secure payment link inside that invoice email. This page supports payment guidance and provides a backup payment access point only if Debra supplies one.</p>
+        <p class="section__eyebrow">Pay Online</p>
+        <h1 class="page-hero__title">Secure Client Payments</h1>
+        <p class="page-hero__subtitle">This page is prepared for Debra's secure online payment integration. Once Stripe is connected, existing clients will be able to complete approved payments here.</p>
         <div class="hero__actions mt-3">
-          <a href="https://buy.stripe.com/REPLACE_WITH_DEBRA_PAYMENT_LINK" class="btn btn--primary btn--large" data-stripe-link target="_blank" rel="noopener noreferrer">Open Backup Stripe Link</a>
+          <a href="contact.html" class="btn btn--primary btn--large">Contact Debra About Payment</a>
         </div>
       </div>
     </section>
 
-    <!-- Stripe reassurance -->
+    <!-- Payment guidance reassurance -->
     <section class="section payment-reassurance-section">
       <div class="container">
         <div class="payment-trust-grid" aria-label="Payment reassurance">
           <article class="payment-trust-card">
-            <span class="payment-trust-card__icon" aria-hidden="true">SSL</span>
-            <h2 class="payment-trust-card__title">Secure Stripe Invoices</h2>
-            <p>Debra's primary payment workflow is through Stripe Dashboard invoices. Debra does not ask for card details through this website.</p>
+            <span class="payment-trust-card__icon" aria-hidden="true">INV</span>
+            <h2 class="payment-trust-card__title">Use Supplied Details</h2>
+            <p>Please only complete payment after Debra has confirmed the amount, reference, and method with you directly.</p>
           </article>
           <article class="payment-trust-card">
-            <span class="payment-trust-card__icon" aria-hidden="true">INV</span>
-            <h2 class="payment-trust-card__title">Invoice-Led Payments</h2>
-            <p>If Debra has already sent a Stripe invoice, please use the payment link inside that email so your reference is matched correctly.</p>
+            <span class="payment-trust-card__icon" aria-hidden="true">CARD</span>
+            <h2 class="payment-trust-card__title">Stripe Ready</h2>
+            <p>The payment area below is reserved for Stripe. It is intentionally inactive until real configuration is supplied.</p>
           </article>
           <article class="payment-trust-card">
             <span class="payment-trust-card__icon" aria-hidden="true">REF</span>
             <h2 class="payment-trust-card__title">Clear References</h2>
-            <p>Use your invoice reference if provided. Custom amounts are not processed on this website.</p>
+            <p>If you are unsure about an amount or reference, contact Debra before making payment.</p>
           </article>
         </div>
       </div>
     </section>
 
-    <!-- Payment Guidance -->
+    <!-- Stripe payment integration point -->
     <section class="section section--pt-none">
       <div class="container centered-narrow-800">
-        <div class="calendar-widget payment-guidance">
-          <p class="section__eyebrow">Payment guidance</p>
-          <h2 class="calendar-widget__title">Check Your Payment Details</h2>
-          <p class="calendar-widget__text">These optional fields are for your own reference only. They are not submitted, saved, sent to Stripe, or used to process payment on this website.</p>
-
-          <form novalidate>
-            <div class="form-group">
-              <label for="pay-name">Client name (optional)</label>
-              <input type="text" id="pay-name" name="client_name" placeholder="Your full name">
+        <div class="payment-widget" aria-labelledby="payment-widget-title">
+          <div class="payment-widget__header">
+            <p class="section__eyebrow">Secure payment area</p>
+            <h2 id="payment-widget-title" class="payment-widget__title">Stripe payment widget</h2>
+            <p class="payment-widget__text">Secure online payment is being prepared. Please contact Debra if you need payment assistance or invoice confirmation.</p>
+          </div>
+          <div class="payment-widget__panel" id="stripe-payment-widget" data-stripe-ready="false">
+            <!-- Connect Stripe here once real publishable keys and backend checkout/session endpoints are available. -->
+            <div class="payment-widget__mock-card" aria-hidden="true">
+              <span></span>
+              <span></span>
+              <span></span>
             </div>
-            <div class="form-group">
-              <label for="pay-email">Email (optional)</label>
-              <input type="email" id="pay-email" name="client_email" placeholder="you@example.com">
-            </div>
-            <div class="form-group">
-              <label for="pay-reference">Invoice or reference number (optional)</label>
-              <input type="text" id="pay-reference" name="reference_number" placeholder="Invoice # or payment reference">
-              <p class="form-hint">Use your invoice reference if Debra has provided one.</p>
-            </div>
-            <div class="form-group">
-              <label for="pay-amount">Custom amount (AUD, optional)</label>
-              <input type="number" id="pay-amount" name="custom_amount_aud" min="0" step="0.01" placeholder="0.00">
-              <p class="form-hint">Custom amounts are not charged or sent to Stripe here. Debra confirms and manages final payment through a Stripe invoice or approved payment link.</p>
-            </div>
-            <p class="calendar-widget__text" id="amount-notice" hidden>Amount entered here is not processed, saved, or sent to Stripe. Final payment amount is managed securely through Stripe invoices or approved Stripe links.</p>
-            <a href="https://buy.stripe.com/REPLACE_WITH_DEBRA_PAYMENT_LINK" class="btn btn--primary" data-stripe-link target="_blank" rel="noopener noreferrer">Open Backup Stripe Link</a>
-          </form>
-
-          <p class="calendar-widget__text mt-3">If Debra has sent you a Stripe invoice directly, please use the secure payment link inside that invoice email as the primary payment method.</p>
+            <dl class="payment-widget__details">
+              <div>
+                <dt>Status</dt>
+                <dd>Awaiting secure Stripe configuration</dd>
+              </div>
+              <div>
+                <dt>Use for</dt>
+                <dd>Existing client invoices and approved payments</dd>
+              </div>
+              <div>
+                <dt>Support</dt>
+                <dd><a href="mailto:hello@debrawylde.world?subject=Payment%20support">hello@debrawylde.world</a></dd>
+              </div>
+            </dl>
+            <button class="btn btn--primary btn--large btn--block" type="button" disabled aria-describedby="payment-widget-note">Payment integration pending</button>
+            <p id="payment-widget-note" class="payment-widget__note">No card details are collected on this prototype page.</p>
+          </div>
           <p class="payment-guidance__note">Need help matching an invoice or reference? <a href="contact.html">Contact Debra</a> before making payment.</p>
         </div>
       </div>
@@ -138,6 +135,7 @@
             <li><a href="blog.html">Blog</a></li>
             <li><a href="faq.html">FAQ</a></li>
             <li><a href="assessment.html">Assessment</a></li>
+            <li><a href="financial-forecast.html">Financial Forecast</a></li>
             <li><a href="contact.html">Contact</a></li>
             <li><a href="pay-online.html">Pay Online</a></li>
           </ul>
@@ -147,7 +145,6 @@
           <ul class="footer-links">
             <li><a href="mailto:hello@debrawylde.world">hello@debrawylde.world</a></li>
             <li><a href="discovery-call.html">Book a Discovery Call</a></li>
-            <li><a href="pay-online.html">Pay Online</a></li>
           </ul>
           <div class="social-links mt-3">
             <a href="https://www.instagram.com/debra.wylde/" aria-label="Instagram @debra.wylde" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg><span>@debra.wylde</span></a>
@@ -161,24 +158,10 @@
       </div>
     </div>
   </footer>
-
-  <script>
-    (function () {
-      var paymentLinks = document.querySelectorAll('[data-stripe-link]');
-      paymentLinks.forEach(function (linkEl) {
-        linkEl.setAttribute('href', STRIPE_PAYMENT_LINK);
-      });
-
-      var amountInput = document.getElementById('pay-amount');
-      var amountNotice = document.getElementById('amount-notice');
-      if (!amountInput || !amountNotice) return;
-
-      amountInput.addEventListener('input', function () {
-        var hasAmount = amountInput.value.trim().length > 0;
-        amountNotice.hidden = !hasAmount;
-      });
-    })();
-  </script>
   <script src="src/js/main.js"></script>
+  <script>
+    // Replace this with Debra's real Stripe publishable key and checkout endpoint when supplied.
+    const STRIPE_PUBLISHABLE_KEY = "";
+  </script>
 </body>
 </html>

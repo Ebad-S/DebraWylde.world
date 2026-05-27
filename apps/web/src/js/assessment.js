@@ -38,11 +38,11 @@
   ];
 
   const answerScale = [
-    { value: 1, label: "Strongly Disagree" },
-    { value: 2, label: "Disagree" },
-    { value: 3, label: "Neutral" },
-    { value: 4, label: "Agree" },
-    { value: 5, label: "Strongly Agree" }
+    { value: 1, label: "Not true for me" },
+    { value: 2, label: "Rarely true" },
+    { value: 3, label: "Sometimes true" },
+    { value: 4, label: "Mostly true" },
+    { value: 5, label: "Strongly true" }
   ];
 
   const resultsByStage = {

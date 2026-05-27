@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Book a Discovery Call | Debra Wylde</title>
-  <meta name="description" content="Request a private discovery call with Debra Wylde while online booking access is being prepared.">
+  <meta name="description" content="Request a private discovery call with Debra Wylde and Debra will confirm the next available time.">
   <meta property="og:title" content="Book a Discovery Call | Debra Wylde">
-  <meta property="og:description" content="Online booking will be available shortly. Contact Debra directly to request a private discovery call.">
+  <meta property="og:description" content="Send a private discovery call request and Debra will confirm the next available time.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://debra.preview.serenity-webcrafts.com.au/discovery-call.html">
   <meta property="og:image" content="https://debra.preview.serenity-webcrafts.com.au/public/images/Logo.png">
@@ -53,7 +53,7 @@
           <li><a href="assessment.html">Assessment</a></li>
           <li><a href="financial-forecast.html">Financial Forecast</a></li>
           <li><a href="contact.html">Contact</a></li>
-          <li><a href="discovery-call.html" class="btn btn--primary nav-cta">Discovery Call</a></li>
+          <li><a href="discovery-call.html" class="btn btn--primary nav-cta active">Discovery Call</a></li>
         </ul>
       </nav>
     </div>
@@ -62,11 +62,11 @@
   <main>
 
     <!-- Page Hero -->
-    <section class="page-hero">
+    <section class="page-hero page-hero--image" style="--page-hero-image: url('/public/images/walking_lady.png'); --page-hero-position: 65% center;">
       <div class="container">
         <p class="section__eyebrow">Let's Talk</p>
         <h1 class="page-hero__title">Book a Discovery Call</h1>
-        <p class="page-hero__subtitle">Online booking will be available shortly. In the meantime, contact Debra directly to request a private conversation about your next chapter.</p>
+        <p class="page-hero__subtitle">To arrange a discovery call, send an enquiry and Debra will confirm the next available time for a private conversation about your next chapter.</p>
       </div>
     </section>
 
@@ -80,12 +80,12 @@
           <div class="split__content">
             <h2>What to Expect</h2>
             <p>The discovery call is a focused 20-30 minute conversation designed to help you get clear on your goals and whether Debra's private advisory support is the right fit.</p>
-            <p>There's no hard sell and no pressure. This is about you - your challenges, your aspirations, and what's possible when you have the right support.</p>
+            <p>There's no hard sell and no pressure. This is about you, your challenges, your aspirations, and what's possible when you have the right support.</p>
             <ul class="list-disc-muted">
               <li>Share where you are and where you want to be</li>
-              <li>Ask questions about the program and process</li>
+              <li>Ask questions about the advisory pathways and process</li>
               <li>Get honest feedback from Debra</li>
-              <li>Decide together if the program is right for you</li>
+              <li>Decide together if the next step is right for you</li>
             </ul>
           </div>
         </div>
@@ -105,7 +105,7 @@
           <div class="card">
             <div class="card__icon">🤝</div>
             <h3 class="card__title">No Obligation</h3>
-            <p class="card__text">This call is entirely free. If the program isn't the right fit, you'll still walk away with valuable perspective.</p>
+            <p class="card__text">This call is entirely free. If private advisory isn't the right fit, you'll still walk away with valuable perspective.</p>
           </div>
           <div class="card">
             <div class="card__icon">🚀</div>
@@ -161,25 +161,38 @@
       </div>
     </section>
 
-    <!-- Discovery Call Booking Placeholder -->
+    <!-- Calendly widget integration point -->
     <section class="section section--alt">
-      <div class="container centered-narrow-700">
+      <div class="container centered-narrow-800">
         <div class="text-center mb-3">
-          <p class="section__eyebrow">Booking Access</p>
-          <h2 class="section__title">Book a Discovery Call</h2>
-          <p class="section__subtitle section__subtitle--centered">Online booking will be available shortly. In the meantime, please contact Debra directly using the contact form or email.</p>
+          <p class="section__eyebrow">Calendly Booking</p>
+          <h2 class="section__title">Choose a Time for Your Discovery Call</h2>
+          <p class="section__subtitle section__subtitle--centered">Debra's Calendly scheduling area belongs here. Once the confirmed booking link is supplied, the calendar will display in this panel.</p>
         </div>
-        <div class="calendar-widget">
-          <!-- TODO: Add Debra's confirmed Calendly event link as a button or popup widget once supplied. -->
-          <div class="booking-placeholder">
-            <p class="booking-placeholder__label">Current booking status</p>
-            <p class="booking-placeholder__text">The booking calendar is being prepared and no live scheduling widget is active yet.</p>
+        <div class="calendar-widget calendar-widget--calendly">
+          <!-- Replace CALENDLY_URL below with Debra's real Calendly event URL when supplied. -->
+          <div id="calendly-widget" class="calendly-widget" data-calendly-url="" aria-label="Calendly scheduling widget">
+            <div class="booking-placeholder booking-placeholder--calendar">
+              <p class="booking-placeholder__label">Calendly widget pending</p>
+              <p class="booking-placeholder__text">The scheduling widget is ready to connect. Add Debra's confirmed Calendly URL in the page script to activate the live embed.</p>
+              <div class="calendly-widget__frame" aria-hidden="true">
+                <div class="calendly-widget__bar"></div>
+                <div class="calendly-widget__grid">
+                  <span></span><span></span><span></span><span></span><span></span><span></span>
+                  <span></span><span></span><span></span><span></span><span></span><span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="booking-placeholder booking-placeholder--fallback">
+            <p class="booking-placeholder__label">Prefer to enquire first?</p>
+            <p class="booking-placeholder__text">If the calendar is not connected yet, send the enquiry form or email Debra directly. Debra will use your message and preferred times to coordinate the call.</p>
             <div class="hero__actions">
-              <a href="contact.html" class="btn btn--primary btn--large">Contact Debra</a>
+              <a href="#enquiry-form" class="btn btn--primary btn--large">Use the Enquiry Form</a>
               <a href="mailto:hello@debrawylde.world?subject=Discovery%20call%20request" class="btn btn--outline btn--large">Email Debra</a>
             </div>
           </div>
-          <p class="calendar-widget__text mt-2 calendar-note">Future integration point reserved for Debra's Calendly popup once the correct event link is available.</p>
+          <p class="calendar-widget__text mt-2 calendar-note">You can also use the general <a href="contact.html">Contact page</a> if you have a question before requesting a call.</p>
         </div>
       </div>
     </section>
@@ -234,6 +247,7 @@
             <li><a href="blog.html">Blog</a></li>
             <li><a href="faq.html">FAQ</a></li>
             <li><a href="assessment.html">Assessment</a></li>
+            <li><a href="financial-forecast.html">Financial Forecast</a></li>
             <li><a href="contact.html">Contact</a></li>
             <li><a href="pay-online.html">Pay Online</a></li>
           </ul>
@@ -243,7 +257,6 @@
           <ul class="footer-links">
             <li><a href="mailto:hello@debrawylde.world">hello@debrawylde.world</a></li>
             <li><a href="discovery-call.html">Book a Discovery Call</a></li>
-            <li><a href="pay-online.html">Pay Online</a></li>
           </ul>
           <div class="social-links mt-3">
             <a href="https://www.instagram.com/debra.wylde/" aria-label="Instagram @debra.wylde" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg><span>@debra.wylde</span></a>
@@ -252,12 +265,27 @@
       </div>
       <div class="footer-bottom">
         <p class="footer-bottom__col footer-bottom__col--left">&copy; 2026 Debra Wylde. All rights reserved.</p>
-        <p class="footer-bottom__col footer-bottom__col--center">Your transformation starts with a single conversation.</p>
+        <p class="footer-bottom__col footer-bottom__col--center">Clarity for the next chapter you are ready to lead.</p>
         <p class="footer-bottom__col footer-bottom__col--right">Build with care by <a href="https://serenity-webcrafts.com.au/" target="_blank" rel="noopener">Serenity WebCrafts</a></p>
       </div>
     </div>
   </footer>
 
   <script src="src/js/main.js"></script>
+  <script>
+    const CALENDLY_URL = "";
+
+    (function initialiseCalendlyWidget() {
+      const mount = document.getElementById("calendly-widget");
+      if (!mount || !CALENDLY_URL) return;
+
+      const iframe = document.createElement("iframe");
+      iframe.src = CALENDLY_URL;
+      iframe.title = "Schedule a discovery call with Debra Wylde";
+      iframe.loading = "lazy";
+      iframe.referrerPolicy = "strict-origin-when-cross-origin";
+      mount.replaceChildren(iframe);
+    })();
+  </script>
 </body>
 </html>

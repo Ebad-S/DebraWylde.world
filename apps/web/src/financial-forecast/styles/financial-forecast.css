@@ -365,6 +365,31 @@
   background: rgba(142, 214, 166, 0.06);
 }
 
+.ff-next-steps {
+  border: 1px solid rgba(216, 185, 138, 0.38);
+  background:
+    radial-gradient(circle at 90% 12%, rgba(216, 185, 138, 0.14), transparent 34%),
+    rgba(216, 185, 138, 0.07);
+  border-radius: 12px;
+  padding: 1rem 1.1rem;
+  margin: 0 0 1rem;
+}
+
+.ff-next-steps h3 {
+  margin: 0 0 0.55rem;
+  color: #f7f2eb;
+}
+
+.ff-next-steps ol {
+  margin: 0;
+  padding-left: 1.2rem;
+  color: #e8ded0;
+}
+
+.ff-next-steps li + li {
+  margin-top: 0.35rem;
+}
+
 .ff-grid {
   display: grid;
   gap: 0.8rem;

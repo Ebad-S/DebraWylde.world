@@ -1415,12 +1415,21 @@ export function renderResultsStep(snapshot) {
       <div class="ff-subsection-head ff-subsection-head--actions">
         <div class="ff-actions-inline">
           <button class="btn btn--outline" data-action="print-summary">Print Summary</button>
-          <button class="btn btn--outline" data-action="save-json-file">Save JSON Data</button>
+          <button class="btn btn--outline" data-action="save-json-file">Save Forecast Data File (.json)</button>
         </div>
       </div>
       <p class="ff-helper" style="margin:0 0 0.75rem;">
         Final, client-facing view of your forecast. Use <strong>Step 13: Scenario Testing</strong> for pressure-testing and downside exploration.
       </p>
+      <div class="ff-next-steps" role="note">
+        <h3>What to do next</h3>
+        <ol>
+          <li>Review your Results Dashboard.</li>
+          <li>Save your completed forecast data file and email it to Debra before your consultation.</li>
+          <li>Debra can import the saved <code>.json</code> file and review the same forecast with you.</li>
+          <li>If you need a paper copy, use Print Summary and your browser's print or save-as-PDF option.</li>
+        </ol>
+      </div>
       ${buildDataCompletenessBanner(canonical)}
       <div class="ff-kpi-grid">${kpis}</div>
       <div class="ff-chart-grid">

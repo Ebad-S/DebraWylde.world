@@ -19,10 +19,10 @@ A polished, client-ready prototype that establishes Debra's personal brand, comm
 
 | Page | File | Purpose |
 |---|---|---|
-| Home | `index.html` | Primary landing page — trust, offer overview, discovery call CTA |
+| Home | `index.html` | Primary landing page  -  trust, offer overview, discovery call CTA |
 | Program | `program.html` | Detailed 12-week Transformation Program page |
 | About | `about.html` | Debra's story, authority, mission, speaking credentials |
-| Discovery Call | `discovery-call.html` | Lead capture — enquiry form for booking a free call |
+| Discovery Call | `discovery-call.html` | Lead capture  -  enquiry form for booking a free call |
 | Blog | `blog.html` | Article listing with category filters and featured post |
 | Blog Post | `blog-post.html` | Single article template with author box and related posts |
 | Contact | `contact.html` | General contact form, details, and FAQ |
