@@ -1,5 +1,5 @@
 /* ============================================
-   DebraWylde.world - Phase 1 Prototype JS
+   DebraWylde.world - Static Site JS
    Mobile nav, FAQ accordion, form validation
    ============================================ */
 
@@ -55,7 +55,39 @@
     });
   });
 
-  /* --- Form Validation & Prototype Submit --- */
+  function encodeMailtoBody(value) {
+    return encodeURIComponent(value).replace(/%20/g, '+');
+  }
+
+  function labelForField(field) {
+    const group = field.closest('.form-group');
+    const label = group ? group.querySelector('label') : null;
+    if (!label) return field.name || 'Field';
+    return label.textContent.replace('*', '').replace(/\s+/g, ' ').trim();
+  }
+
+  function buildMailtoHref(form) {
+    const recipient = form.dataset.mailtoRecipient || 'hello@debrawylde.world';
+    const subject = form.dataset.mailtoSubject || 'Website enquiry';
+    const lines = [
+      'Hello Debra,',
+      '',
+      'I would like to send the following enquiry:',
+      ''
+    ];
+
+    form.querySelectorAll('input, textarea, select').forEach(function (field) {
+      if (!field.name || field.type === 'submit' || field.type === 'button') return;
+      const value = field.value.trim();
+      if (!value) return;
+      lines.push(labelForField(field) + ': ' + value);
+    });
+
+    lines.push('', 'Please reply when you have a moment.', '');
+    return 'mailto:' + encodeURIComponent(recipient) + '?subject=' + encodeMailtoBody(subject) + '&body=' + encodeMailtoBody(lines.join('\n'));
+  }
+
+  /* --- Form Validation & Static Submit --- */
   const forms = document.querySelectorAll('[data-prototype-form]');
 
   forms.forEach(function (form) {
@@ -71,26 +103,29 @@
       const required = form.querySelectorAll('[required]');
       required.forEach(function (field) {
         const group = field.closest('.form-group');
-        if (!group) return;
-
         const value = field.value.trim();
 
         if (!value) {
-          group.classList.add('has-error');
+          if (group) group.classList.add('has-error');
           isValid = false;
           return;
         }
 
         if (field.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-          group.classList.add('has-error');
+          if (group) group.classList.add('has-error');
           isValid = false;
         }
       });
 
       if (!isValid) {
-        const firstError = form.querySelector('.has-error input, .has-error textarea');
+        const firstError = form.querySelector('.has-error input, .has-error textarea') || form.querySelector('[required]');
         if (firstError) firstError.focus();
         return;
+      }
+
+      if (form.hasAttribute('data-mailto-form')) {
+        console.info('Contact form uses mailto in this static build. No backend email service is connected yet.');
+        window.location.href = buildMailtoHref(form);
       }
 
       form.style.display = 'none';

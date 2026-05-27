@@ -91,20 +91,6 @@
     return tag;
   }
 
-  function generateAIReportPayload(submission) {
-    const payload = {
-      first_name: submission.user.first_name,
-      email: submission.user.email,
-      answers: submission.answers,
-      group_scores: submission.scores,
-      result_stage: submission.result_stage,
-      crm_tag: submission.crm_tag,
-      timestamp: submission.created_at
-    };
-    console.log("[Assessment] AI payload:", payload);
-    return payload;
-  }
-
   const state = {
     screen: "intro",
     currentQuestionIndex: 0,
@@ -140,7 +126,7 @@
   const resultSubtitle = document.getElementById("result-subtitle");
   const resultBody = document.getElementById("result-body");
   const resultRequires = document.getElementById("result-requires");
-  const resultJson = document.getElementById("result-json");
+  const emailResults = document.getElementById("email-results");
 
   const firstNameInput = document.getElementById("lead-first-name");
   const emailInput = document.getElementById("lead-email");
@@ -295,6 +281,41 @@
     return submission;
   }
 
+  function encodeMailtoBody(value) {
+    return encodeURIComponent(value).replace(/%20/g, "+");
+  }
+
+  function buildResultsMailtoHref(submission, content) {
+    const scoreLines = Object.keys(submission.scores).map(function (stage) {
+      return stage + ": " + submission.scores[stage];
+    });
+    const answerLines = submission.answers.map(function (answer) {
+      return "Question " + answer.question_id + " (" + answer.question_group + "): " + answer.value;
+    });
+    const body = [
+      "Hello Debra,",
+      "",
+      "I have completed the Alignment Assessment and would like to share my result.",
+      "",
+      "Name: " + submission.user.first_name,
+      "Email: " + submission.user.email,
+      "Result stage: " + submission.result_stage,
+      "Result summary: " + content.subheadline,
+      "What this stage requires: " + content.requires,
+      "",
+      "Group scores:",
+      scoreLines.join("\n"),
+      "",
+      "Answers:",
+      answerLines.join("\n"),
+      "",
+      "Please let me know the best next step.",
+      ""
+    ].join("\n");
+
+    return "mailto:hello@debrawylde.world?subject=" + encodeMailtoBody("Alignment Assessment Result") + "&body=" + encodeMailtoBody(body);
+  }
+
   function renderResults() {
     const scores = scoreGroups();
     const resultStage = resolveResultStage(scores);
@@ -306,16 +327,10 @@
     resultRequires.textContent = "What this stage requires: " + content.requires;
 
     const submission = buildSubmission(resultStage, scores);
-    const aiPayload = generateAIReportPayload(submission);
-
-    resultJson.textContent = JSON.stringify(
-      {
-        submission: submission,
-        ai_payload: aiPayload
-      },
-      null,
-      2
-    );
+    if (emailResults) {
+      emailResults.setAttribute("href", buildResultsMailtoHref(submission, content));
+    }
+    console.info("[Assessment] Result mailto prepared. No backend email service is connected yet.");
 
     showPanel("results");
   }
