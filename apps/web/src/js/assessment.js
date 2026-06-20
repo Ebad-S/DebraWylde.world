@@ -126,18 +126,77 @@
   const resultSubtitle = document.getElementById("result-subtitle");
   const resultBody = document.getElementById("result-body");
   const resultRequires = document.getElementById("result-requires");
-  const emailResults = document.getElementById("email-results");
 
   const firstNameInput = document.getElementById("lead-first-name");
   const emailInput = document.getElementById("lead-email");
+  const questionsSection = document.querySelector(".assessment-questions-section");
+
+  function prefersReducedMotion() {
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  }
+
+  function getScrollOffset() {
+    const raw = getComputedStyle(document.documentElement).getPropertyValue("--site-header-height");
+    const headerHeight = parseInt(raw, 10);
+    return Number.isFinite(headerHeight) ? headerHeight : 72;
+  }
+
+  function scrollPanelIntoView(panel) {
+    if (!panel) return;
+    const offset = getScrollOffset() + 16;
+    const top = panel.getBoundingClientRect().top + window.scrollY - offset;
+    window.scrollTo({
+      top: Math.max(0, top),
+      behavior: prefersReducedMotion() ? "auto" : "smooth"
+    });
+  }
+
+  function playPanelEntrance(panel) {
+    if (!panel || prefersReducedMotion()) return;
+    panel.classList.remove("is-panel-entering");
+    void panel.offsetWidth;
+    panel.classList.add("is-panel-entering");
+    panel.addEventListener("animationend", function onEnd(event) {
+      if (event.target !== panel) return;
+      panel.classList.remove("is-panel-entering");
+      panel.removeEventListener("animationend", onEnd);
+    });
+  }
+
+  function playSectionRevealCue() {
+    if (!questionsSection || prefersReducedMotion()) return;
+    questionsSection.classList.remove("is-panel-revealed");
+    void questionsSection.offsetWidth;
+    questionsSection.classList.add("is-panel-revealed");
+    questionsSection.addEventListener("animationend", function onEnd(event) {
+      if (event.target !== questionsSection) return;
+      questionsSection.classList.remove("is-panel-revealed");
+      questionsSection.removeEventListener("animationend", onEnd);
+    });
+  }
+
+  function revealQuestionsPanel() {
+    requestAnimationFrame(function () {
+      scrollPanelIntoView(panelQuestions);
+      playPanelEntrance(panelQuestions);
+      playSectionRevealCue();
+    });
+  }
 
   function showPanel(panelName) {
+    const wasQuestionsHidden = panelQuestions.hidden;
     state.screen = panelName;
-    panelIntro.hidden = panelName !== "intro";
+    if (panelIntro) {
+      panelIntro.hidden = panelName !== "intro";
+    }
     panelQuestions.hidden = panelName !== "questions";
     panelLead.hidden = panelName !== "lead";
     panelPaywall.hidden = panelName !== "paywall";
     panelResults.hidden = panelName !== "results";
+
+    if (panelName === "questions" && wasQuestionsHidden) {
+      revealQuestionsPanel();
+    }
   }
 
   function selectedValueForCurrent() {
@@ -281,41 +340,6 @@
     return submission;
   }
 
-  function encodeMailtoBody(value) {
-    return encodeURIComponent(value).replace(/%20/g, "+");
-  }
-
-  function buildResultsMailtoHref(submission, content) {
-    const scoreLines = Object.keys(submission.scores).map(function (stage) {
-      return stage + ": " + submission.scores[stage];
-    });
-    const answerLines = submission.answers.map(function (answer) {
-      return "Question " + answer.question_id + " (" + answer.question_group + "): " + answer.value;
-    });
-    const body = [
-      "Hello Debra,",
-      "",
-      "I have completed the Alignment Assessment and would like to share my result.",
-      "",
-      "Name: " + submission.user.first_name,
-      "Email: " + submission.user.email,
-      "Result stage: " + submission.result_stage,
-      "Result summary: " + content.subheadline,
-      "What this stage requires: " + content.requires,
-      "",
-      "Group scores:",
-      scoreLines.join("\n"),
-      "",
-      "Answers:",
-      answerLines.join("\n"),
-      "",
-      "Please let me know the best next step.",
-      ""
-    ].join("\n");
-
-    return "mailto:hello@debrawylde.world?subject=" + encodeMailtoBody("Alignment Assessment Result") + "&body=" + encodeMailtoBody(body);
-  }
-
   function renderResults() {
     const scores = scoreGroups();
     const resultStage = resolveResultStage(scores);
@@ -326,11 +350,7 @@
     resultBody.textContent = content.body;
     resultRequires.textContent = "What this stage requires: " + content.requires;
 
-    const submission = buildSubmission(resultStage, scores);
-    if (emailResults) {
-      emailResults.setAttribute("href", buildResultsMailtoHref(submission, content));
-    }
-    console.info("[Assessment] Result mailto prepared. No backend email service is connected yet.");
+    buildSubmission(resultStage, scores);
 
     showPanel("results");
   }

@@ -1,14 +1,27 @@
 :root {
-  /* Brand colours */
-  --dw-indigo-900: #0b0f2f;
-  --dw-indigo-850: #0d1235;
-  --dw-indigo-800: #121642;
-  --dw-indigo-700: #141a47;
-  --dw-indigo-650: #1a1b4b;
+  /* Core website theme (from _NOTES_.md) */
+  --bg-dark: #120526;
+  --bg-primary: #1f0b37;
+  --bg-royal: #291248;
+  --bg-secondary: #391c59;
+  --purple-muted: #4d2864;
+  --mauve-deep: #693564;
+  --ancient-gold: #c6a85a;
+  --rose: #834369;
+  --rose-light: #a25670;
+  --copper: #cb6e65;
+  --copper-light: #d87c72;
 
-  --dw-gold-500: #c6a85a;
-  --dw-gold-400: #d3b46a;
-  --dw-gold-300: #e3c977;
+  /* Legacy aliases kept for compatibility */
+  --dw-indigo-900: var(--bg-dark);
+  --dw-indigo-850: var(--bg-primary);
+  --dw-indigo-800: var(--bg-royal);
+  --dw-indigo-700: var(--bg-secondary);
+  --dw-indigo-650: var(--purple-muted);
+
+  --dw-gold-500: var(--ancient-gold);
+  --dw-gold-400: var(--ancient-gold);
+  --dw-gold-300: var(--ancient-gold);
 
   --dw-ivory-100: #f5eedf;
   --dw-ivory-90: rgba(245, 238, 223, 0.9);
@@ -19,21 +32,22 @@
   --dw-border-gold-mid: rgba(198, 168, 90, 0.45);
 
   /* Existing semantic aliases */
-  --color-bg: var(--dw-indigo-900);
-  --color-surface: var(--dw-indigo-800);
-  --color-surface-soft: var(--dw-indigo-650);
+  --color-bg: var(--bg-dark);
+  --color-surface: var(--bg-primary);
+  --color-surface-soft: var(--bg-secondary);
   --color-text: var(--dw-ivory-100);
   --color-text-secondary: var(--dw-ivory-80);
-  --color-accent: var(--dw-gold-500);
-  --color-accent-hover: var(--dw-gold-300);
+  --color-accent: var(--ancient-gold);
+  --color-accent-hover: var(--ancient-gold);
   --color-accent-soft: rgba(198, 168, 90, 0.16);
-  --color-border: var(--dw-border-gold-soft);
+  --color-border: rgba(198, 168, 90, 0.28);
 
   /* Typography */
   --font-heading: "Playfair Display", "Cormorant Garamond", Georgia, "Times New Roman", serif;
   --font-body: "Inter", "Lato", "Segoe UI", Arial, sans-serif;
 
   /* Layout */
+  --site-header-height: 72px;
   --max-width: 1200px;
   --dw-container-wide: 1280px;
   --dw-container-page: 1180px;
@@ -49,15 +63,15 @@
 
   /* Background recipes */
   --dw-bg-premium:
-    radial-gradient(circle at 15% 15%, rgba(72, 56, 130, 0.22), transparent 42%),
-    radial-gradient(circle at 85% 10%, rgba(38, 70, 124, 0.2), transparent 40%),
-    linear-gradient(180deg, #0b0f2f 0%, #0d1235 45%, #111645 100%);
+    radial-gradient(circle at 15% 15%, rgba(162, 86, 112, 0.22), transparent 42%),
+    radial-gradient(circle at 85% 10%, rgba(131, 67, 105, 0.2), transparent 40%),
+    linear-gradient(180deg, var(--bg-dark) 0%, var(--bg-primary) 45%, var(--bg-secondary) 100%);
 
   --dw-bg-section:
-    radial-gradient(circle at 78% 38%, rgba(198, 168, 90, 0.14) 0%, rgba(198, 168, 90, 0) 42%),
-    linear-gradient(180deg, #0b0f2f 0%, #1a1b4b 52%, #0b0f2f 100%);
+    radial-gradient(circle at 78% 38%, rgba(203, 110, 101, 0.16) 0%, rgba(203, 110, 101, 0) 42%),
+    linear-gradient(180deg, var(--bg-dark) 0%, var(--bg-secondary) 52%, var(--bg-dark) 100%);
 
   --dw-bg-private-advisory:
-    radial-gradient(circle at center, rgba(26, 27, 75, 0.55) 0%, rgba(11, 15, 47, 0.95) 55%, #050816 100%),
-    linear-gradient(180deg, #0b0f2f 0%, #1a1b4b 50%, #0b0f2f 100%);
+    radial-gradient(circle at center, rgba(57, 28, 89, 0.55) 0%, rgba(31, 11, 55, 0.95) 55%, #120526 100%),
+    linear-gradient(180deg, var(--bg-dark) 0%, var(--bg-secondary) 50%, var(--bg-dark) 100%);
 }

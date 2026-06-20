@@ -58,19 +58,12 @@
   </header>
 
   <main>
-    <section class="page-hero page-hero--image" style="--page-hero-image: url('/public/images/gate.png'); --page-hero-position: 60% center;">
-      <div class="container">
-        <p class="section__eyebrow">Alignment Assessment</p>
-        <h1 class="page-hero__title">Access Your Alignment Assessment</h1>
-        <p class="page-hero__subtitle">A strategic diagnostic for leaders becoming founders. Understand where you are, what’s shifting, and what your next chapter requires.</p>
-      </div>
-    </section>
-
     <section class="dw-assessment section">
       <div class="container">
         <div class="dw-assessment__intro text-center">
-          <p class="section__eyebrow">What You Will Clarify</p>
-          <h2 class="section__title">Your current stage, your friction point, and your next strategic move.</h2>
+          <p class="section__eyebrow">Alignment Assessment</p>
+          <h2 class="section__title">See where you are now, and what comes next.</h2>
+          <p class="section__subtitle section__subtitle--centered">A short assessment designed to help you identify where you are in your next chapter, what may be keeping you stuck, and the strategic shift required to move forward with clarity.</p>
         </div>
         <div class="dw-assessment__grid">
           <article class="dw-assessment__card">
@@ -89,21 +82,15 @@
             <p>Leave with clearer direction on what to refine, what to release, and where to focus next.</p>
           </article>
         </div>
+        <div class="dw-assessment__actions text-center">
+          <button id="start-assessment" class="btn btn--primary btn--large" type="button">Access Your Alignment Assessment</button>
+          <p class="dw-assessment__support">Takes only a few minutes.</p>
+        </div>
       </div>
     </section>
 
-    <section class="section">
+    <section class="section assessment-questions-section" aria-label="Alignment assessment questions">
       <div class="container assessment-wrap">
-        <div id="panel-intro" class="assessment-panel assessment-intro">
-          <p class="section__eyebrow">Alignment Evolution Path™</p>
-          <h1 class="section__title">Where Are You on Your Alignment Evolution Path™?</h1>
-          <p class="section__subtitle section__subtitle--centered">You’ve built success. But something is shifting. This short assessment will identify where you are in the process and what your next move requires.</p>
-          <p class="assessment-note">Select the answer that feels most true for you right now.</p>
-          <div class="hero__actions mt-4">
-            <button id="start-assessment" class="btn btn--primary btn--large" type="button">Begin Your Assessment</button>
-          </div>
-        </div>
-
         <div id="panel-questions" class="assessment-panel" hidden>
           <div class="assessment-progress">
             <p id="progress-text" class="assessment-progress__text">Question 1 of 15</p>
@@ -162,9 +149,18 @@
           <p id="result-requires" class="assessment-result-requires"></p>
           <div class="hero__actions">
             <a href="discovery-call.html" class="btn btn--primary btn--large">Book a Confidential Strategy Call</a>
-            <a id="email-results" href="mailto:hello@debrawylde.world?subject=Alignment%20Assessment%20Result" class="btn btn--outline btn--large">Email My Results to Debra</a>
           </div>
-          <p class="assessment-note">Use the email button to open a prepared message with your stage and result details. Please review and send it to share your result with Debra.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section assessment-program-cta-section" aria-label="Program next step">
+      <div class="container">
+        <div class="assessment-program-cta text-center">
+          <p class="section__eyebrow">After Your Assessment</p>
+          <h2 class="section__title">Ready to explore the deeper pathway?</h2>
+          <p class="section__subtitle section__subtitle--centered">If your result confirms that your next chapter needs structure, the Program page outlines the private advisory pathway designed to help you move with clarity.</p>
+          <a href="program.html" class="btn btn--primary btn--large">Explore the Program</a>
         </div>
       </div>
     </section>
@@ -173,40 +169,60 @@
   <!-- Footer -->
   <footer class="site-footer">
     <div class="container">
-      <div class="footer-grid">
-        <div class="footer-brand">
-          <p class="footer-brand__name">Debra Wylde</p>
-          <p class="footer-brand__text">Private strategic advisory for leaders navigating identity shift, next-level direction, and aligned leadership.</p>
+      <section class="footer-cta" aria-labelledby="footer-cta-title">
+        <div class="footer-cta__copy">
+          <h2 class="footer-cta__title" id="footer-cta-title">Ready to lead your next chapter with clarity?</h2>
+          <p class="footer-cta__text">Identify where you are now, what is asking to shift, and the strategic step that may come next.</p>
         </div>
-        <div>
-          <h4>Quick Links</h4>
+        <div class="footer-cta__actions" aria-label="Footer calls to action">
+          <a class="footer-cta__link footer-cta__link--primary" href="assessment.html">Take the Alignment Assessment</a>
+          <a class="footer-cta__link footer-cta__link--secondary" href="discovery-call.html">Book a Discovery Call</a>
+        </div>
+      </section>
+
+      <div class="footer-grid">
+        <section class="footer-brand" aria-labelledby="footer-brand-title">
+          <h2 class="footer-brand__name" id="footer-brand-title">Debra Wylde</h2>
+          <p class="footer-brand__text">Private strategic advisory for leaders navigating identity shift, next-level direction, and aligned leadership.</p>
+          <a class="footer-contact-link" href="mailto:hello@debrawylde.world">hello@debrawylde.world</a>
+          <div class="social-links">
+            <a href="https://www.instagram.com/debra.wylde/" aria-label="Instagram @debra.wylde" target="_blank" rel="noopener"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg><span>@debra.wylde</span></a>
+          </div>
+        </section>
+
+        <nav class="footer-nav" aria-label="Explore">
+          <h2>Explore</h2>
           <ul class="footer-links">
             <li><a href="./">Home</a></li>
-            <li><a href="program.html">Program</a></li>
             <li><a href="about.html">About</a></li>
+            <li><a href="program.html">Program</a></li>
+          </ul>
+        </nav>
+
+        <nav class="footer-nav" aria-label="Resources">
+          <h2>Resources</h2>
+          <ul class="footer-links">
             <li><a href="blog.html">Blog</a></li>
             <li><a href="faq.html">FAQ</a></li>
-            <li><a href="assessment.html">Assessment</a></li>
             <li><a href="financial-forecast.html">Financial Forecast</a></li>
-            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </nav>
+
+        <nav class="footer-nav" aria-label="Take the Next Step">
+          <h2>Take the Next Step</h2>
+          <ul class="footer-links">
+            <li><a href="assessment.html">Alignment Assessment</a></li>
+            <li><a href="discovery-call.html">Book a Discovery Call</a></li>
+            <li><a href="contact.html">Contact Debra</a></li>
             <li><a href="pay-online.html">Pay Online</a></li>
           </ul>
-        </div>
-        <div>
-          <h4>Get in Touch</h4>
-          <ul class="footer-links">
-            <li><a href="mailto:hello@debrawylde.world">hello@debrawylde.world</a></li>
-            <li><a href="discovery-call.html">Book a Discovery Call</a></li>
-          </ul>
-          <div class="social-links mt-3">
-            <a href="https://www.instagram.com/debra.wylde/" aria-label="Instagram @debra.wylde" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg><span>@debra.wylde</span></a>
-          </div>
-        </div>
+        </nav>
       </div>
+
       <div class="footer-bottom">
         <p class="footer-bottom__col footer-bottom__col--left">&copy; 2026 Debra Wylde. All rights reserved.</p>
         <p class="footer-bottom__col footer-bottom__col--center">Clarity for the next chapter you are ready to lead.</p>
-        <p class="footer-bottom__col footer-bottom__col--right">Build with care by <a href="https://serenity-webcrafts.com.au/" target="_blank" rel="noopener">Serenity WebCrafts</a></p>
+        <p class="footer-bottom__col footer-bottom__col--right">Built with care by <a href="https://serenity-webcrafts.com.au/" target="_blank" rel="noopener">Serenity Webcrafts</a></p>
       </div>
     </div>
   </footer>

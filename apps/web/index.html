@@ -13,8 +13,9 @@
   <link rel="canonical" href="https://debra.preview.serenity-webcrafts.com.au/">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;500;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&family=Inter:wght@300;400;700&family=Lato:wght@400;500;700&family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="icon" href="/public/images/Logo.png" type="image/png">
+  <link rel="preload" as="image" href="/public/images/debra-wylde-hero-background.jpg">
   <script>
   (function () {
     var path = window.location.pathname;
@@ -62,20 +63,22 @@
   <main>
 
     <!-- Hero -->
-    <section class="dw-hero dw-hero--photo" style="--dw-hero-image: url('/public/images/gate.png'); --dw-hero-image-position: 62% center;">
+    <section class="dw-hero dw-hero--home" aria-labelledby="home-hero-title">
       <div class="container dw-hero__layout">
         <div class="dw-hero__content">
-          <p class="dw-hero__eyebrow">Private Strategic Advisory</p>
-          <h1 class="dw-hero__title">Where leaders become high-impact founders</h1>
-          <p class="dw-hero__lead">Strategic advice for building aligned, high-impact businesses.</p>
-          <div class="dw-hero__identity">
-            <span class="dw-hero__name">Debra Wylde</span>
-            <span class="dw-hero__role">Strategic Alignment Advisor</span>
-          </div>
-          <div class="hero__actions">
-            <a href="assessment.html" class="btn btn--primary btn--large">Access Your Alignment Assessment</a>
-            <a href="discovery-call.html" class="btn btn--outline btn--large">Book a Confidential Strategy Call</a>
-          </div>
+          <p class="dw-hero__brand">
+            <span class="dw-hero__brand-mark" aria-hidden="true"><img src="/public/images/Logo.png" alt="" class="dw-hero__brand-logo"></span>
+            <span class="dw-hero__brand-name">DEBRA WYLDE</span>
+          </p>
+          <p class="dw-hero__kicker">LEADERSHIP · WEALTH · IMPACT</p>
+          <div class="dw-hero__ornament" aria-hidden="true"></div>
+          <h1 class="hero-title" id="home-hero-title"><span>The Capacity</span><span>to Hold More</span></h1>
+          <p class="hero-subtitle">Build extraordinary wealth, leadership and impact, without abandoning yourself in the process.</p>
+          <a href="assessment.html" class="hero-cta">Access Your Alignment Assessment</a>
+          <div class="dw-hero__ornament dw-hero__ornament--support" aria-hidden="true"></div>
+          <p class="hero-supporting-copy">Strategic counsel for high-achieving women leaders<br>navigating expansion, transition and their next level<br>of impact, with clarity, regulation and alignment.</p>
+          <p class="hero-authority-line">UN Consultant · Fortune 50 Advisor · Master Trainer</p>
+          <p class="hero-trust-line">Trusted by thousands of accomplished leaders</p>
         </div>
       </div>
     </section>
@@ -94,15 +97,25 @@
       <div class="container next-chapter__layout">
         <div class="next-chapter__content">
           <p class="section__eyebrow">Your Next Chapter</p>
-          <h2 class="section__title">You’ve outgrown where you are. But haven’t fully stepped into what’s next.</h2>
-          <p class="section__subtitle">There comes a point where success stops feeling like progress. Not because you’ve failed, but because you’ve evolved.</p>
-          <ul class="next-chapter__points">
-            <li>Your current role no longer reflects your full capability.</li>
-            <li>You feel a pull toward building something of your own.</li>
-            <li>You want more ownership over your time, decisions, and direction.</li>
-            <li>External success no longer feels like enough.</li>
-            <li>You’re thinking beyond career, toward long-term impact.</li>
-          </ul>
+          <h2 class="section__title">You’ve outgrown where you are. <span class="next-chapter__title-accent">But haven’t fully stepped into what’s next.</span></h2>
+          <div class="next-chapter__divider" aria-hidden="true"></div>
+          <div class="next-chapter__columns">
+            <div class="next-chapter__col">
+              <p>There comes a point where success stops feeling like progress.</p>
+              <p>Not because you’ve failed, but because you’ve evolved.</p>
+              <p>You can still lead. Still deliver. Still perform at a high level.</p>
+            </div>
+            <div class="next-chapter__col">
+              <p class="next-chapter__points-title">You may recognize this if:</p>
+              <ul class="next-chapter__points">
+                <li>Your current role no longer reflects your full capability.</li>
+                <li>You feel a pull toward building something of your own.</li>
+                <li>You want more ownership over your time, decisions, and direction.</li>
+                <li>External success no longer feels like enough.</li>
+                <li>You’re thinking beyond career, toward long-term impact.</li>
+              </ul>
+            </div>
+          </div>
           <p class="next-chapter__transition">This isn’t about leaving. It’s about stepping into what’s next.</p>
           <div class="hero__actions">
             <a href="assessment.html" class="btn btn--primary">Access Your Alignment Assessment</a>
@@ -110,7 +123,6 @@
           </div>
           <p class="dw-assessment__support">Identify where you are and what to do next.</p>
         </div>
-        <div class="next-chapter__media" style="--dw-next-chapter-image: url('/public/images/walking_lady.png'); --dw-next-chapter-image-position: center center;" aria-hidden="true"></div>
       </div>
     </section>
 
@@ -147,11 +159,11 @@
     </section>
 
     <!-- About Teaser -->
-    <section class="section section--alt">
+    <section class="section section--alt about-debra-section">
       <div class="container">
         <div class="split">
           <div class="split__media">
-            <img src="/public/images/debra_portrait_1.png" alt="Debra Wylde portrait">
+            <img src="/public/images/debra_portrait_2.png" alt="Debra Wylde portrait">
           </div>
           <div class="split__content">
             <p class="section__eyebrow">About Debra</p>
@@ -214,40 +226,60 @@
   <!-- Footer -->
   <footer class="site-footer">
     <div class="container">
-      <div class="footer-grid">
-        <div class="footer-brand">
-          <p class="footer-brand__name">Debra Wylde</p>
-          <p class="footer-brand__text">Private strategic advisory for leaders navigating identity shift, next-level direction, and aligned leadership.</p>
+      <section class="footer-cta" aria-labelledby="footer-cta-title">
+        <div class="footer-cta__copy">
+          <h2 class="footer-cta__title" id="footer-cta-title">Ready to lead your next chapter with clarity?</h2>
+          <p class="footer-cta__text">Identify where you are now, what is asking to shift, and the strategic step that may come next.</p>
         </div>
-        <div>
-          <h4>Quick Links</h4>
+        <div class="footer-cta__actions" aria-label="Footer calls to action">
+          <a class="footer-cta__link footer-cta__link--primary" href="assessment.html">Take the Alignment Assessment</a>
+          <a class="footer-cta__link footer-cta__link--secondary" href="discovery-call.html">Book a Discovery Call</a>
+        </div>
+      </section>
+
+      <div class="footer-grid">
+        <section class="footer-brand" aria-labelledby="footer-brand-title">
+          <h2 class="footer-brand__name" id="footer-brand-title">Debra Wylde</h2>
+          <p class="footer-brand__text">Private strategic advisory for leaders navigating identity shift, next-level direction, and aligned leadership.</p>
+          <a class="footer-contact-link" href="mailto:hello@debrawylde.world">hello@debrawylde.world</a>
+          <div class="social-links">
+            <a href="https://www.instagram.com/debra.wylde/" aria-label="Instagram @debra.wylde" target="_blank" rel="noopener"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg><span>@debra.wylde</span></a>
+          </div>
+        </section>
+
+        <nav class="footer-nav" aria-label="Explore">
+          <h2>Explore</h2>
           <ul class="footer-links">
             <li><a href="./">Home</a></li>
-            <li><a href="program.html">Program</a></li>
             <li><a href="about.html">About</a></li>
+            <li><a href="program.html">Program</a></li>
+          </ul>
+        </nav>
+
+        <nav class="footer-nav" aria-label="Resources">
+          <h2>Resources</h2>
+          <ul class="footer-links">
             <li><a href="blog.html">Blog</a></li>
             <li><a href="faq.html">FAQ</a></li>
-            <li><a href="assessment.html">Assessment</a></li>
             <li><a href="financial-forecast.html">Financial Forecast</a></li>
-            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </nav>
+
+        <nav class="footer-nav" aria-label="Take the Next Step">
+          <h2>Take the Next Step</h2>
+          <ul class="footer-links">
+            <li><a href="assessment.html">Alignment Assessment</a></li>
+            <li><a href="discovery-call.html">Book a Discovery Call</a></li>
+            <li><a href="contact.html">Contact Debra</a></li>
             <li><a href="pay-online.html">Pay Online</a></li>
           </ul>
-        </div>
-        <div>
-          <h4>Get in Touch</h4>
-          <ul class="footer-links">
-            <li><a href="mailto:hello@debrawylde.world">hello@debrawylde.world</a></li>
-            <li><a href="discovery-call.html">Book a Discovery Call</a></li>
-          </ul>
-          <div class="social-links mt-3">
-            <a href="https://www.instagram.com/debra.wylde/" aria-label="Instagram @debra.wylde" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg><span>@debra.wylde</span></a>
-          </div>
-        </div>
+        </nav>
       </div>
+
       <div class="footer-bottom">
         <p class="footer-bottom__col footer-bottom__col--left">&copy; 2026 Debra Wylde. All rights reserved.</p>
         <p class="footer-bottom__col footer-bottom__col--center">Clarity for the next chapter you are ready to lead.</p>
-        <p class="footer-bottom__col footer-bottom__col--right">Build with care by <a href="https://serenity-webcrafts.com.au/" target="_blank" rel="noopener">Serenity WebCrafts</a></p>
+        <p class="footer-bottom__col footer-bottom__col--right">Built with care by <a href="https://serenity-webcrafts.com.au/" target="_blank" rel="noopener">Serenity Webcrafts</a></p>
       </div>
     </div>
   </footer>

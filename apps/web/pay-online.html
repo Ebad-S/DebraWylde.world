@@ -45,7 +45,7 @@
   <main>
 
     <!-- Page Hero -->
-    <section class="page-hero page-hero--image" style="--page-hero-image: url('/public/images/gate.png'); --page-hero-position: 58% center;">
+    <section class="page-hero page-hero--image" style="--page-hero-image: url('/public/images/BG_Base_4.png'); --page-hero-position: 58% center;">
       <div class="container">
         <p class="section__eyebrow">Pay Online</p>
         <h1 class="page-hero__title">Secure Client Payments</h1>
@@ -121,40 +121,60 @@
   <!-- Footer -->
   <footer class="site-footer">
     <div class="container">
-      <div class="footer-grid">
-        <div class="footer-brand">
-          <p class="footer-brand__name">Debra Wylde</p>
-          <p class="footer-brand__text">Private strategic advisory for leaders navigating identity shift, next-level direction, and aligned leadership.</p>
+      <section class="footer-cta" aria-labelledby="footer-cta-title">
+        <div class="footer-cta__copy">
+          <h2 class="footer-cta__title" id="footer-cta-title">Ready to lead your next chapter with clarity?</h2>
+          <p class="footer-cta__text">Identify where you are now, what is asking to shift, and the strategic step that may come next.</p>
         </div>
-        <div>
-          <h4>Quick Links</h4>
+        <div class="footer-cta__actions" aria-label="Footer calls to action">
+          <a class="footer-cta__link footer-cta__link--primary" href="assessment.html">Take the Alignment Assessment</a>
+          <a class="footer-cta__link footer-cta__link--secondary" href="discovery-call.html">Book a Discovery Call</a>
+        </div>
+      </section>
+
+      <div class="footer-grid">
+        <section class="footer-brand" aria-labelledby="footer-brand-title">
+          <h2 class="footer-brand__name" id="footer-brand-title">Debra Wylde</h2>
+          <p class="footer-brand__text">Private strategic advisory for leaders navigating identity shift, next-level direction, and aligned leadership.</p>
+          <a class="footer-contact-link" href="mailto:hello@debrawylde.world">hello@debrawylde.world</a>
+          <div class="social-links">
+            <a href="https://www.instagram.com/debra.wylde/" aria-label="Instagram @debra.wylde" target="_blank" rel="noopener"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg><span>@debra.wylde</span></a>
+          </div>
+        </section>
+
+        <nav class="footer-nav" aria-label="Explore">
+          <h2>Explore</h2>
           <ul class="footer-links">
             <li><a href="./">Home</a></li>
-            <li><a href="program.html">Program</a></li>
             <li><a href="about.html">About</a></li>
+            <li><a href="program.html">Program</a></li>
+          </ul>
+        </nav>
+
+        <nav class="footer-nav" aria-label="Resources">
+          <h2>Resources</h2>
+          <ul class="footer-links">
             <li><a href="blog.html">Blog</a></li>
             <li><a href="faq.html">FAQ</a></li>
-            <li><a href="assessment.html">Assessment</a></li>
             <li><a href="financial-forecast.html">Financial Forecast</a></li>
-            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </nav>
+
+        <nav class="footer-nav" aria-label="Take the Next Step">
+          <h2>Take the Next Step</h2>
+          <ul class="footer-links">
+            <li><a href="assessment.html">Alignment Assessment</a></li>
+            <li><a href="discovery-call.html">Book a Discovery Call</a></li>
+            <li><a href="contact.html">Contact Debra</a></li>
             <li><a href="pay-online.html">Pay Online</a></li>
           </ul>
-        </div>
-        <div>
-          <h4>Get in Touch</h4>
-          <ul class="footer-links">
-            <li><a href="mailto:hello@debrawylde.world">hello@debrawylde.world</a></li>
-            <li><a href="discovery-call.html">Book a Discovery Call</a></li>
-          </ul>
-          <div class="social-links mt-3">
-            <a href="https://www.instagram.com/debra.wylde/" aria-label="Instagram @debra.wylde" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg><span>@debra.wylde</span></a>
-          </div>
-        </div>
+        </nav>
       </div>
+
       <div class="footer-bottom">
         <p class="footer-bottom__col footer-bottom__col--left">&copy; 2026 Debra Wylde. All rights reserved.</p>
-        <p class="footer-bottom__col footer-bottom__col--center">Your transformation starts with a single conversation.</p>
-        <p class="footer-bottom__col footer-bottom__col--right">Build with care by <a href="https://serenity-webcrafts.com.au/" target="_blank" rel="noopener">Serenity WebCrafts</a></p>
+        <p class="footer-bottom__col footer-bottom__col--center">Clarity for the next chapter you are ready to lead.</p>
+        <p class="footer-bottom__col footer-bottom__col--right">Built with care by <a href="https://serenity-webcrafts.com.au/" target="_blank" rel="noopener">Serenity Webcrafts</a></p>
       </div>
     </div>
   </footer>
