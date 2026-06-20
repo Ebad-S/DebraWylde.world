@@ -861,6 +861,60 @@ p + p { margin-top: 1rem; }
   color: var(--color-text-secondary);
 }
 
+/* --- Honeypot (anti-spam): visually and audibly hidden, off-screen --- */
+.hp-field {
+  position: absolute !important;
+  left: -9999px !important;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* --- Inline form feedback (error after a failed submit) --- */
+.form-feedback {
+  display: none;
+  margin-top: 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius, 6px);
+  background-color: #fbecec;
+  border: 1px solid #e3b7b3;
+  color: #8a2a23;
+  font-size: 0.9rem;
+}
+
+.form-feedback.is-visible {
+  display: block;
+}
+
+/* --- Assessment result note (email status / graceful fallback) --- */
+.assessment-result-note {
+  display: none;
+  margin-top: 1.25rem;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius, 6px);
+  background-color: var(--color-surface-alt, #f4efe8);
+  border: 1px solid var(--color-border, #d8c9b4);
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+}
+
+.assessment-result-note.is-visible {
+  display: block;
+}
+
+.assessment-result-note--error {
+  background-color: #fbf3ea;
+  border-color: #e3cdb0;
+  color: #7a5a2e;
+}
+
+/* --- Pay Online form spacing --- */
+.payment-form {
+  display: grid;
+  gap: 1.1rem;
+}
+
 /* --- Process / Steps --- */
 .steps {
   display: grid;
@@ -4687,8 +4741,87 @@ body:has(.dw-hero--home) .nav-list a {
   font-size: 0.92rem;
 }
 
+#panel-paywall.assessment-panel {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: clamp(2rem, 4vw, 2.85rem);
+  text-align: center;
+  border-color: var(--dw-border-gold-mid);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(198, 168, 90, 0.1), transparent 58%),
+    rgba(14, 19, 59, 0.84);
+}
+
+#panel-paywall .section__eyebrow {
+  margin-bottom: 0.75rem;
+  letter-spacing: 0.22em;
+}
+
+#panel-paywall .section__title {
+  font-family: var(--font-heading);
+  font-size: clamp(1.75rem, 4vw, 2.35rem);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--color-text);
+  margin-bottom: 0.85rem;
+}
+
+#panel-paywall .section__subtitle {
+  font-family: var(--font-body);
+  font-size: clamp(1rem, 2vw, 1.125rem);
+  color: var(--color-text-secondary);
+  max-width: 38rem;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 1.25rem;
+  line-height: 1.72;
+}
+
+#panel-paywall .assessment-note {
+  max-width: 42rem;
+  margin: 0 auto 1.75rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--dw-border-gold-soft);
+  border-radius: var(--dw-radius-card);
+  background: rgba(198, 168, 90, 0.08);
+  color: #e8dba7;
+  font-size: 0.95rem;
+  line-height: 1.65;
+  text-align: center;
+}
+
+#panel-paywall .assessment-actions {
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+#panel-results.assessment-panel {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: clamp(2rem, 4vw, 2.85rem);
+  text-align: center;
+  border-color: var(--dw-border-gold-mid);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(198, 168, 90, 0.1), transparent 58%),
+    rgba(14, 19, 59, 0.84);
+}
+
+#panel-results .section__eyebrow {
+  margin-bottom: 0.75rem;
+}
+
 .assessment-result-title {
   margin-bottom: 0.5rem;
+}
+
+#panel-results .assessment-result-title {
+  font-family: var(--font-heading);
+  font-size: clamp(1.75rem, 4vw, 2.35rem);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--color-text);
+  margin-bottom: 0.4rem;
 }
 
 .assessment-result-subtitle {
@@ -4696,9 +4829,26 @@ body:has(.dw-hero--home) .nav-list a {
   margin-bottom: 1rem;
 }
 
+#panel-results .assessment-result-subtitle {
+  font-family: var(--font-heading);
+  font-size: clamp(1.05rem, 2.5vw, 1.25rem);
+  font-style: italic;
+  color: var(--ancient-gold);
+  margin-bottom: 1.35rem;
+}
+
 .assessment-result-body {
   color: var(--color-text-secondary);
   margin-bottom: 1rem;
+}
+
+#panel-results .assessment-result-body {
+  max-width: 42rem;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+  line-height: 1.72;
 }
 
 .assessment-result-requires {
@@ -4706,9 +4856,46 @@ body:has(.dw-hero--home) .nav-list a {
   margin-bottom: 1.5rem;
 }
 
+#panel-results .assessment-result-requires {
+  max-width: 42rem;
+  margin: 0 auto 1.5rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--dw-border-gold-soft);
+  border-radius: var(--dw-radius-card);
+  background: rgba(198, 168, 90, 0.08);
+  font-size: 0.95rem;
+  line-height: 1.65;
+  text-align: left;
+}
+
+#panel-results .assessment-result-note {
+  display: none;
+  max-width: 42rem;
+  margin: 0 auto 1.25rem;
+  padding: 0.85rem 1.1rem;
+  border-radius: var(--dw-radius-card);
+  background: rgba(198, 168, 90, 0.12);
+  border: 1px solid var(--dw-border-gold-mid);
+  color: var(--dw-ivory-100);
+  font-size: 0.9rem;
+  line-height: 1.55;
+  text-align: center;
+}
+
+#panel-results .assessment-result-note.is-visible {
+  display: block;
+}
+
+#panel-results .assessment-result-note--error {
+  background: rgba(203, 110, 101, 0.14);
+  border-color: rgba(203, 110, 101, 0.45);
+  color: #f5ddd8;
+}
+
 #panel-results .hero__actions {
   justify-content: center;
   text-align: center;
+  margin-top: 0.25rem;
 }
 
 .assessment-debug {

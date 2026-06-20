@@ -129,7 +129,71 @@
 
   const firstNameInput = document.getElementById("lead-first-name");
   const emailInput = document.getElementById("lead-email");
+  const websiteInput = document.getElementById("lead-website");
+  const resultRequiresEl = document.getElementById("result-requires");
   const questionsSection = document.querySelector(".assessment-questions-section");
+
+  let resultNoteEl = null;
+
+  function setResultNote(message, isError) {
+    if (!resultNoteEl) {
+      resultNoteEl = document.createElement("p");
+      resultNoteEl.className = "assessment-result-note";
+      resultNoteEl.setAttribute("role", "status");
+      if (resultRequiresEl && resultRequiresEl.parentNode) {
+        resultRequiresEl.parentNode.insertBefore(
+          resultNoteEl,
+          resultRequiresEl.nextSibling
+        );
+      }
+    }
+    resultNoteEl.textContent = message;
+    resultNoteEl.classList.toggle("assessment-result-note--error", !!isError);
+    resultNoteEl.classList.toggle("is-visible", !!message);
+  }
+
+  function submitToBackend(resultStage, scores) {
+    if (!window.DebraApi || typeof window.DebraApi.postJson !== "function") {
+      return;
+    }
+
+    const answers = questions.map(function (question) {
+      return {
+        question_id: question.id,
+        question_group: question.group,
+        value: state.answersById[question.id] || 0
+      };
+    });
+
+    const payload = {
+      name: state.user.first_name,
+      email: state.user.email,
+      answers: answers,
+      scores: scores,
+      result_stage: resultStage,
+      website: websiteInput ? websiteInput.value.trim() : "",
+      source: "assessment",
+      page: window.location.pathname
+    };
+
+    setResultNote("Sending your result summary by email...", false);
+
+    window.DebraApi.postJson("/assessment", payload)
+      .then(function () {
+        setResultNote(
+          "A copy of your result has been emailed to " + state.user.email + ".",
+          false
+        );
+      })
+      .catch(function () {
+        // The on-screen result must survive even when the API is unavailable.
+        setResultNote(
+          "Your result is ready. We could not send the email summary right now, " +
+            "but you can still review your result on this page.",
+          true
+        );
+      });
+  }
 
   function prefersReducedMotion() {
     return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -353,6 +417,7 @@
     buildSubmission(resultStage, scores);
 
     showPanel("results");
+    submitToBackend(resultStage, scores);
   }
 
   function goToQuestion(index) {

@@ -99,7 +99,7 @@ function buildMonthlyByYearTables(rowSpecs, { snapshot = false, firstColHeader =
         skipTotal: snapshot || spec.skipTotal
       };
     });
-    const title = `Year ${yearIndex + 1} Monthly (M${yearIndex * 12 + 1}–M${yearIndex * 12 + 12})`;
+    const title = `Year ${yearIndex + 1} Monthly (M${yearIndex * 12 + 1}-M${yearIndex * 12 + 12})`;
     tables.push(`<h4 class="print-sub-heading">${escapeHtml(title)}</h4>${buildPrintPeriodTable({
       rows,
       columns: monthLabelsForYear(yearIndex),

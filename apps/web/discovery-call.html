@@ -15,24 +15,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;500;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="icon" href="/public/images/Logo.png" type="image/png">
-  <script>
-  (function () {
-    var path = window.location.pathname;
-    if (!path || path.endsWith('/')) return;
-    var last = path.slice(path.lastIndexOf('/') + 1);
-    if (last.indexOf('.') !== -1) return;
-    var withSlash = path + '/';
-    var xhr = new XMLHttpRequest();
-    xhr.open('HEAD', withSlash + 'src/css/styles.css', false);
-    try {
-      xhr.send();
-      if (xhr.status === 200) {
-        window.location.replace(withSlash + window.location.search + window.location.hash);
-      }
-    } catch (err) {}
-  })();
-  </script>
-  <link rel="stylesheet" href="src/css/styles.css">
+  <link rel="stylesheet" href="/src/css/styles.css">
 </head>
 <body>
 
@@ -125,7 +108,11 @@
           <p class="section__subtitle section__subtitle--centered">Fill in the form below and Debra will be in touch to arrange your free discovery call.</p>
         </div>
 
-        <form data-prototype-form data-mailto-form data-mailto-recipient="hello@debrawylde.world" data-mailto-subject="Discovery call request" novalidate>
+        <form data-prototype-form data-api-endpoint="/discovery-call" novalidate>
+          <div class="hp-field" aria-hidden="true">
+            <label for="dc-website">Leave this field empty</label>
+            <input type="text" id="dc-website" name="website" tabindex="-1" autocomplete="off">
+          </div>
           <div class="form-group">
             <label for="dc-name">Full Name <span aria-hidden="true">*</span></label>
             <input type="text" id="dc-name" name="full_name" required autocomplete="name" placeholder="Your full name">
@@ -154,9 +141,9 @@
 
         <div class="form-success" role="alert">
           <div class="form-success__icon">✓</div>
-          <h3 class="form-success__title">Email Prepared</h3>
-          <p class="form-success__text">Your email app should now open with your discovery call request prepared. Please review and send it to complete your enquiry.</p>
-          <p class="form-success__demo-note">If your email app did not open, please email Debra directly at <a href="mailto:hello@debrawylde.world">hello@debrawylde.world</a>.</p>
+          <h3 class="form-success__title">Request Received</h3>
+          <p class="form-success__text">Thank you. Debra will be in touch to arrange your free discovery call.</p>
+          <p class="form-success__demo-note">Prefer email? You can also reach Debra directly at <a href="mailto:hello@debrawylde.world">hello@debrawylde.world</a>.</p>
         </div>
       </div>
     </section>
@@ -291,8 +278,12 @@
     </div>
   </footer>
 
-  <script src="src/js/main.js"></script>
+  <script src="/src/js/api.js"></script>
+  <script src="/src/js/main.js"></script>
   <script>
+    // Calendly is config-only. Paste Debra's confirmed Calendly event URL between
+    // the quotes to activate the inline embed. While empty, the polished
+    // placeholder/fallback above remains visible. Do not use a placeholder URL.
     const CALENDLY_URL = "";
 
     (function initialiseCalendlyWidget() {

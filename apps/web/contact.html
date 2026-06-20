@@ -15,24 +15,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;500;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="icon" href="/public/images/Logo.png" type="image/png">
-  <script>
-  (function () {
-    var path = window.location.pathname;
-    if (!path || path.endsWith('/')) return;
-    var last = path.slice(path.lastIndexOf('/') + 1);
-    if (last.indexOf('.') !== -1) return;
-    var withSlash = path + '/';
-    var xhr = new XMLHttpRequest();
-    xhr.open('HEAD', withSlash + 'src/css/styles.css', false);
-    try {
-      xhr.send();
-      if (xhr.status === 200) {
-        window.location.replace(withSlash + window.location.search + window.location.hash);
-      }
-    } catch (err) {}
-  })();
-  </script>
-  <link rel="stylesheet" href="src/css/styles.css">
+  <link rel="stylesheet" href="/src/css/styles.css">
 </head>
 <body>
 
@@ -78,7 +61,11 @@
             <h2>Send a Message</h2>
             <p class="text-secondary mb-3">Share a little context and Debra will respond personally within 1-2 business days.</p>
 
-            <form data-prototype-form data-mailto-form data-mailto-recipient="hello@debrawylde.world" data-mailto-subject="Website enquiry for Debra Wylde" novalidate>
+            <form data-prototype-form data-api-endpoint="/contact" novalidate>
+              <div class="hp-field" aria-hidden="true">
+                <label for="ct-website">Leave this field empty</label>
+                <input type="text" id="ct-website" name="website" tabindex="-1" autocomplete="off">
+              </div>
               <div class="form-group">
                 <label for="ct-name">Full Name <span aria-hidden="true">*</span></label>
                 <input type="text" id="ct-name" name="full_name" required autocomplete="name" placeholder="Your full name">
@@ -104,9 +91,9 @@
 
             <div class="form-success" role="alert">
               <div class="form-success__icon">✓</div>
-              <h3 class="form-success__title">Email Prepared</h3>
-              <p class="form-success__text">Your email app should now open with your message prepared. Please review and send it to complete your enquiry.</p>
-              <p class="form-success__demo-note">If your email app did not open, please email Debra directly at <a href="mailto:hello@debrawylde.world">hello@debrawylde.world</a>.</p>
+              <h3 class="form-success__title">Message Sent</h3>
+              <p class="form-success__text">Thank you for reaching out. Debra will respond personally within 1-2 business days.</p>
+              <p class="form-success__demo-note">Prefer email? You can also reach Debra directly at <a href="mailto:hello@debrawylde.world">hello@debrawylde.world</a>.</p>
             </div>
           </div>
 
@@ -268,6 +255,7 @@
     </div>
   </footer>
 
-  <script src="src/js/main.js"></script>
+  <script src="/src/js/api.js"></script>
+  <script src="/src/js/main.js"></script>
 </body>
 </html>

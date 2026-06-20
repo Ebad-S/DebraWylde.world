@@ -15,25 +15,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="icon" href="public/images/Logo.png" type="image/png">
-  <script>
-  (function () {
-    var path = window.location.pathname;
-    if (!path || path.endsWith('/')) return;
-    var last = path.slice(path.lastIndexOf('/') + 1);
-    if (last.indexOf('.') !== -1) return;
-    var withSlash = path + '/';
-    var xhr = new XMLHttpRequest();
-    xhr.open('HEAD', withSlash + 'src/css/styles.css', false);
-    try {
-      xhr.send();
-      if (xhr.status === 200) {
-        window.location.replace(withSlash + window.location.search + window.location.hash);
-      }
-    } catch (err) {}
-  })();
-  </script>
-  <link rel="stylesheet" href="src/css/styles.css">
-  <link rel="stylesheet" href="src/financial-forecast/styles/financial-forecast.css">
+  <link rel="stylesheet" href="/src/css/styles.css">
+  <link rel="stylesheet" href="/src/financial-forecast/styles/financial-forecast.css">
 </head>
 <body class="financial-forecast-product">
   <header class="site-header">
@@ -133,7 +116,7 @@
     </div>
   </footer>
 
-  <script src="src/js/main.js"></script>
+  <script src="/src/js/main.js"></script>
   <script>
     (function bootstrapForecastApp() {
       if (window.location.protocol === "file:") {
@@ -154,7 +137,7 @@
 
       var script = document.createElement("script");
       script.type = "module";
-      script.src = "src/financial-forecast/ui/app-shell.js";
+      script.src = "/src/financial-forecast/ui/app-shell.js";
       script.onerror = function () {
         var mount = document.getElementById("forecast-app");
         if (mount) {

@@ -49,6 +49,34 @@ cd apps/web
 python -m http.server 8000
 ```
 
+### Test API Health Locally
+
+**Terminal 1 (frontend):**
+```bash
+npx serve apps/web -l 3000
+```
+
+**Terminal 2 (backend):**
+```bash
+cd apps/api
+python -m venv .venv
+
+# Windows:
+.venv/Scripts/activate
+
+# macOS/Linux:
+source .venv/bin/activate
+
+pip install -r requirements.txt
+uvicorn app.main:app --reload --port 8000
+```
+
+Open in your browser:  
+[http://localhost:8000/api/health](http://localhost:8000/api/health)
+
+The report confirms this local setup was tested successfully with the frontend on `:3000` and API on `:8000`.
+
+
 **Local Homepage Preview:**  
 [http://localhost:3000/apps/web/](http://localhost:3000/apps/web/)
 

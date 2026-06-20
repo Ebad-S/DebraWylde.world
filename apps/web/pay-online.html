@@ -89,28 +89,66 @@
             <p class="payment-widget__text">Secure online payment is being prepared. Please contact Debra if you need payment assistance or invoice confirmation.</p>
           </div>
           <div class="payment-widget__panel" id="stripe-payment-widget" data-stripe-ready="false">
-            <!-- Connect Stripe here once real publishable keys and backend checkout/session endpoints are available. -->
-            <div class="payment-widget__mock-card" aria-hidden="true">
-              <span></span>
-              <span></span>
-              <span></span>
+            <!-- Inactive state: shown until the backend reports Stripe is configured. -->
+            <div class="payment-inactive" id="payment-inactive">
+              <div class="payment-widget__mock-card" aria-hidden="true">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+              <dl class="payment-widget__details">
+                <div>
+                  <dt>Status</dt>
+                  <dd>Awaiting secure Stripe configuration</dd>
+                </div>
+                <div>
+                  <dt>Use for</dt>
+                  <dd>Existing client invoices and approved payments</dd>
+                </div>
+                <div>
+                  <dt>Support</dt>
+                  <dd><a href="mailto:hello@debrawylde.world?subject=Payment%20support">hello@debrawylde.world</a></dd>
+                </div>
+              </dl>
+              <button class="btn btn--primary btn--large btn--block" type="button" disabled aria-describedby="payment-widget-note">Payment integration pending</button>
+              <p id="payment-widget-note" class="payment-widget__note">No card details are collected on this page. Secure payment is handled by Stripe.</p>
             </div>
-            <dl class="payment-widget__details">
-              <div>
-                <dt>Status</dt>
-                <dd>Awaiting secure Stripe configuration</dd>
+
+            <!-- Active state: revealed only when Stripe is configured. Submits to the
+                 backend which creates a Stripe-hosted Checkout session. -->
+            <form class="payment-form" id="payment-form" hidden novalidate>
+              <div class="hp-field" aria-hidden="true">
+                <label for="pay-website">Leave this field empty</label>
+                <input type="text" id="pay-website" name="website" tabindex="-1" autocomplete="off">
               </div>
-              <div>
-                <dt>Use for</dt>
-                <dd>Existing client invoices and approved payments</dd>
+              <div class="form-group">
+                <label for="pay-name">Full Name <span aria-hidden="true">*</span></label>
+                <input type="text" id="pay-name" name="name" required autocomplete="name" placeholder="Your full name">
+                <p class="error-text">Please enter your name.</p>
               </div>
-              <div>
-                <dt>Support</dt>
-                <dd><a href="mailto:hello@debrawylde.world?subject=Payment%20support">hello@debrawylde.world</a></dd>
+              <div class="form-group">
+                <label for="pay-email">Email Address <span aria-hidden="true">*</span></label>
+                <input type="email" id="pay-email" name="email" required autocomplete="email" placeholder="you@example.com">
+                <p class="error-text">Please enter a valid email address.</p>
               </div>
-            </dl>
-            <button class="btn btn--primary btn--large btn--block" type="button" disabled aria-describedby="payment-widget-note">Payment integration pending</button>
-            <p id="payment-widget-note" class="payment-widget__note">No card details are collected on this prototype page.</p>
+              <div class="form-group">
+                <label for="pay-reference">Payment / Invoice Reference <span aria-hidden="true">*</span></label>
+                <input type="text" id="pay-reference" name="reference" required placeholder="As supplied by Debra">
+                <p class="error-text">Please enter the reference Debra supplied.</p>
+              </div>
+              <div class="form-group">
+                <label for="pay-amount">Amount (AUD) <span aria-hidden="true">*</span></label>
+                <input type="number" id="pay-amount" name="amount_aud" required min="0" step="0.01" inputmode="decimal" placeholder="0.00">
+                <p class="error-text">Please enter the approved amount.</p>
+              </div>
+              <div class="form-group">
+                <label for="pay-note">Note <span class="form-hint">(optional)</span></label>
+                <textarea id="pay-note" name="note" rows="3" placeholder="Anything Debra should know about this payment"></textarea>
+              </div>
+              <button type="submit" class="btn btn--primary btn--large btn--block">Continue to Secure Payment</button>
+              <p class="payment-widget__note">You will be redirected to Stripe to complete payment securely. No card details are entered or stored on this site.</p>
+              <p class="form-feedback" role="alert"></p>
+            </form>
           </div>
           <p class="payment-guidance__note">Need help matching an invoice or reference? <a href="contact.html">Contact Debra</a> before making payment.</p>
         </div>
@@ -178,10 +216,8 @@
       </div>
     </div>
   </footer>
+  <script src="src/js/api.js"></script>
   <script src="src/js/main.js"></script>
-  <script>
-    // Replace this with Debra's real Stripe publishable key and checkout endpoint when supplied.
-    const STRIPE_PUBLISHABLE_KEY = "";
-  </script>
+  <script src="src/js/payments.js"></script>
 </body>
 </html>

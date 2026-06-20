@@ -15,24 +15,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;500;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="icon" href="/public/images/Logo.png" type="image/png">
-  <script>
-  (function () {
-    var path = window.location.pathname;
-    if (!path || path.endsWith('/')) return;
-    var last = path.slice(path.lastIndexOf('/') + 1);
-    if (last.indexOf('.') !== -1) return;
-    var withSlash = path + '/';
-    var xhr = new XMLHttpRequest();
-    xhr.open('HEAD', withSlash + 'src/css/styles.css', false);
-    try {
-      xhr.send();
-      if (xhr.status === 200) {
-        window.location.replace(withSlash + window.location.search + window.location.hash);
-      }
-    } catch (err) {}
-  })();
-  </script>
-  <link rel="stylesheet" href="src/css/styles.css">
+  <link rel="stylesheet" href="/src/css/styles.css">
 </head>
 <body>
 
@@ -175,13 +158,17 @@
         <div class="newsletter">
           <h3>Stay in the Loop</h3>
           <p>Get weekly insights on leadership, transformation, and personal growth delivered straight to your inbox.</p>
-          <form class="newsletter__form" data-prototype-form data-mailto-form data-mailto-recipient="hello@debrawylde.world" data-mailto-subject="Newsletter interest" novalidate>
+          <form class="newsletter__form" data-prototype-form data-api-endpoint="/newsletter/subscribe" novalidate>
+            <div class="hp-field" aria-hidden="true">
+              <label for="nl-website">Leave this field empty</label>
+              <input type="text" id="nl-website" name="website" tabindex="-1" autocomplete="off">
+            </div>
             <input type="email" name="email" placeholder="Your email address" required aria-label="Email address for newsletter">
             <button type="submit" class="btn btn--primary">Subscribe</button>
           </form>
           <div class="form-success" role="alert">
-            <p class="form-success__text mt-2">Your email app should now open with a newsletter interest message prepared.</p>
-            <p class="form-success__demo-note">If your email app did not open, please email Debra directly at <a href="mailto:hello@debrawylde.world">hello@debrawylde.world</a>.</p>
+            <p class="form-success__text mt-2">You are subscribed. Thank you for joining the list.</p>
+            <p class="form-success__demo-note">Prefer email? You can also reach Debra directly at <a href="mailto:hello@debrawylde.world">hello@debrawylde.world</a>.</p>
           </div>
         </div>
       </div>
@@ -250,6 +237,7 @@
     </div>
   </footer>
 
-  <script src="src/js/main.js"></script>
+  <script src="/src/js/api.js"></script>
+  <script src="/src/js/main.js"></script>
 </body>
 </html>
