@@ -2679,12 +2679,12 @@ body:has(.dw-hero--home) .nav-list a {
 
 .dw-hero--home {
   isolation: isolate;
-  margin-top: calc(-1 * var(--site-header-height));
-  min-height: 100vh;
-  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  min-height: calc(100svh - var(--site-header-height));
   padding: 0;
   background:
-    url('/public/images/debra-wylde-hero-background.jpg') 72% center / cover no-repeat,
+    url('/public/images/arch_main.png') center center / cover no-repeat,
     var(--bg-dark);
   color: var(--dw-ivory-100);
 }
@@ -2720,19 +2720,17 @@ body:has(.dw-hero--home) .nav-list a {
 }
 
 .dw-hero--home .dw-hero__layout {
-  min-height: 100vh;
-  min-height: 100svh;
-  grid-template-columns: minmax(0, 760px) minmax(0, 1fr);
-  align-content: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  justify-content: start;
+  width: 100%;
+  min-height: calc(100svh - var(--site-header-height));
   max-width: none;
   margin: 0;
   padding:
-    calc(var(--site-header-height) + clamp(1.8rem, 3.4vw, 3rem))
-    clamp(1.5rem, 5vw, 5rem)
     clamp(1.8rem, 3.4vw, 3rem)
-    clamp(1.5rem, 8vw, 8rem);
+    clamp(1.5rem, 5vw, 5rem);
 }
 
 .dw-hero--home .dw-hero__content {
@@ -3190,9 +3188,7 @@ body:has(.dw-hero--home) .nav-list a {
 
 @media (max-width: 1120px) {
   .dw-hero--home .dw-hero__layout {
-    grid-template-columns: minmax(0, 660px) minmax(0, 1fr);
-    padding-top: calc(var(--site-header-height) + clamp(2.1rem, 4vw, 3rem));
-    padding-bottom: clamp(2.15rem, 4vw, 3.2rem);
+    padding-block: clamp(2.15rem, 4vw, 3.2rem);
   }
 
   .dw-hero__brand-mark {
@@ -3237,11 +3233,11 @@ body:has(.dw-hero--home) .nav-list a {
   }
 
   .dw-hero--home {
-    background-position: 70% center;
+    background-position: center center;
   }
 
   .dw-hero--home .dw-hero__layout {
-    grid-template-columns: minmax(0, 620px) minmax(0, 1fr);
+    min-height: calc(100svh - var(--site-header-height));
   }
 
   .dw-hero--home .dw-hero__content {
@@ -3272,8 +3268,8 @@ body:has(.dw-hero--home) .nav-list a {
   }
 
   .dw-hero--home {
-    min-height: 100svh;
-    background-position: 76% center;
+    min-height: calc(100svh - var(--site-header-height));
+    background-position: center center;
   }
 
   .dw-hero--home::before {
@@ -3284,11 +3280,8 @@ body:has(.dw-hero--home) .nav-list a {
   }
 
   .dw-hero--home .dw-hero__layout {
-    grid-template-columns: 1fr;
-    min-height: inherit;
-    align-items: center;
-    padding-top: calc(var(--site-header-height) + clamp(3.75rem, 10vw, 5.25rem));
-    padding-bottom: clamp(3rem, 9vw, 4.5rem);
+    min-height: calc(100svh - var(--site-header-height));
+    padding-block: clamp(3rem, 9vw, 4.5rem);
   }
 
   .dw-hero__title {
@@ -3357,15 +3350,14 @@ body:has(.dw-hero--home) .nav-list a {
   }
 
   .dw-hero--home {
-    min-height: auto;
+    min-height: calc(100svh - var(--site-header-height));
     padding: 0;
-    background-position: 76% top;
+    background-position: center top;
   }
 
   .dw-hero--home .dw-hero__layout {
-    min-height: 690px;
-    padding-top: calc(var(--site-header-height) + 2.75rem);
-    padding-bottom: 2.8rem;
+    min-height: calc(100svh - var(--site-header-height));
+    padding-block: 2.8rem;
   }
 
   .dw-hero__brand {
