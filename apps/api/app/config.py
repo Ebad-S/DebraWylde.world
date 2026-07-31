@@ -56,6 +56,13 @@ class Settings:
         self.resend_api_key = os.getenv("RESEND_API_KEY", "").strip()
         self.resend_from_email = os.getenv("RESEND_FROM_EMAIL", "").strip()
         self.resend_audience_id = os.getenv("RESEND_AUDIENCE_ID", "").strip()
+        # Template id or alias (Resend accepts either for published templates).
+        self.resend_contact_internal_template = os.getenv(
+            "RESEND_CONTACT_INTERNAL_TEMPLATE", "Debra_internal_notification"
+        ).strip()
+        self.resend_contact_client_template = os.getenv(
+            "RESEND_CONTACT_CLIENT_TEMPLATE", "Debra_Client_Confirmation"
+        ).strip()
 
         # Calendly
         self.calendly_url = os.getenv("CALENDLY_URL", "").strip()

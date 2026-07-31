@@ -79,11 +79,17 @@ All public form endpoints support a `website` honeypot field, optional
 
 ## Email modes
 
-- `console`: payloads logged only (safe default).
+- `console`: payloads logged only (safe default). Console logs include template
+  name/alias, recipient, original recipient, subject, and template variables.
 - `resend`: sends through the Resend HTTP API using `RESEND_API_KEY` and
-  `RESEND_FROM_EMAIL`.
+  `RESEND_FROM_EMAIL`. Contact emails use published templates via
+  `RESEND_CONTACT_INTERNAL_TEMPLATE` and `RESEND_CONTACT_CLIENT_TEMPLATE`
+  (template id or alias). If `EMAIL_PROVIDER=resend` but keys/from are missing,
+  the send fails safely (`resend_not_configured`) and is recorded in
+  `email_logs` without calling Resend.
 - `EMAIL_TEST_REDIRECT=true`: regardless of provider, every message is sent only
-  to `EMAIL_TEST_REDIRECT_TO`, with the intended recipient shown in the body.
+  to `EMAIL_TEST_REDIRECT_TO`, with the intended recipient shown in the body
+  (HTML fallback) or console/log metadata (template sends).
 
 ## Stripe
 
