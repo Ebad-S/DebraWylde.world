@@ -40,6 +40,18 @@ class ContactRequest(BasePublicForm):
         return value
 
 
+class CalendlyBookingRequest(BasePublicForm):
+    event_uri: Optional[str] = Field(default=None, max_length=400)
+    invitee_uri: Optional[str] = Field(default=None, max_length=400)
+
+    @field_validator("event_uri", "invitee_uri", mode="before")
+    @classmethod
+    def _strip_uri(cls, value: Any) -> Any:
+        if isinstance(value, str):
+            return value.strip()
+        return value
+
+
 class DiscoveryCallRequest(BasePublicForm):
     name: str = Field(min_length=1, max_length=120)
     email: EmailStr
@@ -129,6 +141,7 @@ class HealthResponse(BaseModel):
     email_provider: str
     stripe_configured: bool
     calendly_configured: bool
+    calendly_api_configured: bool = False
 
 
 class PaymentStatusResponse(BaseModel):

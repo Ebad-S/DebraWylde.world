@@ -60,7 +60,8 @@ RESEND_AUDIENCE_ID=               # optional
 RESEND_CONTACT_INTERNAL_TEMPLATE=a1c62180-ab37-4cd9-82e0-e3b8f2d1e935
 RESEND_CONTACT_CLIENT_TEMPLATE=f4a78c5b-f30a-4068-b1fb-62359ef8c933
 
-CALENDLY_URL=                     # leave empty to show the polished fallback
+CALENDLY_URL=https://calendly.com/debrawylde/30min
+CALENDLY_API_TOKEN=               # optional; include widget notes on hello@ booking emails
 
 STRIPE_SECRET_KEY=                # leave empty to keep Pay Online inactive (safe 503)
 STRIPE_WEBHOOK_SECRET=

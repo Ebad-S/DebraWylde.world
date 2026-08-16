@@ -49,7 +49,7 @@
       <div class="container">
         <p class="section__eyebrow">Let's Talk</p>
         <h1 class="page-hero__title">Book a Discovery Call</h1>
-        <p class="page-hero__subtitle">To arrange a discovery call, send an enquiry and Debra will confirm the next available time for a private conversation about your next chapter.</p>
+        <p class="page-hero__subtitle">Choose a time on the calendar below, or send an enquiry if you would rather Debra follow up personally about your next chapter.</p>
       </div>
     </section>
 
@@ -99,13 +99,37 @@
       </div>
     </section>
 
+    <!-- Calendly inline embed -->
+    <section class="section" id="book">
+      <div class="container centered-narrow-800">
+        <div class="text-center mb-3">
+          <p class="section__eyebrow">Book a Time</p>
+          <h2 class="section__title">Choose a Time for Your Discovery Call</h2>
+          <p class="section__subtitle section__subtitle--centered">Select a time that suits you. The calendar shows Debra's live availability for a 30-minute discovery call.</p>
+        </div>
+        <div class="calendar-widget calendar-widget--calendly">
+          <div
+            class="calendly-inline-widget"
+            data-url="https://calendly.com/debrawylde/30min?hide_gdpr_banner=1"
+            data-resize="true"
+            role="region"
+            aria-label="Calendly scheduling calendar"
+          ></div>
+          <noscript>
+            <p class="calendar-widget__text">JavaScript is required to show the calendar. You can still <a href="https://calendly.com/debrawylde/30min" target="_blank" rel="noopener">book a time on Calendly</a>.</p>
+          </noscript>
+          <p class="calendar-widget__text mt-2 calendar-note">Prefer to write first? Use the <a href="#enquiry-form">enquiry form</a>, email <a href="mailto:hello@debrawylde.world?subject=Discovery%20call%20request">hello@debrawylde.world</a>, or visit the <a href="contact.html">Contact page</a>.</p>
+        </div>
+      </div>
+    </section>
+
     <!-- Enquiry Form -->
-    <section class="section" id="enquiry-form">
+    <section class="section section--alt" id="enquiry-form">
       <div class="container centered-narrow-640">
         <div class="text-center mb-3">
-          <p class="section__eyebrow">Request a Call</p>
+          <p class="section__eyebrow">Prefer a Personal Reply?</p>
           <h2 class="section__title">Tell Us a Little About Yourself</h2>
-          <p class="section__subtitle section__subtitle--centered">Fill in the form below and Debra will be in touch to arrange your free discovery call.</p>
+          <p class="section__subtitle section__subtitle--centered">If you would rather not book a time yet, send a short note and Debra will follow up to arrange the call.</p>
         </div>
 
         <form data-prototype-form data-api-endpoint="/discovery-call" novalidate>
@@ -148,44 +172,8 @@
       </div>
     </section>
 
-    <!-- Calendly widget integration point -->
-    <section class="section section--alt">
-      <div class="container centered-narrow-800">
-        <div class="text-center mb-3">
-          <p class="section__eyebrow">Calendly Booking</p>
-          <h2 class="section__title">Choose a Time for Your Discovery Call</h2>
-          <p class="section__subtitle section__subtitle--centered">Debra's Calendly scheduling area belongs here. Once the confirmed booking link is supplied, the calendar will display in this panel.</p>
-        </div>
-        <div class="calendar-widget calendar-widget--calendly">
-          <!-- Replace CALENDLY_URL below with Debra's real Calendly event URL when supplied. -->
-          <div id="calendly-widget" class="calendly-widget" data-calendly-url="" aria-label="Calendly scheduling widget">
-            <div class="booking-placeholder booking-placeholder--calendar">
-              <p class="booking-placeholder__label">Calendly widget pending</p>
-              <p class="booking-placeholder__text">The scheduling widget is ready to connect. Add Debra's confirmed Calendly URL in the page script to activate the live embed.</p>
-              <div class="calendly-widget__frame" aria-hidden="true">
-                <div class="calendly-widget__bar"></div>
-                <div class="calendly-widget__grid">
-                  <span></span><span></span><span></span><span></span><span></span><span></span>
-                  <span></span><span></span><span></span><span></span><span></span><span></span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="booking-placeholder booking-placeholder--fallback">
-            <p class="booking-placeholder__label">Prefer to enquire first?</p>
-            <p class="booking-placeholder__text">If the calendar is not connected yet, send the enquiry form or email Debra directly. Debra will use your message and preferred times to coordinate the call.</p>
-            <div class="hero__actions">
-              <a href="#enquiry-form" class="btn btn--primary btn--large">Use the Enquiry Form</a>
-              <a href="mailto:hello@debrawylde.world?subject=Discovery%20call%20request" class="btn btn--outline btn--large">Email Debra</a>
-            </div>
-          </div>
-          <p class="calendar-widget__text mt-2 calendar-note">You can also use the general <a href="contact.html">Contact page</a> if you have a question before requesting a call.</p>
-        </div>
-      </div>
-    </section>
-
     <!-- Alternative Contact -->
-    <section class="section section--alt">
+    <section class="section">
       <div class="container text-center">
         <h3>Prefer to Reach Out Directly?</h3>
         <p class="text-secondary mt-2 centered-copy-540">If you'd rather send an email or have a quick question before booking, you can reach Debra directly.</p>
@@ -209,7 +197,7 @@
     </section>
 
     <!-- Trust Reassurance -->
-    <section class="section">
+    <section class="section section--alt">
       <div class="container text-center">
         <p class="centered-copy-600">Your information is kept confidential and will only be used to arrange your discovery call. Debra values your privacy and will never share your details with third parties.</p>
       </div>
@@ -280,22 +268,36 @@
 
   <script src="/src/js/api.js"></script>
   <script src="/src/js/main.js"></script>
+  <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
   <script>
-    // Calendly is config-only. Paste Debra's confirmed Calendly event URL between
-    // the quotes to activate the inline embed. While empty, the polished
-    // placeholder/fallback above remains visible. Do not use a placeholder URL.
-    const CALENDLY_URL = "";
+    (function () {
+      var notified = false;
 
-    (function initialiseCalendlyWidget() {
-      const mount = document.getElementById("calendly-widget");
-      if (!mount || !CALENDLY_URL) return;
+      function isCalendlyEvent(event) {
+        return event.origin === "https://calendly.com"
+          && event.data
+          && typeof event.data.event === "string"
+          && event.data.event.indexOf("calendly.") === 0;
+      }
 
-      const iframe = document.createElement("iframe");
-      iframe.src = CALENDLY_URL;
-      iframe.title = "Schedule a discovery call with Debra Wylde";
-      iframe.loading = "lazy";
-      iframe.referrerPolicy = "strict-origin-when-cross-origin";
-      mount.replaceChildren(iframe);
+      window.addEventListener("message", function (event) {
+        if (!isCalendlyEvent(event) || event.data.event !== "calendly.event_scheduled" || notified) {
+          return;
+        }
+        notified = true;
+
+        var payload = event.data.payload || {};
+        var bookedEvent = payload.event || {};
+        var invitee = payload.invitee || {};
+        if (!window.DebraApi) return;
+
+        window.DebraApi.postJson("/calendly/booking", {
+          event_uri: bookedEvent.uri || "",
+          invitee_uri: invitee.uri || "",
+          source: "calendly-embed",
+          page: window.location.pathname
+        }).catch(function () {});
+      });
     })();
   </script>
 </body>

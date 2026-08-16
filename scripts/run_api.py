@@ -1,4 +1,4 @@
-"""Start the FastAPI app using apps/api/.venv when available."""
+"""Start the FastAPI app with apps/api/.venv only."""
 
 from __future__ import annotations
 
@@ -19,7 +19,11 @@ def resolve_python() -> Path:
     for path in candidates:
         if path.exists():
             return path
-    return Path(sys.executable)
+    raise FileNotFoundError(
+        "apps/api/.venv not found. Create it with:\n"
+        "  cd apps/api && python -m venv .venv && "
+        ".venv/Scripts/pip install -r requirements.txt"
+    )
 
 
 def main() -> int:
@@ -28,22 +32,17 @@ def main() -> int:
         return 1
 
     python = resolve_python()
-    if python == Path(sys.executable) and not (API_DIR / ".venv").exists():
-        print(
-            "Warning: apps/api/.venv not found. Using the current Python interpreter.\n"
-            "Create the venv with:\n"
-            "  cd apps/api && python -m venv .venv && "
-            ".venv/Scripts/pip install -r requirements.txt",
-            file=sys.stderr,
-        )
-
+    print(f"API python: {python}", flush=True)
     env = os.environ.copy()
+    env["PYTHONPATH"] = str(API_DIR)
     cmd = [
         str(python),
         "-m",
         "uvicorn",
         "app.main:app",
         "--reload",
+        "--reload-dir",
+        "app",
         "--port",
         "8000",
     ]

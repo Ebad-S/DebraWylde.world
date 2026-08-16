@@ -46,7 +46,7 @@ npm run dev
 
 That uses [`concurrently`](https://www.npmjs.com/package/concurrently) to start both processes in one terminal (prefixed `web` / `api` logs). Stop with `Ctrl+C`.
 
-Confirm the web log says `http://localhost:3000` (not a random port). If port 3000 is busy, stop the old process first, then run `npm run dev` again.
+Confirm the web log says `http://localhost:3000`. The web script frees a leftover process on 3000, then binds that port only.
 
 - Site: [http://localhost:3000](http://localhost:3000)
 - API health: [http://localhost:8000/api/health](http://localhost:8000/api/health)

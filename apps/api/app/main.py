@@ -17,6 +17,7 @@ from .config import get_settings
 from .db import init_db
 from .routes import (
     assessment,
+    calendly,
     contact,
     discovery,
     health,
@@ -35,13 +36,16 @@ logger = logging.getLogger("debra-api")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    get_settings.cache_clear()
     init_db()
     settings = get_settings()
     logger.info(
-        "debra-api starting env=%s email_provider=%s stripe_configured=%s",
+        "debra-api starting env=%s email_provider=%s stripe_configured=%s "
+        "calendly_configured=%s",
         settings.environment_label,
         settings.email_provider,
         settings.stripe_configured,
+        settings.calendly_configured,
     )
     yield
 
@@ -49,9 +53,13 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="Debra Wylde API", version="1.0.0", lifespan=lifespan)
 
 settings = get_settings()
+# In development, serve may bind a fallback port (not 3000). Allow any
+# localhost origin so the Calendly booking notify can reach the API.
+_LOCAL_ORIGIN_RE = r"https?://(localhost|127\.0\.0\.1)(:\d+)?"
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.allowed_origins,
+    allow_origin_regex=None if settings.is_production else _LOCAL_ORIGIN_RE,
     allow_credentials=False,
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization"],
@@ -126,6 +134,7 @@ api_prefix = "/api"
 app.include_router(health.router, prefix=api_prefix, tags=["health"])
 app.include_router(contact.router, prefix=api_prefix, tags=["contact"])
 app.include_router(discovery.router, prefix=api_prefix, tags=["discovery"])
+app.include_router(calendly.router, prefix=api_prefix, tags=["calendly"])
 app.include_router(newsletter.router, prefix=api_prefix, tags=["newsletter"])
 app.include_router(assessment.router, prefix=api_prefix, tags=["assessment"])
 app.include_router(payments.router, prefix=api_prefix, tags=["payments"])

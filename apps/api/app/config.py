@@ -6,11 +6,13 @@ in development). No secrets are hardcoded. See .env.example for the full list.
 
 import os
 from functools import lru_cache
+from pathlib import Path
 
 from dotenv import load_dotenv
 
-# Override so edited .env values win over stale process env during local reloads.
-load_dotenv(override=True)
+# Always load apps/api/.env, even if the process was started from the repo root.
+_API_DIR = Path(__file__).resolve().parents[1]
+load_dotenv(_API_DIR / ".env", override=True)
 
 
 def _get_bool(name: str, default: bool = False) -> bool:
@@ -71,6 +73,11 @@ class Settings:
 
         # Calendly
         self.calendly_url = os.getenv("CALENDLY_URL", "").strip()
+        # Optional personal access token. Used only to read invitee notes/name
+        # after the embed reports a booking. Leave blank to skip that lookup.
+        self.calendly_api_token = "".join(
+            os.getenv("CALENDLY_API_TOKEN", "").split()
+        )
 
         # Stripe
         self.stripe_secret_key = os.getenv("STRIPE_SECRET_KEY", "").strip()
@@ -106,6 +113,10 @@ class Settings:
     @property
     def calendly_configured(self) -> bool:
         return bool(self.calendly_url)
+
+    @property
+    def calendly_api_configured(self) -> bool:
+        return bool(self.calendly_api_token)
 
     @property
     def resend_configured(self) -> bool:

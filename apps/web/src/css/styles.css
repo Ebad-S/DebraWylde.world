@@ -1941,50 +1941,25 @@ p + p { margin-top: 1rem; }
 .calendar-widget--calendly {
   display: grid;
   gap: 1rem;
+  padding: 1.15rem;
 }
 
-.calendly-widget iframe {
-  min-height: 640px;
+.calendly-inline-widget {
+  min-width: 320px;
+  height: 720px;
+  overflow: hidden;
+  border-radius: var(--radius);
   background: #fff;
 }
 
-.booking-placeholder--calendar {
-  padding: clamp(1.4rem, 4vw, 2rem);
+.calendly-inline-widget iframe,
+.calendar-widget--calendly iframe {
+  min-height: 720px;
+  background: #fff;
 }
 
-.booking-placeholder--fallback {
-  background: rgba(8, 11, 34, 0.34);
-}
-
-.calendly-widget__frame {
-  display: grid;
-  gap: 1rem;
-  max-width: 620px;
-  margin: 1.2rem auto 0;
-  padding: 1rem;
-  border: 1px solid rgba(198, 168, 90, 0.22);
-  border-radius: var(--radius);
-  background: rgba(245, 238, 223, 0.05);
-}
-
-.calendly-widget__bar {
-  height: 12px;
-  width: 42%;
-  border-radius: 999px;
-  background: rgba(198, 168, 90, 0.42);
-}
-
-.calendly-widget__grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.65rem;
-}
-
-.calendly-widget__grid span {
-  min-height: 48px;
-  border: 1px solid rgba(245, 238, 223, 0.12);
-  border-radius: var(--radius);
-  background: rgba(245, 238, 223, 0.05);
+.calendar-widget--calendly .calendar-note {
+  margin-bottom: 0;
 }
 
 .payment-status-hero {

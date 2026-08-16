@@ -18,4 +18,5 @@ def health() -> HealthResponse:
         email_provider=settings.email_provider,
         stripe_configured=settings.stripe_configured,
         calendly_configured=settings.calendly_configured,
+        calendly_api_configured=bool(settings.calendly_api_token),
     )
