@@ -330,7 +330,7 @@ def _build_assessment_user_email(
         inner_html=inner,
         footer_html=(
             '<p style="margin:0 0 8px 0;padding:0;font-size:12px;line-height:1.6;color:#B9AFC7;">'
-            "Strategic counsel for high-achieving women leaders navigating expansion, "
+            "Strategic advisor for high-achieving women leaders navigating expansion, "
             "transition, and their next level of impact."
             "</p>"
             '<p style="margin:0;padding:0;font-size:11px;line-height:1.6;color:#8F839F;">'
