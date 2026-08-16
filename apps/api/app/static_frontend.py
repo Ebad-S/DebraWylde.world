@@ -15,6 +15,10 @@ from urllib.parse import unquote
 from fastapi import FastAPI
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 
+_HTML_EXTS = {".html"}
+_CODE_EXTS = {".js", ".css"}
+_ASSET_EXTS = {".png", ".jpg", ".jpeg", ".webp", ".svg", ".ico", ".woff", ".woff2"}
+
 logger = logging.getLogger("debra-api.static")
 
 _API_PREFIXES = ("api", "api/")
@@ -94,11 +98,38 @@ def _safe_file(web_root: Path, url_path: str) -> Path | None:
     return None
 
 
+def _cache_headers(path: Path) -> dict[str, str]:
+    ext = path.suffix.lower()
+    if ext in _HTML_EXTS:
+        # HTML must not be cached by browsers or Coolify/Traefik. A stale
+        # contact.html without the phone field posts to an API that requires it.
+        return {"Cache-Control": "no-store"}
+    if ext in _CODE_EXTS:
+        return {"Cache-Control": "no-cache, must-revalidate"}
+    if ext in _ASSET_EXTS:
+        return {"Cache-Control": "public, max-age=86400"}
+    return {"Cache-Control": "no-cache"}
+
+
+def _file_response(path: Path, status_code: int = 200) -> FileResponse:
+    media_type = "text/html" if path.suffix.lower() in _HTML_EXTS else None
+    return FileResponse(
+        path,
+        status_code=status_code,
+        media_type=media_type,
+        headers=_cache_headers(path),
+    )
+
+
 def _not_found(web_root: Path) -> FileResponse | HTMLResponse:
     custom = web_root / "404.html"
     if custom.is_file():
-        return FileResponse(custom, status_code=404, media_type="text/html")
-    return HTMLResponse("Not found", status_code=404)
+        return _file_response(custom, status_code=404)
+    return HTMLResponse(
+        "Not found",
+        status_code=404,
+        headers={"Cache-Control": "no-store"},
+    )
 
 
 def register_frontend(app: FastAPI) -> Path | None:
@@ -119,11 +150,11 @@ def register_frontend(app: FastAPI) -> Path | None:
         found = _safe_file(web_root, url_path)
         if found is None:
             return _not_found(web_root)
-        return FileResponse(found)
+        return _file_response(found)
 
     @app.api_route("/", methods=["GET", "HEAD"], include_in_schema=False)
     async def serve_home():
-        return FileResponse(web_root / "index.html")
+        return _file_response(web_root / "index.html")
 
     @app.api_route("/{full_path:path}", methods=["GET", "HEAD"], include_in_schema=False)
     async def serve_page(full_path: str):

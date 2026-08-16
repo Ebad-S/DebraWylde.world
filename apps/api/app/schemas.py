@@ -55,7 +55,7 @@ class CalendlyBookingRequest(BasePublicForm):
 class DiscoveryCallRequest(BasePublicForm):
     name: str = Field(min_length=1, max_length=120)
     email: EmailStr
-    phone: Optional[str] = Field(default=None, max_length=40)
+    phone: str = Field(min_length=1, max_length=40)
     company: Optional[str] = Field(default=None, max_length=160)
     best_time: Optional[str] = Field(default=None, max_length=200)
     message: Optional[str] = Field(default=None, max_length=5000)

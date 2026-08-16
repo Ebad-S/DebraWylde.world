@@ -148,8 +148,9 @@
             <p class="error-text">Please enter a valid email address.</p>
           </div>
           <div class="form-group">
-            <label for="dc-phone">Phone Number <span class="form-hint">(optional)</span></label>
-            <input type="tel" id="dc-phone" name="phone" autocomplete="tel" placeholder="Your phone number">
+            <label for="dc-phone">Phone Number <span aria-hidden="true">*</span></label>
+            <input type="tel" id="dc-phone" name="phone" required autocomplete="tel" placeholder="Your phone number" inputmode="tel">
+            <p class="error-text">Please enter your phone number.</p>
           </div>
           <div class="form-group">
             <label for="dc-time">Best Time to Contact <span class="form-hint">(optional)</span></label>

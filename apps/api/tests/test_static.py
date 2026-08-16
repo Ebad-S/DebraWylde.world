@@ -6,6 +6,15 @@ def test_homepage_served(client):
     assert response.status_code == 200
     assert "text/html" in response.headers.get("content-type", "")
     assert "Debra Wylde" in response.text
+    assert response.headers.get("cache-control") == "no-store"
+
+
+def test_contact_page_includes_required_phone(client):
+    response = client.get("/contact.html")
+    assert response.status_code == 200
+    assert 'id="ct-phone"' in response.text
+    assert "Phone Number" in response.text
+    assert response.headers.get("cache-control") == "no-store"
 
 
 def test_html_pages_served(client):
