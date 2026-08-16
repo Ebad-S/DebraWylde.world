@@ -922,6 +922,16 @@ p + p { margin-top: 1rem; }
   gap: 1.1rem;
 }
 
+/* Author display must not defeat the hidden attribute. */
+.payment-form[hidden],
+.payment-inactive[hidden] {
+  display: none !important;
+}
+
+#pay-now {
+  scroll-margin-top: 6rem;
+}
+
 /* --- Process / Steps --- */
 .steps {
   display: grid;
@@ -1994,6 +2004,27 @@ p + p { margin-top: 1rem; }
   margin-bottom: 0.6rem;
 }
 
+.payment-status-card__badge {
+  display: inline-block;
+  margin: 0 0 0.75rem;
+  color: var(--dw-gold-300);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.payment-status-card--success {
+  border-color: var(--dw-border-gold-mid);
+  background:
+    linear-gradient(135deg, rgba(198, 168, 90, 0.14), transparent 48%),
+    rgba(14, 19, 59, 0.78);
+}
+
+.payment-status-card--success h2 {
+  color: var(--color-text);
+}
+
 /* --- Demo Notice on Form Success --- */
 .form-success__demo-note {
   display: inline-block;
@@ -2391,6 +2422,30 @@ body:has(.dw-hero--home) .nav-list a {
 
 .contact-column {
   max-width: 100%;
+}
+
+/* Contact form + details: keep columns top-aligned as the form grows */
+.contact-form-section .contact-form-section__split {
+  align-items: start;
+  gap: 3.5rem;
+}
+
+.contact-form-section .contact-column .form-group {
+  margin-bottom: 1rem;
+}
+
+.contact-form-section .contact-column textarea {
+  min-height: 8.5rem;
+}
+
+.contact-form-section .contact-details {
+  margin-top: 0.25rem;
+}
+
+@media (max-width: 768px) {
+  .contact-form-section .contact-form-section__split {
+    gap: 2.5rem;
+  }
 }
 
 /* Discovery Call page - What to Expect */

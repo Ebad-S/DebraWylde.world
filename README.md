@@ -26,59 +26,37 @@ DebraWylde.world/
 
 ## Quick Start
 
-The frontend prototype lives in `apps/web/`. Use `Live Server` or open `apps/web/index.html` in any browser to preview.
-
-from the root folder run:
+Run frontend (`:3000`) and API (`:8000`) together from the repo root:
 
 ```bash
-npx serve apps/web -l 3000
-```
-
-For local development with live reload:
-
-```bash
-cd apps/web
-npx serve .
-
-```
-
-**Alternatively, you can run a Python server:**
-
-```bash
-cd apps/web
-python -m http.server 8000
-```
-
-### Test API Health Locally
-
-**Terminal 1 (frontend):**
-```bash
-npx serve apps/web -l 3000
-```
-
-**Terminal 2 (backend):**
-```bash
+# one-time: create the API venv if you have not already
 cd apps/api
 python -m venv .venv
 
 # Windows:
-.venv/Scripts/activate
+.venv/Scripts/pip install -r requirements.txt
 
 # macOS/Linux:
-source .venv/bin/activate
+# .venv/bin/pip install -r requirements.txt
 
-pip install -r requirements.txt
-uvicorn app.main:app --reload --port 8000
+cd ../..
+npm install
+npm run dev
 ```
 
-Open in your browser:  
-[http://localhost:8000/api/health](http://localhost:8000/api/health)
+That uses [`concurrently`](https://www.npmjs.com/package/concurrently) to start both processes in one terminal (prefixed `web` / `api` logs). Stop with `Ctrl+C`.
 
-The report confirms this local setup was tested successfully with the frontend on `:3000` and API on `:8000`.
+Confirm the web log says `http://localhost:3000` (not a random port). If port 3000 is busy, stop the old process first, then run `npm run dev` again.
 
+- Site: [http://localhost:3000](http://localhost:3000)
+- API health: [http://localhost:8000/api/health](http://localhost:8000/api/health)
 
-**Local Homepage Preview:**  
-[http://localhost:3000/apps/web/](http://localhost:3000/apps/web/)
+To run only one side:
+
+```bash
+npm run dev:web
+npm run dev:api
+```
 
 ## Tech Stack
 

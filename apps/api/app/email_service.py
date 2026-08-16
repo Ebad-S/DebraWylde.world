@@ -63,9 +63,13 @@ class EmailResult:
 def build_contact_template_data(payload: Any, site_base_url: str) -> dict:
     """Build Resend template variables for contact-form emails.
 
-    Optional phone/subject render as ``Not provided``. The mailto reply link in
-    the internal template already prefixes ``Re:``, so ``encoded_subject`` is the
+    Optional subject renders as ``Not provided``. Contact phone is required by
+    the API schema; other flows may still omit it. The mailto reply link in the
+    internal template already prefixes ``Re:``, so ``encoded_subject`` is the
     URL-encoded raw subject (or ``Website enquiry`` when subject is missing).
+
+    Keys match Resend template placeholders (triple braces in HTML/subject).
+    Uses ``contact_email`` because Resend reserves the key ``EMAIL``.
     """
     phone_raw = getattr(payload, "phone", None)
     phone = (str(phone_raw).strip() if phone_raw is not None else "") or NOT_PROVIDED
@@ -81,9 +85,11 @@ def build_contact_template_data(payload: Any, site_base_url: str) -> dict:
     submitted_at = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     site_url = (site_base_url or "").strip().rstrip("/")
 
+    # Resend reserves the variable key EMAIL, so the lead address is contact_email.
+    # Template HTML/subject must use triple braces: {{{name}}}, {{{contact_email}}}, etc.
     return {
         "name": getattr(payload, "name", "") or "",
-        "email": str(getattr(payload, "email", "")),
+        "contact_email": str(getattr(payload, "email", "")),
         "phone": phone,
         "subject": subject_display,
         "message": getattr(payload, "message", "") or "",

@@ -87,9 +87,10 @@ All public form endpoints support a `website` honeypot field, optional
   (template id or alias). If `EMAIL_PROVIDER=resend` but keys/from are missing,
   the send fails safely (`resend_not_configured`) and is recorded in
   `email_logs` without calling Resend.
-- `EMAIL_TEST_REDIRECT=true`: regardless of provider, every message is sent only
-  to `EMAIL_TEST_REDIRECT_TO`, with the intended recipient shown in the body
-  (HTML fallback) or console/log metadata (template sends).
+- `EMAIL_TEST_REDIRECT`: when `true`, every message is sent only to
+  `EMAIL_TEST_REDIRECT_TO` (intended recipient noted in body/logs). Default is
+  `false` so internal mail goes to `INTERNAL_NOTIFICATION_EMAIL` and client
+  confirmation goes to the form submitter.
 
 ## Stripe
 

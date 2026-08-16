@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pay Online | Debra Wylde</title>
-  <meta name="description" content="Pay Online for Debra Wylde clients. A secure payment area is ready for Stripe configuration.">
+  <meta name="description" content="Pay Online for Debra Wylde clients. Complete an approved invoice payment securely via Stripe Checkout.">
   <meta property="og:title" content="Pay Online | Debra Wylde">
-  <meta property="og:description" content="A secure online payment area for existing Debra Wylde clients, ready for Stripe configuration.">
+  <meta property="og:description" content="A secure online payment area for existing Debra Wylde clients to complete approved invoice payments.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://debra.preview.serenity-webcrafts.com.au/pay-online.html">
   <meta property="og:image" content="https://debra.preview.serenity-webcrafts.com.au/public/images/Logo.png">
@@ -49,9 +49,10 @@
       <div class="container">
         <p class="section__eyebrow">Pay Online</p>
         <h1 class="page-hero__title">Secure Client Payments</h1>
-        <p class="page-hero__subtitle">This page is prepared for Debra's secure online payment integration. Once Stripe is connected, existing clients will be able to complete approved payments here.</p>
+        <p class="page-hero__subtitle">Use the form below to pay an approved invoice amount. You will be redirected to Stripe to complete payment securely. No card details are entered on this site.</p>
         <div class="hero__actions mt-3">
-          <a href="contact.html" class="btn btn--primary btn--large">Contact Debra About Payment</a>
+          <a href="#pay-now" class="btn btn--primary btn--large">Make a Payment</a>
+          <a href="contact.html" class="btn btn--outline btn--large">Contact Debra</a>
         </div>
       </div>
     </section>
@@ -67,8 +68,8 @@
           </article>
           <article class="payment-trust-card">
             <span class="payment-trust-card__icon" aria-hidden="true">CARD</span>
-            <h2 class="payment-trust-card__title">Stripe Ready</h2>
-            <p>The payment area below is reserved for Stripe. It is intentionally inactive until real configuration is supplied.</p>
+            <h2 class="payment-trust-card__title">Stripe Checkout</h2>
+            <p>After you submit the form, Stripe hosts the secure card payment step. Debra never stores card details on this site.</p>
           </article>
           <article class="payment-trust-card">
             <span class="payment-trust-card__icon" aria-hidden="true">REF</span>
@@ -79,18 +80,18 @@
       </div>
     </section>
 
-    <!-- Stripe payment integration point -->
-    <section class="section section--pt-none">
+    <!-- Stripe payment form -->
+    <section class="section section--pt-none" id="pay-now">
       <div class="container centered-narrow-800">
         <div class="payment-widget" aria-labelledby="payment-widget-title">
           <div class="payment-widget__header">
             <p class="section__eyebrow">Secure payment area</p>
-            <h2 id="payment-widget-title" class="payment-widget__title">Stripe payment widget</h2>
-            <p class="payment-widget__text">Secure online payment is being prepared. Please contact Debra if you need payment assistance or invoice confirmation.</p>
+            <h2 id="payment-widget-title" class="payment-widget__title">Pay an approved invoice</h2>
+            <p id="payment-widget-text" class="payment-widget__text">Enter the details Debra confirmed with you, then continue to Stripe Checkout to pay securely.</p>
           </div>
-          <div class="payment-widget__panel" id="stripe-payment-widget" data-stripe-ready="false">
-            <!-- Inactive state: shown until the backend reports Stripe is configured. -->
-            <div class="payment-inactive" id="payment-inactive">
+          <div class="payment-widget__panel" id="stripe-payment-widget" data-stripe-ready="true">
+            <!-- Fallback only when the API reports Stripe is not configured. -->
+            <div class="payment-inactive" id="payment-inactive" hidden>
               <div class="payment-widget__mock-card" aria-hidden="true">
                 <span></span>
                 <span></span>
@@ -99,7 +100,7 @@
               <dl class="payment-widget__details">
                 <div>
                   <dt>Status</dt>
-                  <dd>Awaiting secure Stripe configuration</dd>
+                  <dd>Online payment is temporarily unavailable</dd>
                 </div>
                 <div>
                   <dt>Use for</dt>
@@ -110,16 +111,15 @@
                   <dd><a href="mailto:hello@debrawylde.world?subject=Payment%20support">hello@debrawylde.world</a></dd>
                 </div>
               </dl>
-              <button class="btn btn--primary btn--large btn--block" type="button" disabled aria-describedby="payment-widget-note">Payment integration pending</button>
+              <button class="btn btn--primary btn--large btn--block" type="button" disabled aria-describedby="payment-widget-note">Payment temporarily unavailable</button>
               <p id="payment-widget-note" class="payment-widget__note">No card details are collected on this page. Secure payment is handled by Stripe.</p>
             </div>
 
-            <!-- Active state: revealed only when Stripe is configured. Submits to the
-                 backend which creates a Stripe-hosted Checkout session. -->
-            <form class="payment-form" id="payment-form" hidden novalidate>
+            <!-- Primary entry: creates a Stripe-hosted Checkout session via the API. -->
+            <form class="payment-form" id="payment-form" novalidate>
               <div class="hp-field" aria-hidden="true">
                 <label for="pay-website">Leave this field empty</label>
-                <input type="text" id="pay-website" name="website" tabindex="-1" autocomplete="off">
+                <input type="text" id="pay-website" name="hp_website" tabindex="-1" autocomplete="off" value="">
               </div>
               <div class="form-group">
                 <label for="pay-name">Full Name <span aria-hidden="true">*</span></label>

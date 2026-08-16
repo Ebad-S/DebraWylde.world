@@ -133,6 +133,13 @@
       else if (payload.first_name) payload.name = payload.first_name;
     }
 
+    // Honeypot HTML uses hp_website so browsers do not autofill "website".
+    // Map to the API field name expected by check_honeypot().
+    if (Object.prototype.hasOwnProperty.call(payload, 'hp_website')) {
+      payload.website = payload.hp_website;
+      delete payload.hp_website;
+    }
+
     const pageFile = window.location.pathname.split('/').pop() || 'index.html';
     payload.page = window.location.pathname;
     if (!payload.source) payload.source = pageFile.replace(/\.html$/, '') || 'home';
@@ -209,8 +216,10 @@
 
   function submitToApi(form, endpoint) {
     if (!window.DebraApi || typeof window.DebraApi.postJson !== 'function') {
-      // Helper missing: fall back to the static success state so the user is not stuck.
-      showSuccess(form);
+      showError(
+        form,
+        'We could not reach the server right now. Please try again shortly, or email hello@debrawylde.world.'
+      );
       return;
     }
     const button = form.querySelector('[type="submit"]');

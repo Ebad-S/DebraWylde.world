@@ -13,6 +13,7 @@ from typing import Dict, List, Optional
 from fastapi import APIRouter, Request
 
 from ..config import get_settings
+from ..email_html import branded_email, email_button, email_detail_row
 from ..email_service import EmailMessage, send_email
 from ..models import insert_assessment, insert_lead
 from ..schemas import AssessmentRequest, AssessmentSuccess
@@ -180,21 +181,68 @@ def submit_assessment(payload: AssessmentRequest, request: Request) -> Assessmen
     )
 
 
+def _site_page_url(base: str, page: str) -> str:
+    root = (base or "").rstrip("/")
+    path = page if page.startswith("/") else f"/{page}"
+    return f"{root}{path}"
+
+
 def _notify_internal(
     payload: AssessmentRequest, stage: str, scores: Dict[str, float], lead_id: int
 ) -> None:
     settings = get_settings()
     if not settings.internal_notification_email:
         return
+
     score_rows = "".join(
-        f"<li>{escape(group)}: {value}</li>" for group, value in scores.items()
+        "<tr>"
+        f'<td style="padding:8px 0;font-size:14px;line-height:1.5;color:#B9AFC7;">'
+        f"{escape(group)}</td>"
+        f'<td align="right" style="padding:8px 0;font-size:15px;line-height:1.5;'
+        f'font-weight:600;color:#E9CF7A;">{value}</td>'
+        "</tr>"
+        for group, value in scores.items()
     )
-    html = (
-        f"<h2>New assessment submission (lead #{lead_id})</h2>"
-        f"<p><strong>Name:</strong> {escape(payload.name)}</p>"
-        f"<p><strong>Email:</strong> {escape(str(payload.email))}</p>"
-        f"<p><strong>Result stage:</strong> {escape(stage)}</p>"
-        f"<p><strong>Scores:</strong></p><ul>{score_rows}</ul>"
+    email_link = (
+        f'<a href="mailto:{escape(str(payload.email), quote=True)}" '
+        f'style="color:#E9CF7A;text-decoration:none;">{escape(str(payload.email))}</a>'
+    )
+    detail_rows = "".join(
+        [
+            email_detail_row("Name", escape(payload.name)),
+            email_detail_row("Email", email_link),
+            email_detail_row("Result stage", escape(stage)),
+            email_detail_row("Lead ID", f"#{lead_id}"),
+        ]
+    )
+    inner = f"""
+<p style="margin:0 0 10px 0;padding:0;font-size:11px;line-height:1.4;letter-spacing:0.26em;text-transform:uppercase;color:#D87C72;">Website Notification</p>
+<h1 style="margin:0 0 22px 0;padding:0;font-family:Georgia,'Times New Roman',serif;font-size:30px;line-height:1.2;font-weight:400;color:#E9CF7A;">New assessment submission</h1>
+<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="width:100%;background-color:#120526;border:1px solid #5a4570;border-radius:18px;">
+  <tr>
+    <td style="padding:22px 24px;">
+      <p style="margin:0 0 14px 0;padding:0;font-size:12px;line-height:1.4;letter-spacing:0.18em;text-transform:uppercase;color:#C6A85A;">Lead details</p>
+      <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">{detail_rows}</table>
+    </td>
+  </tr>
+</table>
+<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-top:18px;width:100%;background-color:#391C59;border:1px solid #6b4568;border-radius:18px;">
+  <tr>
+    <td style="padding:22px 24px;">
+      <p style="margin:0 0 12px 0;padding:0;font-size:12px;line-height:1.4;letter-spacing:0.18em;text-transform:uppercase;color:#D87C72;">Scores</p>
+      <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">{score_rows}</table>
+    </td>
+  </tr>
+</table>
+"""
+    html = branded_email(
+        preheader=f"New assessment submission from {payload.name}: {stage}",
+        inner_html=inner,
+        footer_html=(
+            '<p style="margin:0;padding:0;font-size:11px;line-height:1.6;color:#8F839F;">'
+            "This notification was generated from the Debra Wylde Alignment Assessment."
+            "</p>"
+        ),
     )
     text = (
         f"New assessment submission (lead #{lead_id})\n"
@@ -216,12 +264,17 @@ def _notify_internal(
 
 
 def _build_assessment_user_email(
-    name: str, stage: str, content: Optional[dict]
+    name: str,
+    stage: str,
+    content: Optional[dict],
+    site_base_url: str,
 ) -> tuple[str, str]:
     """Build html and plain-text bodies for the user result summary email."""
     subheadline = content["subheadline"] if content else ""
     body = content["body"] if content else ""
     requires = content["requires"] if content else ""
+    discovery_url = _site_page_url(site_base_url, "discovery-call.html")
+    contact_url = _site_page_url(site_base_url, "contact.html")
 
     text = (
         f"Hi {name},\n\n"
@@ -231,18 +284,60 @@ def _build_assessment_user_email(
         f"{body}\n\n"
         "What this stage requires\n"
         f"{requires}\n\n"
+        "Next steps\n"
+        f"Request a discovery call: {discovery_url}\n"
+        f"Send a message: {contact_url}\n\n"
         "Warm regards,\n"
         "The Debra Wylde team\n"
     )
-    html = (
-        f"<p>Hi {escape(name)},</p>"
-        f"<p>{escape(ASSESSMENT_INTRO)}</p>"
-        f"<h2>{escape(stage)}</h2>"
-        f"<p><em>{escape(subheadline)}</em></p>"
-        f"<p>{escape(body)}</p>"
-        f"<p><strong>What this stage requires</strong></p>"
-        f"<p>{escape(requires)}</p>"
-        "<p>Warm regards,<br>The Debra Wylde team</p>"
+    inner = f"""
+<p style="margin:0 0 18px 0;padding:0;font-size:16px;line-height:1.7;color:#F8F1E8;">Hi {escape(name)},</p>
+<p style="margin:0 0 22px 0;padding:0;font-size:16px;line-height:1.7;color:#F8F1E8;">{escape(ASSESSMENT_INTRO)}</p>
+<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="width:100%;background-color:#120526;border:1px solid #5a4570;border-radius:18px;">
+  <tr>
+    <td style="padding:24px;">
+      <p style="margin:0 0 8px 0;padding:0;font-size:12px;line-height:1.4;letter-spacing:0.18em;text-transform:uppercase;color:#C6A85A;">Your result</p>
+      <h1 style="margin:0 0 10px 0;padding:0;font-family:Georgia,'Times New Roman',serif;font-size:30px;line-height:1.2;font-weight:400;color:#E9CF7A;">{escape(stage)}</h1>
+      <p style="margin:0;padding:0;font-size:15px;line-height:1.6;font-style:italic;color:#D87C72;">{escape(subheadline)}</p>
+    </td>
+  </tr>
+</table>
+<p style="margin:22px 0 18px 0;padding:0;font-size:16px;line-height:1.7;color:#F8F1E8;">{escape(body)}</p>
+<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="width:100%;background-color:#391C59;border:1px solid #6b4568;border-radius:18px;">
+  <tr>
+    <td style="padding:22px 24px;">
+      <p style="margin:0 0 10px 0;padding:0;font-size:12px;line-height:1.4;letter-spacing:0.18em;text-transform:uppercase;color:#D87C72;">What this stage requires</p>
+      <p style="margin:0;padding:0;font-size:15px;line-height:1.65;color:#EDE2D2;">{escape(requires)}</p>
+    </td>
+  </tr>
+</table>
+<p style="margin:28px 0 14px 0;padding:0;font-size:12px;line-height:1.4;letter-spacing:0.18em;text-transform:uppercase;color:#C6A85A;">Next steps</p>
+<p style="margin:0 0 18px 0;padding:0;font-size:15px;line-height:1.65;color:#EDE2D2;">If you would like to explore this result in conversation, book a discovery call or send Debra a message.</p>
+<table role="presentation" border="0" cellpadding="0" cellspacing="0">
+  <tr>
+    <td style="padding:0;">
+      {email_button(href=discovery_url, label="Discovery Call")}
+    </td>
+    <td style="padding:0;">
+      {email_button(href=contact_url, label="Contact Debra")}
+    </td>
+  </tr>
+</table>
+<p style="margin:28px 0 0 0;padding:0;font-size:16px;line-height:1.7;color:#F8F1E8;">Warm regards,<br /><span style="color:#E9CF7A;">The Debra Wylde team</span></p>
+"""
+    html = branded_email(
+        preheader=f"Your Alignment Assessment result: {stage}",
+        inner_html=inner,
+        footer_html=(
+            '<p style="margin:0 0 8px 0;padding:0;font-size:12px;line-height:1.6;color:#B9AFC7;">'
+            "Strategic counsel for high-achieving women leaders navigating expansion, "
+            "transition, and their next level of impact."
+            "</p>"
+            '<p style="margin:0;padding:0;font-size:11px;line-height:1.6;color:#8F839F;">'
+            "This email was sent because you completed the Alignment Assessment on the "
+            "Debra Wylde website."
+            "</p>"
+        ),
     )
     return html, text
 
@@ -253,7 +348,10 @@ def _email_result(
     content: Optional[dict],
     lead_id: int,
 ) -> None:
-    html, text = _build_assessment_user_email(payload.name, stage, content)
+    settings = get_settings()
+    html, text = _build_assessment_user_email(
+        payload.name, stage, content, settings.site_base_url
+    )
     send_email(
         EmailMessage(
             to_email=str(payload.email),

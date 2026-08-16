@@ -50,13 +50,15 @@ DATABASE_URL=sqlite:///./data/debra_api.sqlite3
 ALLOWED_ORIGINS=https://debra.preview.serenity-webcrafts.com.au
 
 EMAIL_PROVIDER=console            # switch to "resend" once a sender is verified
-EMAIL_TEST_REDIRECT=true          # keep true until a verified domain exists
+EMAIL_TEST_REDIRECT=false         # true only redirects all mail to EMAIL_TEST_REDIRECT_TO
 EMAIL_TEST_REDIRECT_TO=serenity_tester@proton.me
-INTERNAL_NOTIFICATION_EMAIL=serenity_tester@proton.me
+INTERNAL_NOTIFICATION_EMAIL=hello@debrawylde.world
 
 RESEND_API_KEY=                   # set when Resend is ready
 RESEND_FROM_EMAIL=                # e.g. Debra Wylde <hello@debrawylde.world> after DNS
 RESEND_AUDIENCE_ID=               # optional
+RESEND_CONTACT_INTERNAL_TEMPLATE=a1c62180-ab37-4cd9-82e0-e3b8f2d1e935
+RESEND_CONTACT_CLIENT_TEMPLATE=f4a78c5b-f30a-4068-b1fb-62359ef8c933
 
 CALENDLY_URL=                     # leave empty to show the polished fallback
 

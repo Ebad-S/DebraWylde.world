@@ -9,7 +9,8 @@ from functools import lru_cache
 
 from dotenv import load_dotenv
 
-load_dotenv()
+# Override so edited .env values win over stale process env during local reloads.
+load_dotenv(override=True)
 
 
 def _get_bool(name: str, default: bool = False) -> bool:
@@ -46,10 +47,12 @@ class Settings:
 
         # Email
         self.email_provider = os.getenv("EMAIL_PROVIDER", "console").strip().lower()
-        self.email_test_redirect = _get_bool("EMAIL_TEST_REDIRECT", True)
+        self.email_test_redirect = _get_bool("EMAIL_TEST_REDIRECT", False)
         self.email_test_redirect_to = os.getenv("EMAIL_TEST_REDIRECT_TO", "").strip()
+        # Contact/internal alerts go here (not the form submitter). Override via env
+        # for staging; production should use hello@debrawylde.world.
         self.internal_notification_email = os.getenv(
-            "INTERNAL_NOTIFICATION_EMAIL", ""
+            "INTERNAL_NOTIFICATION_EMAIL", "hello@debrawylde.world"
         ).strip()
 
         # Resend
@@ -57,11 +60,13 @@ class Settings:
         self.resend_from_email = os.getenv("RESEND_FROM_EMAIL", "").strip()
         self.resend_audience_id = os.getenv("RESEND_AUDIENCE_ID", "").strip()
         # Template id or alias (Resend accepts either for published templates).
+        # Resend send API accepts template UUID or alias (not the display name).
+        # Dashboard aliases are lowercase for these templates.
         self.resend_contact_internal_template = os.getenv(
-            "RESEND_CONTACT_INTERNAL_TEMPLATE", "Debra_internal_notification"
+            "RESEND_CONTACT_INTERNAL_TEMPLATE", "debra_internal_notification"
         ).strip()
         self.resend_contact_client_template = os.getenv(
-            "RESEND_CONTACT_CLIENT_TEMPLATE", "Debra_Client_Confirmation"
+            "RESEND_CONTACT_CLIENT_TEMPLATE", "debra_client_confirmation"
         ).strip()
 
         # Calendly

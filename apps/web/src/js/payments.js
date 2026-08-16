@@ -1,7 +1,8 @@
 /* ============================================
    DebraWylde.world - Pay Online (Stripe-hosted Checkout)
-   The form is revealed only when the backend reports Stripe is configured.
-   No card details are collected here; we redirect to Stripe Checkout.
+   The payment form is the primary entry. If the API reports Stripe is not
+   configured, we swap to the inactive fallback. No card details are collected
+   here; we redirect to Stripe Checkout.
    ============================================ */
 (function () {
   'use strict';
@@ -9,20 +10,41 @@
   const panel = document.getElementById('stripe-payment-widget');
   const inactive = document.getElementById('payment-inactive');
   const form = document.getElementById('payment-form');
+  const widgetText = document.getElementById('payment-widget-text');
+  const widgetTitle = document.getElementById('payment-widget-title');
   if (!panel || !form) return;
 
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const COPY = {
+    readyTitle: 'Pay an approved invoice',
+    readyText:
+      'Enter the details Debra confirmed with you, then continue to Stripe Checkout to pay securely.',
+    inactiveTitle: 'Payment temporarily unavailable',
+    inactiveText:
+      'Online payment is not available right now. Please contact Debra if you need help with an invoice or reference.'
+  };
+
+  function setCopy(ready) {
+    if (widgetTitle) {
+      widgetTitle.textContent = ready ? COPY.readyTitle : COPY.inactiveTitle;
+    }
+    if (widgetText) {
+      widgetText.textContent = ready ? COPY.readyText : COPY.inactiveText;
+    }
+  }
 
   function activateForm() {
     if (inactive) inactive.hidden = true;
     form.hidden = false;
     panel.setAttribute('data-stripe-ready', 'true');
+    setCopy(true);
   }
 
   function showInactive() {
     if (inactive) inactive.hidden = false;
     form.hidden = true;
     panel.setAttribute('data-stripe-ready', 'false');
+    setCopy(false);
   }
 
   function feedbackEl() {
@@ -79,7 +101,7 @@
       reference: form.querySelector('[name="reference"]').value.trim(),
       amount_aud: parseFloat(form.querySelector('[name="amount_aud"]').value),
       note: form.querySelector('[name="note"]').value.trim(),
-      website: form.querySelector('[name="website"]').value.trim(),
+      website: (form.querySelector('[name="hp_website"]') || { value: '' }).value.trim(),
       source: 'pay-online',
       page: window.location.pathname
     };
@@ -116,6 +138,15 @@
       button.disabled = true;
     }
 
+    if (!window.DebraApi || typeof window.DebraApi.postJson !== 'function') {
+      if (button) {
+        button.textContent = originalText;
+        button.disabled = false;
+      }
+      showError('Payment is not available in this browser session. Please refresh and try again.');
+      return;
+    }
+
     window.DebraApi.postJson('/payments/create-checkout-session', buildPayload())
       .then(function (data) {
         if (data && data.checkout_url) {
@@ -136,19 +167,21 @@
       });
   });
 
-  // Decide which state to show based on backend configuration.
+  // Keep the form visible by default. Only swap to inactive when the API
+  // explicitly says Stripe is not configured.
+  activateForm();
   if (window.DebraApi && typeof window.DebraApi.getJson === 'function') {
     window.DebraApi.getJson('/health')
       .then(function (data) {
-        if (data && data.stripe_configured) {
-          activateForm();
-        } else {
+        if (data && data.stripe_configured === false) {
           showInactive();
+        } else {
+          activateForm();
         }
       })
       .catch(function () {
-        // If health is unreachable, keep the polished inactive state.
-        showInactive();
+        // Keep the form available for local testing if health is briefly unreachable.
+        activateForm();
       });
   }
 })();

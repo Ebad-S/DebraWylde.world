@@ -11,13 +11,11 @@
     if (window.DEBRA_API_BASE_URL) {
       return String(window.DEBRA_API_BASE_URL).replace(/\/+$/, '');
     }
-    // Local static-dev convenience: when serving the static site on :3000,
-    // point at the API dev server on :8000. Otherwise use same-origin /api.
+    // Local static-dev convenience: any localhost/127.0.0.1 static port
+    // (3000, or whatever serve picks) talks to the API on :8000.
+    // Deployed hosts keep same-origin /api behind the reverse proxy.
     var loc = window.location;
-    if (
-      (loc.hostname === 'localhost' || loc.hostname === '127.0.0.1') &&
-      loc.port === '3000'
-    ) {
+    if (loc.hostname === 'localhost' || loc.hostname === '127.0.0.1') {
       return 'http://localhost:8000/api';
     }
     return '/api';

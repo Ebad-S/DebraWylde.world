@@ -1,0 +1,13 @@
+{
+  "name": "debrawylde-world",
+  "private": true,
+  "description": "Local dev helpers for DebraWylde.world (static web + FastAPI)",
+  "scripts": {
+    "dev": "concurrently -k -n web,api -c cyan,magenta \"npm:dev:web\" \"npm:dev:api\"",
+    "dev:web": "npx --yes serve apps/web -l 3000 --no-port-switching",
+    "dev:api": "python scripts/run_api.py"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
