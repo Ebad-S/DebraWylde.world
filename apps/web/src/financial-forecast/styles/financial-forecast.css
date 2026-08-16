@@ -384,6 +384,8 @@
   margin: 0;
   padding-left: 1.2rem;
   color: #e8ded0;
+  list-style: decimal;
+  list-style-position: outside;
 }
 
 .ff-next-steps li + li {

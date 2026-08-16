@@ -70,6 +70,7 @@ function renderIntro(state) {
           Import it here to pick up where you left off.
           Older save formats will be upgraded automatically.
         </p>
+        <p class="ff-helper">You can save your progress at any point via Results Dashboard</p>
         <div class="ff-bottom-actions">
           <button class="btn btn--outline" data-action="import-json-file">Import Saved JSON Data</button>
           <span class="ff-helper" data-region="import-json-status"></span>
