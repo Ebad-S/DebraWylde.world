@@ -1,4 +1,6 @@
-# Debra Wylde API - FastAPI backend
+# API-only image (kept for local experiments).
+# Coolify production/staging uses the repository-root Dockerfile, which also
+# serves the static frontend from apps/web in the same container.
 FROM python:3.12-slim
 
 ENV PYTHONUNBUFFERED=1 \

@@ -1,0 +1,55 @@
+.git
+.gitignore
+.gitattributes
+
+# Secrets and local env (Coolify injects runtime variables)
+.env
+**/.env
+**/.env.*
+!**/.env.example
+
+# Local virtualenvs and Node (frontend is already static)
+**/.venv
+**/venv
+**/node_modules
+**/__pycache__
+**/*.pyc
+**/*.pyo
+**/.pytest_cache
+**/.mypy_cache
+**/.ruff_cache
+**/.coverage
+**/htmlcov
+**/*.egg-info
+
+# Private / non-runtime material
+_Initial_notes_
+xls
+docs
+.cursor
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Databases and logs (never bake live data into the image)
+**/*.sqlite3
+**/*.sqlite3-wal
+**/*.sqlite3-shm
+**/*.log
+
+# Tests are run from the host, not inside the image
+apps/api/tests
+apps/api/pytest.ini
+apps/api/requirements-dev.txt
+
+# Local-only helpers not needed at runtime
+scripts
+package.json
+package-lock.json
+node_modules

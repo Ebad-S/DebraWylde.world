@@ -57,7 +57,7 @@ payloads are logged and recorded in the `email_logs` table.
 
 | Method | Path | Purpose |
 |---|---|---|
-| GET  | `/api/health` | Service + configuration status |
+| GET  | `/api/health` | Safe operational health (`ok`, `service`, `environment`) |
 | POST | `/api/contact` | Contact enquiry |
 | POST | `/api/discovery-call` | Discovery call request |
 | POST | `/api/newsletter/subscribe` | Newsletter signup (upsert) |
@@ -103,15 +103,13 @@ All public form endpoints support a `website` honeypot field, optional
 
 ## Deployment (Coolify)
 
-See `deployment/coolify/README.md` for the full two-resource setup (static
-frontend + this API) and the Traefik `/api/*` path-routing notes. In short:
+See `deployment/coolify/README.md` for the one-container setup. In short:
 
-- Base directory: `apps/api`, build from the `Dockerfile`, expose port `8000`.
+- Coolify builds the **repository-root** `Dockerfile` (not `apps/api/Dockerfile`).
+- One process serves `/api/*` and the static frontend from `apps/web`.
 - Mount a persistent volume at `/app/data` for the SQLite file.
-- Set all env vars from `.env.example` in the Coolify UI (never commit real
-  secrets).
-- Route the preview host `/api/*` to this service and `/` to the static
-  frontend.
+- Set env vars from `.env.example` in the Coolify UI (never commit real secrets).
+- Health check path: `/api/health`.
 
 ## Notes / limitations
 

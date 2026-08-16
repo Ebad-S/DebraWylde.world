@@ -82,8 +82,11 @@ npm run dev:api
 | Service | Purpose |
 |---|---|
 | Vultr VPS | Server hosting |
-| Coolify | Deployment platform |
+| Coolify | One Dockerfile application (API + static site) |
 | GoDaddy | Domain registrar |
+
+Coolify settings, volume path, and environment-variable checklists:
+[`deployment/coolify/README.md`](deployment/coolify/README.md).
 
 ## Pages
 

@@ -1,35 +1,27 @@
 # Deployment
 
-Configuration and scripts for deploying DebraWylde.world.
+Configuration for deploying DebraWylde.world as **one Coolify application**.
 
 ## Hosting
 
 - **Provider:** Vultr VPS
 - **Platform:** Coolify
-- **Domain:** DebraWylde.world (registered via GoDaddy)
+- **Preview:** https://debra.preview.serenity-webcrafts.com.au
+- **Production:** https://debrawylde.world
 
-## Directory Structure
+## Topology
 
-```
-deployment/
-├── coolify/      # Coolify deployment configuration
-├── nginx/        # Reverse proxy configuration (optional)
-└── scripts/      # Deployment and maintenance scripts
-```
+One container built from the repository-root `Dockerfile`:
 
-## Phase 1 topology (two Coolify resources)
+- FastAPI / Uvicorn listens on `0.0.0.0:${PORT:-8000}`
+- `/api/*` is the backend
+- every other path is the static site from `apps/web`
+- SQLite persists at `/app/data` (Coolify volume)
 
-- Resource 1: static frontend, base directory `apps/web`, served at `/`.
-- Resource 2: FastAPI backend, base directory `apps/api`, Dockerfile, port `8000`,
-  persistent volume at `/app/data` for SQLite.
-- The preview host routes `/` to the frontend and `/api/*` to the backend.
+Local `npm run dev` (Node on 3000 + API on 8000 via `concurrently`) is
+development-only and is not used in Coolify.
 
-Full step-by-step setup, env vars, and Traefik path-routing notes are in
-[`coolify/README.md`](./coolify/README.md). Backend specifics are in
-[`apps/api/README.md`](../apps/api/README.md).
+Full Coolify field names, volume path, environment-variable checklist, Stripe
+webhook URLs, and production cutover steps:
 
-## Status
-
-Backend (Phase 1) is implemented and ready to deploy. Production go-live still
-depends on the blockers listed in the implementation report (DNS/Resend domain,
-real sender + notification email, Calendly URL, and Stripe keys/webhook).
+[`coolify/README.md`](./coolify/README.md)

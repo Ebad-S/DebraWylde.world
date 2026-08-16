@@ -10,9 +10,15 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-# Always load apps/api/.env, even if the process was started from the repo root.
+# Load apps/api/.env for local development only as a fallback.
+# Platform/runtime environment variables always take precedence (override=False).
+# The production image does not include a .env file; missing file is a no-op.
 _API_DIR = Path(__file__).resolve().parents[1]
-load_dotenv(_API_DIR / ".env", override=True)
+load_dotenv(_API_DIR / ".env", override=False)
+
+_PROD_ALIASES = frozenset({"production", "prod"})
+_STAGING_ALIASES = frozenset({"staging", "stage"})
+_DEV_ALIASES = frozenset({"development", "dev", "local", ""})
 
 
 def _get_bool(name: str, default: bool = False) -> bool:
@@ -36,12 +42,12 @@ class Settings:
     """Plain settings object read once from the environment."""
 
     def __init__(self) -> None:
-        self.app_env = os.getenv("APP_ENV", "development").strip()
+        self.app_env = _normalize_app_env(os.getenv("APP_ENV", "development"))
         self.site_base_url = os.getenv(
             "SITE_BASE_URL", "http://localhost:3000"
         ).strip().rstrip("/")
         self.database_url = os.getenv(
-            "DATABASE_URL", "sqlite:///./data/debra_api.sqlite3"
+            "DATABASE_URL", _default_database_url(self.app_env)
         ).strip()
 
         raw_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000")
@@ -95,12 +101,28 @@ class Settings:
         self.max_payload_bytes = _get_int("MAX_PAYLOAD_BYTES", 65536)
 
     @property
+    def is_development(self) -> bool:
+        return self.app_env == "development"
+
+    @property
+    def is_staging(self) -> bool:
+        return self.app_env == "staging"
+
+    @property
     def is_production(self) -> bool:
-        return self.app_env.lower() in ("production", "prod")
+        return self.app_env == "production"
+
+    @property
+    def is_deployed(self) -> bool:
+        return not self.is_development
+
+    @property
+    def expose_error_details(self) -> bool:
+        return self.is_development
 
     @property
     def environment_label(self) -> str:
-        return "production" if self.is_production else "development"
+        return self.app_env
 
     @property
     def stripe_configured(self) -> bool:
@@ -128,6 +150,25 @@ class Settings:
         if self.database_url.startswith(prefix):
             return self.database_url[len(prefix):]
         return self.database_url
+
+
+def _normalize_app_env(raw: str | None) -> str:
+    value = (raw or "").strip().lower()
+    if value in _PROD_ALIASES:
+        return "production"
+    if value in _STAGING_ALIASES:
+        return "staging"
+    if value in _DEV_ALIASES:
+        return "development"
+    # Unknown values are treated as deployed (safe errors, no localhost CORS).
+    return value
+
+
+def _default_database_url(app_env: str) -> str:
+    # Deployed containers persist SQLite at /app/data (Coolify volume mount).
+    if app_env in ("staging", "production"):
+        return "sqlite:////app/data/debra_api.sqlite3"
+    return "sqlite:///./data/debra_api.sqlite3"
 
 
 @lru_cache

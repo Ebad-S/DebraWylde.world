@@ -1,4 +1,8 @@
-"""Health and configuration-status endpoint."""
+"""Public health endpoint.
+
+Returns only safe operational information. Configuration diagnostics stay in
+startup logs and are never exposed on this route.
+"""
 
 from fastapi import APIRouter
 
@@ -15,8 +19,4 @@ def health() -> HealthResponse:
         ok=True,
         service="debra-api",
         environment=settings.environment_label,
-        email_provider=settings.email_provider,
-        stripe_configured=settings.stripe_configured,
-        calendly_configured=settings.calendly_configured,
-        calendly_api_configured=bool(settings.calendly_api_token),
     )

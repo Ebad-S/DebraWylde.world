@@ -138,10 +138,6 @@ class HealthResponse(BaseModel):
     ok: bool = True
     service: str = "debra-api"
     environment: str
-    email_provider: str
-    stripe_configured: bool
-    calendly_configured: bool
-    calendly_api_configured: bool = False
 
 
 class PaymentStatusResponse(BaseModel):

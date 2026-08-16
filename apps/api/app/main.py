@@ -1,8 +1,9 @@
 """FastAPI application entry point.
 
-Wires CORS (env allowlist), the /api router tree, database initialisation on
-startup, and safe exception handlers (honeypot, rate limit, payload size, and a
-generic handler that never leaks stack traces to clients in production).
+Wires CORS (env allowlist), the /api router tree, static frontend serving,
+database initialisation on startup, and safe exception handlers (honeypot,
+rate limit, payload size, and a generic handler that never leaks stack traces
+to clients outside development).
 """
 
 import logging
@@ -26,6 +27,7 @@ from .routes import (
     stripe_webhook,
 )
 from .security import RateLimited, SpamDetected
+from .static_frontend import register_frontend
 
 logging.basicConfig(
     level=logging.INFO,
@@ -40,26 +42,36 @@ async def lifespan(app: FastAPI):
     init_db()
     settings = get_settings()
     logger.info(
-        "debra-api starting env=%s email_provider=%s stripe_configured=%s "
-        "calendly_configured=%s",
+        "debra-api starting env=%s deployed=%s sqlite=%s email_provider=%s "
+        "stripe_configured=%s calendly_configured=%s calendly_api_configured=%s",
         settings.environment_label,
+        settings.is_deployed,
+        settings.sqlite_path,
         settings.email_provider,
         settings.stripe_configured,
         settings.calendly_configured,
+        settings.calendly_api_configured,
     )
     yield
 
 
-app = FastAPI(title="Debra Wylde API", version="1.0.0", lifespan=lifespan)
+_boot = get_settings()
+app = FastAPI(
+    title="Debra Wylde API",
+    version="1.0.0",
+    lifespan=lifespan,
+    docs_url="/docs" if _boot.is_development else None,
+    redoc_url="/redoc" if _boot.is_development else None,
+    openapi_url="/openapi.json" if _boot.is_development else None,
+)
 
-settings = get_settings()
-# In development, serve may bind a fallback port (not 3000). Allow any
-# localhost origin so the Calendly booking notify can reach the API.
+# Localhost wildcard CORS is development-only. Staging and production use
+# ALLOWED_ORIGINS exclusively (same-origin in the one-container deploy).
 _LOCAL_ORIGIN_RE = r"https?://(localhost|127\.0\.0\.1)(:\d+)?"
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.allowed_origins,
-    allow_origin_regex=None if settings.is_production else _LOCAL_ORIGIN_RE,
+    allow_origins=_boot.allowed_origins,
+    allow_origin_regex=_LOCAL_ORIGIN_RE if _boot.is_development else None,
     allow_credentials=False,
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization"],
@@ -120,10 +132,10 @@ async def handle_validation_error(
 @app.exception_handler(Exception)
 async def handle_unexpected(request: Request, exc: Exception) -> JSONResponse:
     logger.exception("Unhandled error on %s", request.url.path)
-    if get_settings().is_production:
-        message = "Something went wrong. Please try again later."
-    else:
+    if get_settings().expose_error_details:
         message = f"{type(exc).__name__}: {exc}"
+    else:
+        message = "Something went wrong. Please try again later."
     return JSONResponse(
         status_code=500,
         content={"ok": False, "error": "internal_error", "message": message},
@@ -139,3 +151,6 @@ app.include_router(newsletter.router, prefix=api_prefix, tags=["newsletter"])
 app.include_router(assessment.router, prefix=api_prefix, tags=["assessment"])
 app.include_router(payments.router, prefix=api_prefix, tags=["payments"])
 app.include_router(stripe_webhook.router, prefix=api_prefix, tags=["stripe"])
+
+# Static frontend last so it cannot intercept /api/*.
+register_frontend(app)
