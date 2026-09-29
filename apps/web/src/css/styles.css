@@ -1321,6 +1321,7 @@ p + p { margin-top: 1rem; }
 
 .social-links {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.8rem;
   margin-top: 0.75rem;
 }
