@@ -20,6 +20,7 @@ def test_contact_page_includes_required_phone(client):
 def test_html_pages_served(client):
     for path in (
         "/about.html",
+        "/align-and-thrive.html",
         "/assessment.html",
         "/program.html",
         "/contact.html",
@@ -32,6 +33,19 @@ def test_html_pages_served(client):
         response = client.get(path)
         assert response.status_code == 200, path
         assert "text/html" in response.headers.get("content-type", "")
+
+
+def test_align_and_thrive_page_and_qr_asset(client):
+    response = client.get("/align-and-thrive.html")
+    assert response.status_code == 200
+    assert "Stuck is a story." in response.text
+    assert "/public/images/QR_Code_Scan_to_Pay.PNG" in response.text
+    assert "_Initial_notes_" not in response.text
+    assert ".pdf" not in response.text.lower()
+
+    qr_image = client.get("/public/images/QR_Code_Scan_to_Pay.PNG")
+    assert qr_image.status_code == 200
+    assert qr_image.headers.get("content-type", "").startswith("image/")
 
 
 def test_clean_url_serves_html(client):

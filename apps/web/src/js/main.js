@@ -236,6 +236,15 @@
       });
   }
 
+  /* --- Known Enquiry Prefill --- */
+  const enquiryType = new URLSearchParams(window.location.search).get('enquiry');
+  if (enquiryType === 'align-and-thrive') {
+    const subjectField = document.getElementById('ct-subject');
+    if (subjectField && !subjectField.value) {
+      subjectField.value = 'Join Align and Thrive';
+    }
+  }
+
   const forms = document.querySelectorAll('[data-prototype-form]');
 
   forms.forEach(function (form) {
