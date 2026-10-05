@@ -38,14 +38,29 @@ def test_html_pages_served(client):
 def test_align_and_thrive_page_and_qr_asset(client):
     response = client.get("/align-and-thrive.html")
     assert response.status_code == 200
-    assert "Stuck is a story." in response.text
+    assert 'id="at-hero-title"' in response.text
+    assert "You know you&rsquo;re here to do something big." in response.text
+    assert 'href="assessment.html"' in response.text
+    assert "contact.html?enquiry=align-and-thrive#contact-form" in response.text
+    assert "/public/images/A-n-T_Page_Hero_image.png" in response.text
+    assert "/public/images/A-n-T_Page_Sitting_portrait.jpg" in response.text
     assert "/public/images/QR_Code_Scan_to_Pay.PNG" in response.text
+    assert 'class="at-registration__qr-link"' in response.text
+    assert "buy.stripe.com" in response.text
+    assert "Tuesday" not in response.text
+    assert "October 20, 2026" not in response.text
+    assert "20 October 2026" not in response.text
     assert "_Initial_notes_" not in response.text
     assert ".pdf" not in response.text.lower()
 
-    qr_image = client.get("/public/images/QR_Code_Scan_to_Pay.PNG")
-    assert qr_image.status_code == 200
-    assert qr_image.headers.get("content-type", "").startswith("image/")
+    for image_path in (
+        "/public/images/QR_Code_Scan_to_Pay.PNG",
+        "/public/images/A-n-T_Page_Hero_image.png",
+        "/public/images/A-n-T_Page_Sitting_portrait.jpg",
+    ):
+        image = client.get(image_path)
+        assert image.status_code == 200, image_path
+        assert image.headers.get("content-type", "").startswith("image/")
 
 
 def test_clean_url_serves_html(client):
