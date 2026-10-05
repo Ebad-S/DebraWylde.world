@@ -47,9 +47,10 @@ def test_align_and_thrive_page_and_qr_asset(client):
     assert "/public/images/QR_Code_Scan_to_Pay.PNG" in response.text
     assert 'class="at-registration__qr-link"' in response.text
     assert "buy.stripe.com" in response.text
-    assert "Tuesday" not in response.text
-    assert "October 20, 2026" not in response.text
-    assert "20 October 2026" not in response.text
+    assert "Tuesday, 20 October 2026" in response.text
+    assert "2026-10-20" in response.text
+    assert "Wednesday, 14 October 2026" not in response.text
+    assert "2026-10-14" not in response.text
     assert "_Initial_notes_" not in response.text
     assert ".pdf" not in response.text.lower()
 
