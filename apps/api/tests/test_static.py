@@ -1,4 +1,26 @@
+from pathlib import Path
+
 from app.static_frontend import _safe_file, resolve_web_root
+
+INDEXABLE_PAGES = (
+    "/",
+    "/about.html",
+    "/align-and-thrive.html",
+    "/assessment.html",
+    "/blog.html",
+    "/blog-post.html",
+    "/contact.html",
+    "/discovery-call.html",
+    "/faq.html",
+    "/financial-forecast.html",
+    "/pay-online.html",
+    "/program.html",
+)
+NOINDEX_PAGES = (
+    "/404.html",
+    "/payment-success.html",
+    "/payment-cancelled.html",
+)
 
 
 def test_homepage_served(client):
@@ -7,6 +29,57 @@ def test_homepage_served(client):
     assert "text/html" in response.headers.get("content-type", "")
     assert "Debra Wylde" in response.text
     assert response.headers.get("cache-control") == "no-store"
+
+
+def test_public_pages_use_production_metadata(client):
+    for path in INDEXABLE_PAGES:
+        response = client.get(path)
+        assert response.status_code == 200, path
+        page = response.text.lower()
+        assert "debra.preview.serenity-webcrafts.com.au" not in page, path
+        assert "noindex" not in page, path
+        assert 'rel="canonical"' in page, path
+        assert "https://debrawylde.world" in page, path
+
+    for path in NOINDEX_PAGES:
+        response = client.get(path)
+        assert response.status_code == 200, path
+        assert 'name="robots" content="noindex, follow"' in response.text, path
+        assert "debra.preview.serenity-webcrafts.com.au" not in response.text.lower(), path
+
+    robots = client.get("/robots.txt")
+    assert robots.status_code == 200
+    assert "noindex" not in robots.text.lower()
+    assert "Sitemap: https://debrawylde.world/sitemap.xml" in robots.text
+
+    sitemap = client.get("/sitemap.xml")
+    assert sitemap.status_code == 200
+    locations = [
+        line.split("<loc>", 1)[1].split("</loc>", 1)[0]
+        for line in sitemap.text.splitlines()
+        if "<loc>" in line
+    ]
+    assert len(locations) == len(INDEXABLE_PAGES)
+    assert all(location.startswith("https://debrawylde.world") for location in locations)
+    assert "debra.preview.serenity-webcrafts.com.au" not in sitemap.text
+    for path in NOINDEX_PAGES:
+        assert path not in sitemap.text
+
+
+def test_stripe_callback_examples_use_production_domain():
+    repo_root = Path(__file__).resolve().parents[3]
+    preview_host = "debra.preview.serenity-webcrafts.com.au"
+    config_files = [repo_root / "apps" / "api" / ".env.example"]
+    config_files.extend((repo_root / "deployment").rglob("*.md"))
+    checked = 0
+    for path in config_files:
+        for line in path.read_text(encoding="utf-8").splitlines():
+            if "STRIPE_SUCCESS_URL" not in line and "STRIPE_CANCEL_URL" not in line:
+                continue
+            checked += 1
+            assert preview_host not in line, f"{path.name}: {line}"
+            assert "https://debrawylde.world/payment-" in line, f"{path.name}: {line}"
+    assert checked >= 4
 
 
 def test_contact_page_includes_required_phone(client):

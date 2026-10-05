@@ -130,8 +130,8 @@ STRIPE_WEBHOOK_SECRET=<whsec_... for the staging endpoint>
 STRIPE_CURRENCY=aud
 STRIPE_MIN_AMOUNT_CENTS=5000
 STRIPE_MAX_AMOUNT_CENTS=500000
-STRIPE_SUCCESS_URL=https://debra.preview.serenity-webcrafts.com.au/payment-success.html?session_id={CHECKOUT_SESSION_ID}
-STRIPE_CANCEL_URL=https://debra.preview.serenity-webcrafts.com.au/payment-cancelled.html
+STRIPE_SUCCESS_URL=https://debrawylde.world/payment-success.html?session_id={CHECKOUT_SESSION_ID}
+STRIPE_CANCEL_URL=https://debrawylde.world/payment-cancelled.html
 ```
 
 Do not put live Stripe keys on preview.
